@@ -92,7 +92,7 @@ const PersonalInfo = ({data, isReadOnly}) => {
             </Grid>
         </Grid>
         </Container>
-     );
+    );
 }
- 
+
 export default PersonalInfo;

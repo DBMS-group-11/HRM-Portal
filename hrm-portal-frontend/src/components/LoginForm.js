@@ -84,7 +84,7 @@ const LoginForm = () => {
                 </Box>
             </form>
         </Box>
-     );
+    );
 }
- 
+
 export default LoginForm;

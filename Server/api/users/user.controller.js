@@ -11,19 +11,15 @@ const {
 const {genSaltSync,hashSync,compareSync}=require("bcrypt");
 const {sign}=require("jsonwebtoken");
 
-
 module.exports={
-    login:(req,res)=>{   //login to the system
+    login:(req,res)=>{   //login to the system - done
         const data=req.body;
-        console.log(data)
-        getUserByUserEmail(data.email,(err,results)=>{
-            console.log("///////////////////////")
-            console.log("-----"+results)
-            console.log("---->"+results[0])
-            
+        getUserByUserEmail(data.email,(err,results)=>{            
             if(err){
                 console.log(err);
             }
+            console.log("--------------------------------------------");
+            console.log("Results ::"+results)
             console.log(results)
             if(results==null){
                 return res.json({
@@ -37,11 +33,16 @@ module.exports={
                 const jsontoken=sign({result:results},"qwe1234",{
                     expiresIn:"1h"
                 });
-                console.log("result > "+result);
+                //required response
+                const values = {
+                    UserID: results[0].UserID,
+                    UserAccountLevelID: results[0].UserAccountLevelID
+                };
                 return res.json({
                     success:1,
                     message:"login successfully",
-                    token:jsontoken
+                    token:jsontoken,
+                    values:values
                 });
             }else{
                 return res.json({
@@ -51,42 +52,54 @@ module.exports={
             }
         })
     },
-    register:(req,res)=>{
-        const body=req.body;
-        try{
-            const salt=genSaltSync(10);
-            body.PasswordHash=hashSync(body.PasswordHash,salt);
-        }catch(error){
-            console.log('Error while hasing the password',error);
+    register: (req, res) => {
+        const body = req.body;
+        // console.log("-----------------------------------------------------------------");
+        // console.log(body);
+        // console.log("-----------------------------------------------------------------");
+        try {
+            const salt = genSaltSync(10);
+            body.PasswordHash = hashSync(body.PasswordHash, salt);
+        } catch (error) {
+            console.log('Error while hashing the password', error);
+            return res.status(500).json({
+                success: 0,
+                message: "Error while hashing the password",
+            });
         }
-        addEmployee(body,(err,results)=>{
-            if(err){
+    
+        // Add user and employee
+        addUser(body, (err, userResult) => {
+            if (err) {
                 console.log(err);
                 return res.status(500).json({
-                    success:0,
-                    message:"Database Connection error"
+                    success: 0,
+                    message: "Database Connection error",
                 });
             }
-            return res.status(200).json({
-                success:1,
-                data:results
-            });
-        })
-        addUser(body,(err,results)=>{
-            if(err){
-                console.log(err);
-                return res.status(500).json({
-                    success:0,
-                    message:"Database Connection error"
-                });
-            }
-            return res.status(200).json({
-                success:1,
-                data:results
-            });
-        })
-    },
 
+            // Assuming addUser was successful, you can now add the employee
+            addEmployee(body, (err, employeeResult) => {
+                // console.log('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        success: 0,
+                        message: "Database Connection error",
+                    });
+                }
+    
+                return res.status(200).json({
+                    success: 1,
+                    data: {
+                        user: userResult,
+                        employee: employeeResult,
+                    },
+                    message: "User and employee added successfully",
+                });
+            });
+        });
+    },
     createUser:(req,res)=>{
         const body=req.body;
         console.log(body.PasswordHash);
