@@ -8,7 +8,7 @@ const LoginForm = () => {
     const navigate = useNavigate();
 
     const onValidUsername = (val) => {
-        const usernameRegex = /^[A-Za-z0-9_.]+$/
+        const usernameRegex = /^[A-Za-z0-9_.@]+$/
         return usernameRegex.test(val)
       }
 
