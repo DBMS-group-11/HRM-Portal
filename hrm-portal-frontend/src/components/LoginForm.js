@@ -1,21 +1,32 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from 'axios'
 
 const LoginForm = () => {
-    const [username, setUsername] = useState('');
+    const [email, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
     const onValidUsername = (val) => {
         const usernameRegex = /^[A-Za-z0-9_.@]+$/
         return usernameRegex.test(val)
-      }
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(onValidUsername(username)){
-            console.log(username, password)
+        if((email)){
+            // console.log(username, password)
+            const values={ email , password };
+            axios.post('http://localhost:3000/api/users/login',values)
+            .then(res=>{  
+            console.log(res.data.success);
+            if(res.data.success==1){
+                navigate('/dashboard');
+            }
+        }).catch(err=>{
+            console.log("Axios post Error");
+        })
         }
         else{
             alert("Invalid username")
