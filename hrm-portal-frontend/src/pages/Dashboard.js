@@ -1,18 +1,12 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
-import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Avatar } from '@mui/material';
@@ -23,8 +17,9 @@ import Groups2Icon from '@mui/icons-material/Groups2';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useNavigate } from "react-router-dom";
-
+import { Outlet, useNavigate } from "react-router-dom";
+import { Route } from 'react-router-dom';
+import MyAccount from './MyAccount';
 
 const drawerWidth = 320;
 const drawerLinks = [
@@ -36,12 +31,12 @@ const drawerLinks = [
     {
         label:'Request A Leave',
         icon:<AddCircleOutlineIcon />,
-        path:'/dashboard'
+        path:'/dashboard/request-a-leave'
     },
     {
         label:'Manage Leaves',
         icon:<AssignmentTurnedInIcon />,
-        path:'/dashboard'
+        path:'/dashboard/manage-leaves'
     },
     {
         label:'Supervisees',
@@ -51,23 +46,23 @@ const drawerLinks = [
     {
         label:'Add Employee',
         icon:<PersonAddIcon />,
-        path:'/dashboard'
+        path:'/dashboard/add-employee'
     },{
         label:'My Account',
         icon:<AccountCircleIcon />,
-        path:'/dashboard'
+        path:'/dashboard/myAccount'
     },
     {
         label:'Log out',
         icon:<LogoutIcon />,
-        path:'/'
+        path:'/login'
     }
 ];
 
 
 function Dashboard(props) {
     
-  const { window } = props;
+  const { window, children } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const navigate = useNavigate();
@@ -106,6 +101,7 @@ function Dashboard(props) {
   );
 
   const container = window !== undefined ? () => window().document.body : undefined;
+  
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -155,13 +151,10 @@ function Dashboard(props) {
         component="main"
         sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
         >
-            <Toolbar />
-            <Typography gutterBottom>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non semper dui. Mauris in dignissim metus, quis viverra nunc. Maecenas tincidunt lorem a vestibulum maximus. Duis ac ex eget lacus auctor suscipit nec ut diam. Sed rhoncus sagittis ex non consequat. Donec consectetur velit quis odio consectetur ornare. Nullam sed ultricies arcu, at porta tortor. Pellentesque semper a dolor quis dignissim. Aenean tincidunt ligula ut blandit egestas. Nam rutrum ipsum eget lorem accumsan interdum. Sed tristique nibh vitae sapien scelerisque, sit amet imperdiet elit faucibus. Donec sollicitudin, lorem at vestibulum consequat, magna ipsum lacinia turpis, in aliquet velit nulla vel dui. Fusce blandit ante vitae orci ullamcorper viverra. Fusce vitae mauris consequat, maximus velit vel, rutrum sapien.
-            </Typography>
-            <Typography>
-            Maecenas ut erat vel velit fermentum pharetra in id diam. Curabitur consectetur lectus eu accumsan hendrerit. Aliquam at risus eget arcu dapibus fringilla. Nam bibendum, sem et molestie blandit, nibh urna feugiat quam, a vehicula elit quam eget mauris. Nullam velit arcu, lobortis sit amet purus sed, luctus porta velit. Sed metus elit, tincidunt aliquam erat quis, commodo pellentesque turpis. Nam dapibus rutrum velit non interdum. Nullam elementum at nunc sed lobortis. Cras et eros sit amet felis gravida sagittis a id diam. Curabitur tincidunt neque at blandit pharetra. Morbi vehicula et justo ut vulputate. Pellentesque vitae nisl id lacus sagittis rutrum. Fusce eget dignissim ex, ut aliquam orci. Ut nulla velit, consequat ultrices elementum ut, tempus et nisl.
-            </Typography>            
+            {/* <Toolbar /> */}
+            {/* <Route path={`${match.path}/myAccount`} element={<MyAccount/>}/> */}
+            {/* {children} */}
+            <Outlet />
         </Box>
     </Box>
   );
