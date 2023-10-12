@@ -23,7 +23,7 @@ const PersonalInfo = () => {
             </Grid>
         </Grid>
         </Container>
-     );
+    );
 }
- 
+
 export default PersonalInfo;

@@ -4,7 +4,7 @@ import { useState } from "react";
 import axios from 'axios'
 
 const LoginForm = () => {
-    const [email, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
@@ -15,12 +15,13 @@ const LoginForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if((email)){
+        if(onValidUsername(email)){
             // console.log(username, password)
             const values={ email , password };
             axios.post('http://localhost:3000/api/users/login',values)
             .then(res=>{  
-            console.log(res.data.success);
+                console.log(res.data)
+                console.log(res.data.success);
             if(res.data.success==1){
                 navigate('/dashboard');
             }
@@ -40,7 +41,7 @@ const LoginForm = () => {
             <Typography variant="h5"><b>Hello Again!</b></Typography>
             <Typography variant="body2">Welcome Back</Typography>
             <form>
-                <TextField label="username" variant="outlined" fullWidth sx={{my:1}} onChange={e=>setUsername(e.target.value)}/>
+                <TextField label="username" variant="outlined" fullWidth sx={{my:1}} onChange={e=>setEmail(e.target.value)}/>
                 <TextField label="password" variant="outlined" type="password" fullWidth sx={{my:1}} onChange={e=>setPassword(e.target.value)}/>
                 <Box display={"flex"}>
                     <Typography variant="caption" marginY={'auto'} marginRight={6}>Forgot password?</Typography>
@@ -50,7 +51,7 @@ const LoginForm = () => {
                 </Box>
             </form>
         </Box>
-     );
+    );
 }
- 
+
 export default LoginForm;
