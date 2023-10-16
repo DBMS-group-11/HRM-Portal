@@ -2,7 +2,7 @@ import { Container, TextField, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from "react";
 
-const PersonalInfo = ({data, isReadOnly}) => {
+const PersonalInfo = ({data, isReadOnly, getData}) => {
 
     const [name, setName] = useState('');
     const [employeeId, setEmployeeId] = useState('');
@@ -18,7 +18,11 @@ const PersonalInfo = ({data, isReadOnly}) => {
             setMaritalStatus(data && data.maritalStatus || '');
             setGender(data && data.gender || '');
         }
-    } , [isReadOnly, data]);
+        else{
+            let formData = {name, employeeId, dob, maritalStatus, gender};
+            getData(formData);
+        }
+    } , [isReadOnly, data, name,employeeId, dob, maritalStatus, gender]);
     
     return (
 
@@ -35,7 +39,9 @@ const PersonalInfo = ({data, isReadOnly}) => {
                         readOnly: isReadOnly,
                     }}
                     value={name}
-                    {...(isReadOnly ? {} : {onChange: (e) => setName(e.target.value)})}
+                    {...(isReadOnly ? {} : {onChange: (e) => {
+                        setName(e.target.value);
+                    }})}
                 />
             </Grid>
             <Grid item xs={4}>

@@ -3,6 +3,7 @@ import PersonalInfo from "../components/InfoForms/PersonalInfo";
 import DepartmentInfo from "../components/InfoForms/DepartmentInfo";
 import EmergencyInfo from "../components/InfoForms/EmergencyInfo";
 import { useEffect, useState } from "react";
+import UserCredentialsForm from "../components/userCredentialsForm";
 
 const MyAccount = () => {
 
@@ -44,6 +45,7 @@ const MyAccount = () => {
                 <PersonalInfo data={data} isReadOnly={true}/>
                 <DepartmentInfo data={data} isReadOnly={true}/>
                 <EmergencyInfo data={data} isReadOnly={true}/>
+                <UserCredentialsForm />
             </Box>
      );
 }

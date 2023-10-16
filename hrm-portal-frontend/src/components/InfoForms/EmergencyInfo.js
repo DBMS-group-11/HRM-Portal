@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import { useEffect, useState } from "react";
 
 
-const EmergencyInfo = ({data, isReadOnly}) => {
+const EmergencyInfo = ({data, isReadOnly, getData}) => {
     const [name1, setName1] = useState('');
     const [telNo1, setTelNo1] = useState('');
     const [name2, setName2] = useState('');
@@ -17,8 +17,11 @@ const EmergencyInfo = ({data, isReadOnly}) => {
             setName2(data && data.emergencyName2 || '');
             setTelNo2(data && data.emergencyTel2 || '');
             setAddress(data && data.address || '');
+        }else{
+            let formData = {name1, telNo1, name2, telNo2};
+            getData(formData);
         }
-    } , [isReadOnly, data]);
+    } , [isReadOnly, data, name1, telNo1, name2, telNo2]);
 
     return (
         <Container sx={{marginY:6}}>

@@ -2,7 +2,7 @@ import { Container, TextField, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from "react";
 
-const DepartmentInfo = ({data, isReadOnly}) => {
+const DepartmentInfo = ({data, isReadOnly, getData}) => {
     const [jobTitle, setJobTitle] = useState('');
     const [department, setDepartment] = useState('');
     const [status, setStatus] = useState('');
@@ -16,8 +16,11 @@ const DepartmentInfo = ({data, isReadOnly}) => {
             setStatus(data && data.jobStatus || '');
             setPayGrade(data && data.payGrade || '');
             setSupervisor(data && data.supervisor || '');
+        }else{
+            let formData = {jobTitle, department, status, payGrade, supervisor};
+            getData(formData);
         }
-    } , [isReadOnly, data]);
+    } , [isReadOnly, data, jobTitle, department, status, payGrade, supervisor]);
 
     return (
         <Container sx={{marginY:6}}>
