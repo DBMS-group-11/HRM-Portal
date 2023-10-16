@@ -8,6 +8,7 @@ import Page404 from './pages/Page404';
 import RequestALeave from './pages/RequestALeave';
 import ManageLeave from './pages/ManageLeave';
 import AddEmployee from './pages/AddEmployee';
+import LeaveApproval from './pages/LeaveApproval';
 
 const theme = createTheme({
   typography:{
@@ -28,6 +29,7 @@ function App() {
               {/* <Route path='/dashboard' element={<Dashboard/>}/> */}
               <Route path='/dashboard/myAccount' element={<MyAccount/>}/>
               <Route path='/dashboard/manage-leaves' element={<ManageLeave/>}/>
+              <Route path='/dashboard/manage-leaves/leave-approval' element={<LeaveApproval/>}/>
               <Route path='/dashboard/request-a-leave' element={<RequestALeave/>}/>
               <Route path='/dashboard/add-employee' element={<AddEmployee/>}/>
           </Route>

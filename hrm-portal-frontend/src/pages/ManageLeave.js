@@ -1,58 +1,54 @@
 import { Container } from "@mui/material"
 import { DataGrid } from '@mui/x-data-grid';
+import { useNavigate } from "react-router-dom";
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'firstName', headerName: 'First name', width: 130 },
-    { field: 'lastName', headerName: 'Last name', width: 130 },
-    {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
-      width: 90,
-    },
-    {
-      field: 'fullName',
-      headerName: 'Full name',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      width: 160,
-      valueGetter: (params) =>
-        `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-    },
+    { field: 'emp_id', headerName: 'ID', width: 130 },
+    { field: 'name', headerName: 'Name', width: 230 },
+    { field: 'job-title', headerName: 'Job Title', width: 230 },
+    { field: 'department', headerName: 'Department', width: 230 },
+    { field: 'no-of-days', headerName: 'No of Days', width: 130 }
   ];
   
   const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    { id: 1, emp_id: 'EMP001', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+    { id: 2, emp_id: 'EMP002', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+    { id: 3, emp_id: 'EMP003', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+    { id: 4, emp_id: 'EMP004', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+    { id: 5, emp_id: 'EMP005', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+    { id: 6, emp_id: 'EMP006', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+    { id: 7, emp_id: 'EMP007', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+    { id: 8, emp_id: 'EMP008', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 }
   ];
 
 
 const ManageLeave = () => {
-    return ( 
-        <Container>
-            <div style={{ height: 400, width: '100%' }}>
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                initialState={{
-                pagination: {
-                    paginationModel: { page: 0, pageSize: 5 },
-                },
-                }}
-                pageSizeOptions={[5, 10]}
-                
-            />
-            </div>
-        </Container>
-     );
+
+  const navigate = useNavigate();
+
+  const handleRowClick = (row) => {
+    console.log(row);
+    navigate('/dashboard/manage-leaves/leave-approval');
+  }
+
+  return ( 
+      <Container>
+          <div style={{ height: 400, width: '100%' }}>
+          <DataGrid
+              rows={rows}
+              columns={columns}
+              initialState={{
+              pagination: {
+                  paginationModel: { page: 0, pageSize: 5 },
+              },
+              }}
+              pageSizeOptions={[5, 10]}
+              onRowClick={(row) => handleRowClick(row)}
+              
+          />
+          </div>
+      </Container>
+    );
 }
  
 export default ManageLeave;

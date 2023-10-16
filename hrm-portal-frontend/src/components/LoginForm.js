@@ -41,7 +41,12 @@ const LoginForm = () => {
             setIsLoading(false);
         }
 
-        // navigate('/dashboard');
+        // REMOVE THIS LINE LATER=================================================
+        // WORKAROUND TO BYPASS LOGIN
+        if(email === '11' && password === '11'){
+            navigate('/dashboard');
+        }
+        // REMOVE UPTO HERE=======================================================
     }
 
     return ( 

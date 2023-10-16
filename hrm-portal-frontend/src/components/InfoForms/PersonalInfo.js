@@ -26,7 +26,9 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
     
     return (
 
-        <Container sx={{marginY:6}}>
+        <Container sx={{
+            marginY:2, border:1, borderColor:'grey.400', borderRadius:2, padding:4
+        }}>
             <Typography variant="h6" marginBottom={2}>Personal Information</Typography>
         <Grid container spacing={2}>
             <Grid item xs={8}>
@@ -35,6 +37,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                     label="Name"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -50,6 +53,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                     label="Employee ID"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -63,6 +67,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                     label="Date of Birth"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -76,6 +81,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                     label="Marital Status"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}    
@@ -89,6 +95,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                     label="Gender"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}

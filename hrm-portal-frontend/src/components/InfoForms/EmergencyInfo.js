@@ -24,7 +24,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
     } , [isReadOnly, data, name1, telNo1, name2, telNo2]);
 
     return (
-        <Container sx={{marginY:6}}>
+        <Container sx={{marginY:2, border:1, borderColor:'grey.400', borderRadius:2, padding:4}}>
             <Typography variant="h6" marginBottom={2}>Emergency Information</Typography>
         <Grid container spacing={2}>
             <Grid item xs={6}>
@@ -33,6 +33,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     label="Name"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -46,6 +47,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     label="Tel No"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -59,6 +61,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     label="Name"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -72,6 +75,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     label="Tel No"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -85,6 +89,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     label="Address"
                     variant="standard"
                     fullWidth
+                    required
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
