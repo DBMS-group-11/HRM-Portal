@@ -33,7 +33,7 @@ const ManageLeave = () => {
 
   return ( 
       <Container>
-          <div style={{ height: 400, width: '100%' }}>
+          <div style={{ height: '80%', width: '100%' }}>
           <DataGrid
               rows={rows}
               columns={columns}
@@ -42,7 +42,7 @@ const ManageLeave = () => {
                   paginationModel: { page: 0, pageSize: 5 },
               },
               }}
-              pageSizeOptions={[5, 10]}
+              pageSizeOptions={[10, 15]}
               onRowClick={(row) => handleRowClick(row)}
               
           />

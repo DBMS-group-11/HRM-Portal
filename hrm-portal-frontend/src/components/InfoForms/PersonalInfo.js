@@ -6,6 +6,8 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
 
     const [name, setName] = useState('');
     const [employeeId, setEmployeeId] = useState('');
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [dob, setDob] = useState('');
     const [maritalStatus, setMaritalStatus] = useState('');
     const [gender, setGender] = useState('');
@@ -14,15 +16,17 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
         if(isReadOnly){
             setName(data && data.name || '');
             setEmployeeId(data && data.employeeId || '');
+            setUsername(data && data.username || '');
+            setEmail(data && data.email || '');
             setDob(data && data.dob || '');
             setMaritalStatus(data && data.maritalStatus || '');
             setGender(data && data.gender || '');
         }
         else{
-            let formData = {name, employeeId, dob, maritalStatus, gender};
+            let formData = {name, employeeId, username, email, dob, maritalStatus, gender};
             getData(formData);
         }
-    } , [isReadOnly, data, name,employeeId, dob, maritalStatus, gender]);
+    } , [isReadOnly, data, name, employeeId, username, email, dob, maritalStatus, gender]);
     
     return (
 
@@ -59,6 +63,34 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                     }}
                     value={employeeId}
                     {...(isReadOnly ? {} : {onChange: (e) => setEmployeeId(e.target.value)})}
+                />
+            </Grid>
+            <Grid item xs={6}>
+                <TextField 
+                    id="username"
+                    label="username"
+                    variant="standard"
+                    fullWidth
+                    required
+                    InputProps={{
+                        readOnly: isReadOnly,
+                    }}
+                    value={username}
+                    {...(isReadOnly ? {} : {onChange: (e) => setUsername(e.target.value)})}
+                />
+            </Grid>
+            <Grid item xs={6}>
+                <TextField 
+                    id="email"
+                    label="Email"
+                    variant="standard"
+                    fullWidth
+                    required
+                    InputProps={{
+                        readOnly: isReadOnly,
+                    }}
+                    value={email}
+                    {...(isReadOnly ? {} : {onChange: (e) => setEmail(e.target.value)})}
                 />
             </Grid>
             <Grid item xs={4}>

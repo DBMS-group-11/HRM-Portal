@@ -44,6 +44,7 @@ const UserCredentialsForm = () => {
                             label="old Password"
                             variant="standard"
                             fullWidth
+                            type="password"
                             value={userPassword}
                             onChange={(e) => setUserPassword(e.target.value)}
                         />
@@ -54,6 +55,7 @@ const UserCredentialsForm = () => {
                             label="New Password"
                             variant="standard"
                             fullWidth
+                            type="password"
                             value={newPassword}
                             {...(error && {error:true, helperText:error})}
                             onChange={(e) =>{
@@ -68,6 +70,7 @@ const UserCredentialsForm = () => {
                             label="Confirm New Password"
                             variant="standard"
                             fullWidth
+                            type="password"
                             value={confirmPassword}
                             onChange={(e) => {
                                 setConfirmPassword(e.target.value)

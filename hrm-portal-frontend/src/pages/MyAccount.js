@@ -24,6 +24,8 @@ const MyAccount = () => {
         setData({
             name: "John Doe",
             employeeId: "EMP-001",
+            username: "johndoe",
+            email: "johnd@mail.com",
             dob: "01/01/1990",
             maritalStatus: "Married",
             gender: "Male",
