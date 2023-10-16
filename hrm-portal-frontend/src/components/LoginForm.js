@@ -6,6 +6,9 @@ import axios from 'axios'
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errUserName, setErrUserName] = useState(false);
+    const [errorCredentials, setErrorCredentials] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const onValidUsername = (val) => {
@@ -15,25 +18,35 @@ const LoginForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setIsLoading(true);
         if(onValidUsername(email)){
             // console.log(username, password)
             const values={ email , password };
             axios.post('http://localhost:3000/api/users/login',values)
-            .then(res=>{  
-                console.log(res.data)
+            .then(res=>{
                 console.log(res.data.success);
-            if(res.data.success==1){
-                navigate('/dashboard');
-            }
-        }).catch(err=>{
-            console.log("Axios post Error");
-        })
+                if(res.data.success==1){
+                    navigate('/dashboard');
+                }
+            }).catch(err=>{
+                console.log("Axios post Error");
+                // alert("Invalid username or password");
+                setErrorCredentials(true);
+            }).finally(()=>{
+                setIsLoading(false);
+            });
         }
         else{
-            alert("Invalid username")
+            setErrUserName(true);
+            setIsLoading(false);
         }
 
-        // navigate('/dashboard');
+        // REMOVE THIS LINE LATER=================================================
+        // WORKAROUND TO BYPASS LOGIN
+        if(email === '11' && password === '11'){
+            navigate('/dashboard');
+        }
+        // REMOVE UPTO HERE=======================================================
     }
 
     return ( 
@@ -41,13 +54,38 @@ const LoginForm = () => {
             <Typography variant="h5"><b>Hello Again!</b></Typography>
             <Typography variant="body2">Welcome Back</Typography>
             <form>
-                <TextField label="username" variant="outlined" fullWidth sx={{my:1}} onChange={e=>setEmail(e.target.value)}/>
-                <TextField label="password" variant="outlined" type="password" fullWidth sx={{my:1}} onChange={e=>setPassword(e.target.value)}/>
+                <TextField
+                    label="username"
+                    variant="outlined"
+                    fullWidth
+                    {...(errUserName && {error:true, helperText:"Invalid username"})}
+                    {...(errorCredentials && {error:true})}
+                    sx={{my:1}}
+                    onChange={(e)=>{
+                        setEmail(e.target.value);
+                        setErrUserName(false);
+                        setErrorCredentials(false);
+                    }}
+                />
+                <TextField 
+                    label="password" 
+                    variant="outlined" 
+                    type="password" 
+                    fullWidth 
+                    {...(errorCredentials && {error:true, helperText:"Invalid email or password"})}
+                    sx={{my:1}} 
+                    onChange={(e)=>{
+                        setPassword(e.target.value);
+                        setErrorCredentials(false);
+                    }}
+                />
                 <Box display={"flex"}>
                     <Typography variant="caption" marginY={'auto'} marginRight={6}>Forgot password?</Typography>
-                    <Button variant="contained" sx={{px:10, mt:1, flexGrow:1}} onClick={handleSubmit}>
-                        Login
-                    </Button>
+                    {isLoading ? (
+                        <Button variant="contained" disabled sx={{px:10, mt:1, flexGrow:1}}>Loading...</Button>
+                    ):(
+                        <Button variant="contained" sx={{px:10, mt:1, flexGrow:1}} onClick={handleSubmit}> Login </Button>
+                    )}
                 </Box>
             </form>
         </Box>
