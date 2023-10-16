@@ -12,7 +12,7 @@ const {genSaltSync,hashSync,compareSync}=require("bcrypt");
 const {sign}=require("jsonwebtoken");
 
 module.exports={
-    login:(req,res)=>{   //login to the system - done
+    login:(req,res) => {   //login to the system - done
         const data=req.body;
         getUserByUserEmail(data.email,(err,results)=>{            
             if(err){
@@ -52,7 +52,7 @@ module.exports={
             }
         })
     },
-    register: (req, res) => {
+    register:(req, res) => {
         const body = req.body;
         // console.log("-----------------------------------------------------------------");
         // console.log(body);

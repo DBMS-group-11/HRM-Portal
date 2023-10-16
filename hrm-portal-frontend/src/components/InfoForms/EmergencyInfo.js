@@ -23,7 +23,6 @@ const EmergencyInfo = () => {
             </Grid>
         </Grid>
         </Container>
-     );
+    );
 }
- 
 export default EmergencyInfo;

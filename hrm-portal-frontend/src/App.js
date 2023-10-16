@@ -14,8 +14,6 @@ const theme = createTheme({
     fontFamily: 'Poppins'
   }
 })
-
-
 function App() {
   return (
     <ThemeProvider theme={theme}>

@@ -23,7 +23,7 @@ const DepartmentInfo = () => {
             </Grid>
         </Grid>
         </Container>
-     );
+    );
 }
- 
+
 export default DepartmentInfo;
