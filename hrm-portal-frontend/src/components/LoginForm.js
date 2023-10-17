@@ -24,12 +24,13 @@ const LoginForm = () => {
             const values={ email , password };
             axios.post('http://localhost:3000/api/users/login',values)
             .then(res=>{
-                console.log(res.data.success);
+                console.log(res.data);
                 if(res.data.success==1){
                     navigate('/dashboard/home');
                 }
             }).catch(err=>{
                 console.log("Axios post Error");
+                console.log(err);
                 // alert("Invalid username or password");
                 setErrorCredentials(true);
             }).finally(()=>{
