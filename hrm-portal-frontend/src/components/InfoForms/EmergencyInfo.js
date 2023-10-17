@@ -99,7 +99,6 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
             </Grid>
         </Grid>
         </Container>
-     );
+    );
 }
- 
 export default EmergencyInfo;

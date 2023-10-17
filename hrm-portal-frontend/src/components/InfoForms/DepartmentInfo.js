@@ -98,7 +98,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
             </Grid>
         </Grid>
         </Container>
-     );
+    );
 }
- 
+
 export default DepartmentInfo;

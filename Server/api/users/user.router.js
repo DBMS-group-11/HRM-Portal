@@ -28,6 +28,6 @@ router.patch("/",updateUsers);
 router.delete("/",deleteUser);
 ////////////////////////
 router.post("/login",login); //user login
-router.post("/reg",register); //add employee (user account also will be add)
+router.post("/reg",register); //add employee (user account also will be added)
 
 module.exports=router;
