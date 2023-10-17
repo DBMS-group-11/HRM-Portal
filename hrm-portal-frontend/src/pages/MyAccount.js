@@ -24,6 +24,8 @@ const MyAccount = () => {
         setData({
             name: "John Doe",
             employeeId: "EMP-001",
+            address: "No. 123, Main Street, Colombo 01",
+            country: "Sri Lanka",
             username: "johndoe",
             email: "johnd@mail.com",
             dob: "01/01/1990",
@@ -38,7 +40,7 @@ const MyAccount = () => {
             emergencyTel1: "0771234567",
             emergencyName2: "Sirisena",
             emergencyTel2: "0777654321",
-            address: "No. 123, Main Street, Colombo 01"
+            emergencyaddress: "No. 123, Main Street, Colombo 01"
         });
 
     }, []);
