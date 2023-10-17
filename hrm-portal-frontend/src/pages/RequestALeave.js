@@ -52,7 +52,7 @@ const RequestALeave = () => {
                 container
                 spacing={2}
                 justifyContent={'center'}
-                sx={{border:1, borderColor:'grey.500', borderRadius:2, padding:2}}
+                sx={{border:1, borderColor:'grey.400', borderRadius:2, padding:2}}
             >
                 <Grid item xs={4} textAlign={'center'}>
                     <Typography variant="h4">50</Typography>
