@@ -54,7 +54,7 @@ const AddEmployee = ({children}) => {
                     Submit
                 </Button>
             </Box>
-     );
+    );
 }
- 
+
 export default AddEmployee;

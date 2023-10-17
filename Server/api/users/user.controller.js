@@ -27,7 +27,8 @@ module.exports={
                     data:"Invalid email or password"
                 });
             }
-            const result=compareSync(data.password,results[0].PasswordHash);
+            // const result=compareSync(data.password,results[0].PasswordHash);
+            const result=data.password==results[0].PasswordHash?true:false;
             if(result){
                 results.PasswordHash=undefined;
                 const jsontoken=sign({result:results},"qwe1234",{
@@ -67,6 +68,7 @@ module.exports={
                 message: "Error while hashing the password",
             });
         }
+        //----------------------------------------
     
         // Add user and employee
         addUser(body, (err, userResult) => {
