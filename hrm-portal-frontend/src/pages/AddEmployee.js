@@ -2,9 +2,12 @@ import { Box, Button } from "@mui/material";
 import PersonalInfo from "../components/InfoForms/PersonalInfo";
 import DepartmentInfo from "../components/InfoForms/DepartmentInfo";
 import EmergencyInfo from "../components/InfoForms/EmergencyInfo";
+import CustomAttribute from "../components/InfoForms/CustomAttribute";
 import { useState } from "react";
 
 const AddEmployee = ({children}) => {
+
+    const [customAttributes, setCustomAttributes] = useState([]);
 
     const [myData, setMyData] = useState({});
 
@@ -36,7 +39,23 @@ const AddEmployee = ({children}) => {
                 <PersonalInfo getData={getPersonalInfo}/>
                 <DepartmentInfo getData={getDepartmentInfo}/>
                 <EmergencyInfo getData={getEmergencyInfo}/>
-                <br/>
+                {customAttributes.map((customAttribute, index) => (
+                    <CustomAttribute key={index} getData={(e) => {
+                        myData[`customAttribute${index}`] = e;
+                        myData.noOfCustomAttributes = index+1;
+                    }}/>
+                ))}
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    sx={{width:'100%'}}
+                    onClick={() => {
+                        setCustomAttributes([...customAttributes, {}]);
+                    }}
+                
+                >Add Custom Attribute</Button>
+
+                <br/><br />
                 <Button
                     variant="outlined"
                     color="primary"

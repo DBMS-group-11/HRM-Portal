@@ -18,44 +18,49 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Outlet, useNavigate } from "react-router-dom";
-import { Route } from 'react-router-dom';
-import MyAccount from './MyAccount';
 
 const drawerWidth = 320;
 const drawerLinks = [
     {
         label:'Home',
         icon:<HomeIcon />,
-        path:'/dashboard'
+        path:'/dashboard/home',
+        active:true
     },
     {
         label:'Request A Leave',
         icon:<AddCircleOutlineIcon />,
-        path:'/dashboard/request-a-leave'
+        path:'/dashboard/request-a-leave',
+        active:false
     },
     {
         label:'Manage Leaves',
         icon:<AssignmentTurnedInIcon />,
-        path:'/dashboard/manage-leaves'
+        path:'/dashboard/manage-leaves',
+        active:false
     },
     {
         label:'Supervisees',
         icon:<Groups2Icon />,
-        path:'/dashboard'
+        path:'/dashboard',
+        active:false
     },
     {
         label:'Add Employee',
         icon:<PersonAddIcon />,
-        path:'/dashboard/add-employee'
+        path:'/dashboard/add-employee',
+        active:false
     },{
         label:'My Account',
         icon:<AccountCircleIcon />,
-        path:'/dashboard/myAccount'
+        path:'/dashboard/myAccount',
+        active:false
     },
     {
         label:'Log out',
         icon:<LogoutIcon />,
-        path:'/login'
+        path:'/login',
+        active:false
     }
 ];
 
@@ -90,7 +95,18 @@ function Dashboard(props) {
       <List>
         {drawerLinks.map((drawerLink) => (
             <ListItem key={drawerLink.label}>
-                <ListItemButton onClick={() => navigate(drawerLink.path)}>
+                <ListItemButton
+                    selected={drawerLink.active}
+                    onClick={() => {
+                        drawerLink.active = true;
+                        drawerLinks.forEach((link) => {
+                            if(link.label !== drawerLink.label){
+                                link.active = false;
+                            }
+                        });
+                        navigate(drawerLink.path);
+                    }}
+                >
                     <ListItemIcon sx={{ml:3}}>{drawerLink.icon}</ListItemIcon>
                     <ListItemText>{drawerLink.label}</ListItemText>
                 </ListItemButton>

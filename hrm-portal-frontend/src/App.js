@@ -9,6 +9,7 @@ import RequestALeave from './pages/RequestALeave';
 import ManageLeave from './pages/ManageLeave';
 import AddEmployee from './pages/AddEmployee';
 import LeaveApproval from './pages/LeaveApproval';
+import Home from './pages/Home';
 
 const theme = createTheme({
   typography:{
@@ -23,8 +24,7 @@ function App() {
           <Route exact path='/' element={<Navigate to="/login" />}/>
           <Route exact path='/login' element={<Login/>}/>
           <Route exact path='/dashboard' element={<Dashboard/>}>
-            {/* <Routes> */}
-              {/* <Route path='/dashboard' element={<Dashboard/>}/> */}
+              <Route path='/dashboard/home' element={<Home/>}/>
               <Route path='/dashboard/myAccount' element={<MyAccount/>}/>
               <Route path='/dashboard/manage-leaves' element={<ManageLeave/>}/>
               <Route path='/dashboard/manage-leaves/leave-approval' element={<LeaveApproval/>}/>

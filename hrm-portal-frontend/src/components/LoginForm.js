@@ -26,7 +26,7 @@ const LoginForm = () => {
             .then(res=>{
                 console.log(res.data.success);
                 if(res.data.success==1){
-                    navigate('/dashboard');
+                    navigate('/dashboard/home');
                 }
             }).catch(err=>{
                 console.log("Axios post Error");
@@ -44,7 +44,7 @@ const LoginForm = () => {
         // REMOVE THIS LINE LATER=================================================
         // WORKAROUND TO BYPASS LOGIN
         if(email === '11' && password === '11'){
-            navigate('/dashboard');
+            navigate('/dashboard/home');
         }
         // REMOVE UPTO HERE=======================================================
     }

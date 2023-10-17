@@ -120,7 +120,7 @@ const LeaveApproval = () => {
                     <TextField
                         id="start-date"
                         InputProps={{readOnly: true}}
-                        label="From *"
+                        label="From"
                         variant="standard"
                         fullWidth
                         value={fromDate}
@@ -130,7 +130,7 @@ const LeaveApproval = () => {
                     <TextField
                         id="end-date"
                         InputProps={{readOnly: true}}
-                        label="To *"
+                        label="To"
                         variant="standard"
                         fullWidth
                         value={toDate}

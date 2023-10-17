@@ -8,7 +8,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
     const [telNo1, setTelNo1] = useState('');
     const [name2, setName2] = useState('');
     const [telNo2, setTelNo2] = useState('');
-    const [address, setAddress] = useState('');
+    const [emergencyAddress, setEmergencyAddress] = useState('');
 
     useEffect(() => {
         if(isReadOnly){
@@ -16,7 +16,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
             setTelNo1(data && data.emergencyTel1 || '');
             setName2(data && data.emergencyName2 || '');
             setTelNo2(data && data.emergencyTel2 || '');
-            setAddress(data && data.address || '');
+            setEmergencyAddress(data && data.address || '');
         }else{
             let formData = {name1, telNo1, name2, telNo2};
             getData(formData);
@@ -93,8 +93,8 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
-                    value={address}
-                    {...(isReadOnly ? {} : {onChange: (e) => setAddress(e.target.value)})}
+                    value={emergencyAddress}
+                    {...(isReadOnly ? {} : {onChange: (e) => setEmergencyAddress(e.target.value)})}
                 />
             </Grid>
         </Grid>
