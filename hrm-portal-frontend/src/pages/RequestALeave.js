@@ -4,10 +4,14 @@ import Grid from '@mui/material/Grid';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 
 const RequestALeave = () => {
+
+    useEffect(() => {
+        document.title = 'Request A Leave | HRM-Portal';
+    },[]);
 
     const [reason, setReason] = useState('');
     const [leaveType, setLeaveType] = useState('');
