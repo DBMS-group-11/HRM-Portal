@@ -64,7 +64,7 @@ const Home = () => {
                 <Grid item xs={6} paddingX={4}>
                     <PieChart
                         //shades of blue
-                        colors={['#2196f3', '#1976d2', '#0d47a1', '#82b1ff']}
+                        colors={['#2196f3', '#1976d2', '#0d47a1', '#82b1ff', '#e3f2fd']}
                         series={[
                             {
                             data: [
@@ -72,7 +72,8 @@ const Home = () => {
                                 { id: 0, value: noOfLeaves.Annual, label: 'Annual' },
                                 { id: 1, value: noOfLeaves.Casual, label: 'Casual' },
                                 { id: 2, value: noOfLeaves.Maternity, label: 'Maternity' },
-                                { id: 3, value: noOfLeaves.NoPay, label: 'No-Pay' }
+                                { id: 3, value: noOfLeaves.NoPay, label: 'No-Pay' },
+                                { id: 4, value: 50-totalLeavesTaken, label: 'Leaves Left'}
                             ],
                             innerRadius: 60,
                             outerRadius: 150,
