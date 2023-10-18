@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from 'axios'
 
-const LoginForm = () => {
+const LoginForm = ({setLoggedIn}) => {
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errUserName, setErrUserName] = useState(false);
@@ -27,6 +28,7 @@ const LoginForm = () => {
                 console.log(res.data);
                 if(res.data.success==1){
                     navigate('/dashboard/home');
+                    setLoggedIn(true);
                 }
             }).catch(err=>{
                 console.log("Axios post Error");
@@ -46,6 +48,7 @@ const LoginForm = () => {
         // WORKAROUND TO BYPASS LOGIN
         if(email === '11' && password === '11'){
             navigate('/dashboard/home');
+            setLoggedIn(true);
         }
         // REMOVE UPTO HERE=======================================================
     }
