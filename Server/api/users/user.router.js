@@ -7,6 +7,7 @@ const{
 
     login,
     register,
+    myAccount,
     
 }=require("./user.controller");
 
@@ -29,5 +30,6 @@ router.delete("/",deleteUser);
 ////////////////////////
 router.post("/login",login); //user login
 router.post("/reg",register); //add employee (user account also will be added)
+router.post("/myAccount",myAccount); //employee personal account
 
 module.exports=router;

@@ -4,13 +4,14 @@ import DepartmentInfo from "../components/InfoForms/DepartmentInfo";
 import EmergencyInfo from "../components/InfoForms/EmergencyInfo";
 import CustomAttribute from "../components/InfoForms/CustomAttribute";
 import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddEmployee = ({children}) => {
 
     const [customAttributes, setCustomAttributes] = useState([]);
-
     const [myData, setMyData] = useState({});
-
+    const navigate=useNavigate();
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
     };
@@ -22,12 +23,24 @@ const AddEmployee = ({children}) => {
     const getEmergencyInfo = (e) => {
         myData.emergencyInfo = e;
     };
-
+    ///////////////////////////////////////////
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('submit');
         console.log(myData);
+        axios.post("http://localhost:3000/api/users/reg",myData)
+        .then(res=>{
+            console.log(res.data.success);
+            if(res.data.success===1){
+                navigate('/dashboard/home');
+            }
+        }).catch(err => {
+            console.log("Axios post error");
+        }).finally(() => {
+            console.log("final");
+        });
     };
+    /////////////////////////////////
 
     const handleCancel = (e) => {
         e.preventDefault();

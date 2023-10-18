@@ -27,9 +27,9 @@ module.exports={
                     data:"Invalid email or password"
                 });
             }
-            // const result=compareSync(data.password,results[0].PasswordHash);
-            const result=data.password==results[0].PasswordHash?true:false;
-            if(result){
+            const result1=compareSync(data.password,results[0].PasswordHash);
+            const result2=data.password==results[0].PasswordHash?true:false;
+            if(result1 || result2){
                 results.PasswordHash=undefined;
                 const jsontoken=sign({result:results},"qwe1234",{
                     expiresIn:"1h"
@@ -53,14 +53,41 @@ module.exports={
             }
         })
     },
-    register:(req, res) => {
-        const body = req.body;
-        // console.log("-----------------------------------------------------------------");
-        // console.log(body);
-        // console.log("-----------------------------------------------------------------");
+    register:(req, res) => { // Registration - done
+        var body = req.body;
+        console.log("-----------------------------------------------------------------");
+        console.log(body);
+
+        data = {
+            "UserID": 5,
+            "Username": body.personalInfo.username,
+            "Email": body.personalInfo.email,
+            "PasswordHash": "0000", //default password
+            "UserAccountLevelID": 2,
+
+            "EmployeeID": "E007",
+            "EmployeeName": body.personalInfo.name,
+            "DateOfBirth": body.personalInfo.dob,
+            "Gender": body.personalInfo.gender,
+            "MaritalStatus": body.personalInfo.maritalStatus,
+
+            "Address":body.personalInfo.address,
+            "Country": body.personalInfo.country,
+            "DepartmentID": body.departmentInfo.department,
+            "JobTitleID": body.departmentInfo.jobTitle,
+            "PayGradeID": body.departmentInfo.payGrade,
+            "EmploymentStatusID": body.departmentInfo.status,
+            "SupervisorID":  body.departmentInfo.supervisor,
+            "EmergencyContactID": 1
+        }
+        body=data
+        console.log("_______________________________________________________________________________") //
+        console.log(body)
+        
+        console.log("-----------------------------------------------------------------");
         try {
             const salt = genSaltSync(10);
-            body.PasswordHash = hashSync(body.PasswordHash, salt);
+            body.PasswordHash = hashSync(body.PasswordHash, salt); //hash the password
         } catch (error) {
             console.log('Error while hashing the password', error);
             return res.status(500).json({
@@ -69,38 +96,40 @@ module.exports={
             });
         }
         //----------------------------------------
-    
         // Add user and employee
-        addUser(body, (err, userResult) => {
+        addEmployee(body, (err, employeeResult) => {
+            // console.log('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
             if (err) {
                 console.log(err);
                 return res.status(500).json({
                     success: 0,
                     message: "Database Connection error",
                 });
-            }
-
-            // Assuming addUser was successful, you can now add the employee
-            addEmployee(body, (err, employeeResult) => {
-                // console.log('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
-                if (err) {
-                    console.log(err);
-                    return res.status(500).json({
-                        success: 0,
-                        message: "Database Connection error",
-                    });
-                }
-    
-                return res.status(200).json({
-                    success: 1,
-                    data: {
-                        user: userResult,
-                        employee: employeeResult,
-                    },
-                    message: "User and employee added successfully",
+            }else{
+                // Assuming employee was added successful, you can now add the addUser
+                addUser(body, (err, userResult) => {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({
+                            success: 0,
+                            message: "Database Connection error",
+                        });
+                    }else{
+                        return res.status(200).json({
+                            success: 1,
+                            data: {
+                                user: userResult,
+                                employee: employeeResult,
+                            },
+                            message: "User and employee added successfully",
+                        });
+                    }
                 });
-            });
+            }
         });
+    },
+    myAccount:(req, res) => {
+
     },
     createUser:(req,res)=>{
         const body=req.body;

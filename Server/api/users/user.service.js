@@ -20,13 +20,13 @@ module.exports={
         );
     },
     addUser:(data,callBack)=>{ //add a user account into database
-        // console.log("--------------------------------------------------")
+        // console.log("------------------add user--------------------------------")
         // console.log(data)
-        // console.log("--------------------------------------------------")
+        // console.log("-------------------------------------------------------- -")
         pool.query(
-            `insert into useraccount(Username,Email,EmployeeID,PasswordHash,UserAccountLevelID) values(?,?,?,?,?)`,
+            `insert into useraccount(UserID,Username,Email,EmployeeID,PasswordHash,UserAccountLevelID) values(?,?,?,?,?,?)`,
             [
-                // data.UserID,
+                data.UserID,
                 data.Username,   //at the runtime ? will be repalce from these values
                 data.Email,
                 data.EmployeeID,
@@ -42,9 +42,9 @@ module.exports={
         );
     },
     addEmployee:(data,callBack)=>{  //add a employee account into database
-        console.log("---------------add employee-----------------------------------")
-        console.log(data)
-        console.log("--------------------------------------------------")
+        // console.log("---------------add employee-----------------------------------")
+        // console.log(data)
+        // console.log("--------------------------------------------------------------")
         pool.query(
             `insert into employee(EmployeeID,EmployeeName,DateOfBirth,Gender,MaritalStatus,Address,Country,DepartmentID,JobTitleID,PayGradeID,EmploymentStatusID,SupervisorID,EmergencyContactID) 
             values(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
