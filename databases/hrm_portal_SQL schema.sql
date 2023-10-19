@@ -38,7 +38,7 @@ CREATE TABLE if not exists `PayGrade` (
 );
 -- -------------------------------------------------------------------------------
 CREATE TABLE if not exists `EmergencyContact` (
-  `EmergencyContactID` NUMERIC(10,0),
+  `EmergencyContactID` INT AUTO_INCREMENT,
   `PrimaryName` VARCHAR(20),
   `PrimaryPhoneNumber` NUMERIC(20,0),
   `SecondaryName` VARCHAR(50),
@@ -74,7 +74,7 @@ CREATE TABLE if not exists `Employee` (
   `PayGradeID` NUMERIC(10,0),
   `EmploymentStatusID` NUMERIC(10,0),
   `SupervisorID` VARCHAR(10),
-  `EmergencyContactID` NUMERIC(10,0),
+  `EmergencyContactID` INT AUTO_INCREMENT,
   PRIMARY KEY (`EmployeeID`),
   FOREIGN KEY (`DepartmentID`) REFERENCES `Department`(`DepartmentID`),
   FOREIGN KEY (`JobTitleID`) REFERENCES `JobTitle`(`JobTitleID`),
