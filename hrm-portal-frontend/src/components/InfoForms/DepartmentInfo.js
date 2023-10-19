@@ -1,13 +1,76 @@
-import { Container, TextField, Typography } from "@mui/material";
+import { EditOutlined } from "@mui/icons-material";
+import { Container, IconButton, TextField, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from "react";
 
 const DepartmentInfo = ({data, isReadOnly, getData}) => {
+
+    const departmentTypes = [
+        {
+            value: 'IT',
+            label: 'IT'
+        },
+        {
+            value:'Human Resources',
+            label:'Human Resources'
+        },
+        {
+            value:'Finance',
+            label:'Finance'
+        },
+        {
+            value:'Sales',
+            label:'Sales'
+        },
+        {
+            value:'Production',
+            label:'Production'
+        }
+    ];
+
+    const jobStatusTypes = [
+        {
+            value: 'Intern (fulltime)',
+            label: 'Intern (fulltime)'
+        },
+        {
+            value: 'Intern (parttime)',
+            label: 'Intern (parttime)'
+        },
+        {
+            value: 'Contract (fulltime)',
+            label: 'Contract (fulltime)'
+        },
+        {
+            value: 'Contract (parttime)',
+            label: 'Contract (parttime)'
+        },
+        {
+            value: 'Permanent',
+            label: 'Permanent'
+        },
+        {
+            value: 'Freelance',
+            label: 'Freelance'
+        }
+    ];
+
+    const supervisorList = [
+        {
+            value: 'Rajapakse',
+            label: 'Rajapakse'
+        },
+        {
+            value: 'Perera',
+            label: 'Perera'
+        }
+    ]
+
     const [jobTitle, setJobTitle] = useState('');
-    const [department, setDepartment] = useState('');
-    const [status, setStatus] = useState('');
-    const [payGrade, setPayGrade] = useState('');
-    const [supervisor, setSupervisor] = useState('');
+    const [department, setDepartment] = useState('IT');
+    const [status, setStatus] = useState('Permanent');
+    const [payGrade, setPayGrade] = useState('Level1');
+    const [supervisor, setSupervisor] = useState(supervisorList[0].value);
 
     useEffect(() => {
         if(isReadOnly){
@@ -47,12 +110,22 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    select
+                    SelectProps={{
+                        native: true,
+                    }}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
                     value={department}
                     {...(isReadOnly ? {} : {onChange: (e) => setDepartment(e.target.value)})}
-                />
+                >
+                    {departmentTypes.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </TextField>
             </Grid>
             <Grid item xs={4}>
                 <TextField
@@ -61,12 +134,22 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    select
+                    SelectProps={{
+                        native: true,
+                    }}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
                     value={status}
                     {...(isReadOnly ? {} : {onChange: (e) => setStatus(e.target.value)})}
-                />
+                >
+                    {jobStatusTypes.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </TextField>
             </Grid>
             <Grid item xs={4}>
                 <TextField
@@ -75,12 +158,20 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    select
+                    SelectProps={{
+                        native: true,
+                    }}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
                     value={payGrade}
                     {...(isReadOnly ? {} : {onChange: (e) => setPayGrade(e.target.value)})}
-                />
+                >
+                    <option value={'Level1'}>Level 1</option>
+                    <option value={'Level2'}>Level 2</option>
+                    <option value={'Level3'}>Level 3</option>
+                </TextField>
             </Grid>
             <Grid item xs={4}>
                 <TextField
@@ -89,12 +180,22 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    select
+                    SelectProps={{
+                        native: true,
+                    }}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
                     value={supervisor}
                     {...(isReadOnly ? {} : {onChange: (e) => setSupervisor(e.target.value)})}
-                />
+                >
+                    {supervisorList.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </TextField>
             </Grid>
         </Grid>
         </Container>

@@ -4,10 +4,14 @@ import Grid from '@mui/material/Grid';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 
 const RequestALeave = () => {
+
+    useEffect(() => {
+        document.title = 'Request A Leave | HRM-Portal';
+    },[]);
 
     const [reason, setReason] = useState('');
     const [leaveType, setLeaveType] = useState('');
@@ -116,13 +120,19 @@ const RequestALeave = () => {
                 <Grid item xs={4}>
                     <DatePicker
                         label="From *"
-                        onChange={(newValue) => {setFromDate(newValue)}}
+                        onChange={(newValue) => {
+                            setFromDate(newValue);
+                            if(toDate){
+                                const diffTime = Math.abs(toDate - newValue);
+                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                setNoOfDays(diffDays);
+                            }
+                        }}
                     />
                 </Grid>
                 <Grid item xs={4}>
                     <DatePicker
                         label="To *"
-                        
                         onChange={(newValue) => {
                             setToDate(newValue)
                             if(fromDate){

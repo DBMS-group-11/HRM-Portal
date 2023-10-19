@@ -2,8 +2,14 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid';
 import { Typography } from '@mui/material';
 import LoginForm from '../components/LoginForm';
+import { useEffect } from 'react';
 
-const Login = () => {
+const Login = ({setLoggedIn}) => {
+    
+    useEffect(() => {
+        setLoggedIn(false);
+    },[]);
+
     return ( 
         <Grid container height="100vh">
             <Grid
@@ -26,7 +32,7 @@ const Login = () => {
             </Grid>
             <Grid item xs={4} margin={'auto'}>
                 <Box width={'fit-content'} margin={'auto'}>
-                    <LoginForm />
+                    <LoginForm setLoggedIn={setLoggedIn} />
                 </Box>
             </Grid>
         </Grid>

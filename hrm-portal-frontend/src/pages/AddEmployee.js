@@ -3,11 +3,15 @@ import PersonalInfo from "../components/InfoForms/PersonalInfo";
 import DepartmentInfo from "../components/InfoForms/DepartmentInfo";
 import EmergencyInfo from "../components/InfoForms/EmergencyInfo";
 import CustomAttribute from "../components/InfoForms/CustomAttribute";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AddEmployee = ({children}) => {
+
+    useEffect(() => {
+        document.title = "Add Employee | HRM-Portal";
+    }, []);
 
     const [customAttributes, setCustomAttributes] = useState([]);
     const [myData, setMyData] = useState({});

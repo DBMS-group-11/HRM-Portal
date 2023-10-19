@@ -1,6 +1,7 @@
-import { Container } from "@mui/material"
+import { Container, Typography } from "@mui/material"
 import { DataGrid } from '@mui/x-data-grid';
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const columns = [
     { field: 'emp_id', headerName: 'ID', width: 130 },
@@ -24,6 +25,10 @@ const columns = [
 
 const ManageLeave = () => {
 
+  useEffect(() => {
+    document.title = 'Manage Leave | HRM-Portal';
+  },[]);
+
   const navigate = useNavigate();
 
   const handleRowClick = (row) => {
@@ -33,13 +38,18 @@ const ManageLeave = () => {
 
   return ( 
       <Container>
+          <br />
+          <Typography variant="h6">
+              Manage Leaves
+          </Typography>
+          <br />
           <div style={{ height: '80%', width: '100%' }}>
           <DataGrid
               rows={rows}
               columns={columns}
               initialState={{
               pagination: {
-                  paginationModel: { page: 0, pageSize: 5 },
+                  paginationModel: { page: 0, pageSize: 10 },
               },
               }}
               pageSizeOptions={[10, 15]}
