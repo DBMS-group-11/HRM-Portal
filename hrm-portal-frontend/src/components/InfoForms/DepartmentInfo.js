@@ -2,78 +2,68 @@ import { EditOutlined } from "@mui/icons-material";
 import { Container, IconButton, TextField, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 const DepartmentInfo = ({data, isReadOnly, getData}) => {
 
     
-    const departmentTypes = [
-        {
-            value: 'IT',
-            label: 'IT'
-        },
-        {
-            value:'Human Resources',
-            label:'Human Resources'
-        },
-        {
-            value:'Finance',
-            label:'Finance'
-        },
-        {
-            value:'Sales',
-            label:'Sales'
-        },
-        {
-            value:'Production',
-            label:'Production'
-        }
-    ];
-
-    const jobStatusTypes = [
-        {
-            value: 'Intern (fulltime)',
-            label: 'Intern (fulltime)'
-        },
-        {
-            value: 'Intern (parttime)',
-            label: 'Intern (parttime)'
-        },
-        {
-            value: 'Contract (fulltime)',
-            label: 'Contract (fulltime)'
-        },
-        {
-            value: 'Contract (parttime)',
-            label: 'Contract (parttime)'
-        },
-        {
-            value: 'Permanent',
-            label: 'Permanent'
-        },
-        {
-            value: 'Freelance',
-            label: 'Freelance'
-        }
-    ];
-
-    const supervisorList = [
-        {
-            value: 'Rajapakse',
-            label: 'Rajapakse'
-        },
-        {
-            value: 'Perera',
-            label: 'Perera'
-        }
-    ]
+    const [departmentTypes, setDepartmentTypes] = useState([]);
+    const [jobStatusTypes, setJobStatusTypes] = useState([]);
+    const [supervisorList, setSupervisorList] = useState([]);
+    const [payGradeTypes, setPayGradeTypes] = useState([]);
+    const [jobTitleTypes, setJobTitleTypes] = useState([]);
 
     const [jobTitle, setJobTitle] = useState('');
     const [department, setDepartment] = useState('IT');
     const [status, setStatus] = useState('Permanent');
     const [payGrade, setPayGrade] = useState('Level1');
-    const [supervisor, setSupervisor] = useState(supervisorList[0].value);
+    const [supervisor, setSupervisor] = useState('');
 
     useEffect(() => {
+        // fetching initial data
+        axios.get("http://localhost:3000/api/users/getRegisterSub")
+        .then(res=> {
+            console.log(res.data);
+            setDepartmentTypes([]);
+            setJobStatusTypes([]);
+            setSupervisorList([]);
+            setPayGradeTypes([]);
+            setJobTitleTypes([]);
+
+            for(let i=0; i<res.data.departments.length; i++){
+                // loading department types to the select box
+                setDepartmentTypes(departmentTypes => [...departmentTypes, {value: res.data.departments[i].DepartmentName, label: res.data.departments[i].DepartmentName}]);
+            }
+
+            for(let i=0; i<res.data.EmployeeStatuses.length; i++){
+                // loading job status types to the select box
+                setJobStatusTypes(jobStatusTypes => [...jobStatusTypes, {value: res.data.EmployeeStatuses[i].EmploymentStatusName, label: res.data.EmployeeStatuses[i].EmploymentStatusName}]);
+            }
+
+            for(let i=0; i<res.data.supervisors.length; i++){
+                // loading supervisor list to the select box
+                setSupervisorList(supervisorList => [...supervisorList, {value: res.data.supervisors[i].EmployeeName, label: res.data.supervisors[i].EmployeeName}]);
+            }
+
+            for(let i=0; i<res.data.PayGrades.length; i++){
+                // loading pay grade types to the select box
+                setPayGradeTypes(payGradeTypes => [...payGradeTypes, {value: res.data.PayGrades[i].PayGradeName, label: res.data.PayGrades[i].PayGradeName}]);
+            }
+
+            for(let i=0; i<res.data.jobTitles.length; i++){
+                // loading job title types to the select box
+                setJobTitleTypes(jobTitleTypes => [...jobTitleTypes, {value: res.data.jobTitles[i].JobTitleName, label: res.data.jobTitles[i].JobTitleName}]);
+            }
+
+        }).catch(err=>{
+            console.log("Axios get error");
+        }).finally(()=>{
+            console.log("final");
+        });
+
+    }, []);
+    
+    useEffect(() => {        
         if(isReadOnly){
             setJobTitle(data && data.jobTitle || '');
             setDepartment(data && data.department || '');
@@ -97,12 +87,22 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    select
+                    SelectProps={{
+                        native: true,
+                    }}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
                     value={jobTitle}
                     {...(isReadOnly ? {} : {onChange: (e) => setJobTitle(e.target.value)})}
-                />
+                >
+                    {jobTitleTypes.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </TextField>
             </Grid>
             <Grid item xs={6}>
                 <TextField
@@ -169,9 +169,11 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
                     value={payGrade}
                     {...(isReadOnly ? {} : {onChange: (e) => setPayGrade(e.target.value)})}
                 >
-                    <option value={'Level1'}>Level 1</option>
-                    <option value={'Level2'}>Level 2</option>
-                    <option value={'Level3'}>Level 3</option>
+                    {payGradeTypes.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
                 </TextField>
             </Grid>
             <Grid item xs={4}>
@@ -188,7 +190,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
-                    value={[0]}
+                    value={supervisor}
                     {...(isReadOnly ? {} : {onChange: (e) => setSupervisor(e.target.value)})}
                 >
                     {supervisorList.map((option) => (

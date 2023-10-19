@@ -11,6 +11,7 @@ const AddEmployee = ({children}) => {
 
     useEffect(() => {
         document.title = "Add Employee | HRM-Portal";
+
     }, []);
 
     const [customAttributes, setCustomAttributes] = useState([]);
@@ -48,14 +49,6 @@ const AddEmployee = ({children}) => {
 
     const handleCancel = (e) => {
         e.preventDefault();
-        axios.get("http://localhost:3000/api/users/getRegisterSub")
-        .then(res=> {
-            console.log(res.data)
-        }).catch(err=>{
-            console.log("Axios get error")
-        }).finally(()=>{
-            console.log("final")
-        })
         console.log('cancel');
     };
 

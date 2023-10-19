@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from 'axios'
 
-const LoginForm = ({setLoggedIn}) => {
+const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -84,7 +84,7 @@ const LoginForm = ({setLoggedIn}) => {
                     }}
                 />
                 <Box display={"flex"}>
-                    <Typography variant="caption" marginY={'auto'} marginRight={6}>Forgot password?</Typography>
+                    <Button variant="text" sx={{mt:1, mr:2}} onClick={snackBarOpen}>Forgot Password?</Button>
                     {isLoading ? (
                         <Button variant="contained" disabled sx={{px:10, mt:1, flexGrow:1}}>Loading...</Button>
                     ):(

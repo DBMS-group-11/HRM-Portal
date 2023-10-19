@@ -1,10 +1,24 @@
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid';
-import { Typography } from '@mui/material';
+import { Snackbar, Typography } from '@mui/material';
 import LoginForm from '../components/LoginForm';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const Login = ({setLoggedIn}) => {
+
+    const [snackBarOpen, setSnackBarOpen] = useState(false);
+
+    const handleSnackBarClick = () => {
+        setSnackBarOpen(true);
+      };
+
+    const handleSnackBarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+
+    setSnackBarOpen(false);
+    };
     
     useEffect(() => {
         setLoggedIn(false);
@@ -32,9 +46,16 @@ const Login = ({setLoggedIn}) => {
             </Grid>
             <Grid item xs={4} margin={'auto'}>
                 <Box width={'fit-content'} margin={'auto'}>
-                    <LoginForm setLoggedIn={setLoggedIn} />
+                    <LoginForm setLoggedIn={setLoggedIn} snackBarOpen={handleSnackBarClick} snackBarClose={handleSnackBarClose} />
                 </Box>
             </Grid>
+            <Snackbar
+                open={snackBarOpen}
+                autoHideDuration={6000}
+                onClose={handleSnackBarClose}
+                TransitionComponent={'TransitionRight'}
+                message="Try to Remember your Password next time!"
+            />
         </Grid>
      );
 }
