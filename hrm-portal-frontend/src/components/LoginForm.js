@@ -2,8 +2,11 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from 'axios'
+import { useCookies } from 'react-cookie';
 
 const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
+
+    const [cookie, setCookie] = useCookies(['userLoggedIn']);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -29,6 +32,7 @@ const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
                 if(res.data.success==1){
                     navigate('/dashboard/home');
                     setLoggedIn(true);
+                    setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 minutes
                 }
             }).catch(err=>{
                 console.log("Axios post Error");
