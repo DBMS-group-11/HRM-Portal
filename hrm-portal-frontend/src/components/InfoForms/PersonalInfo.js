@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import { useEffect, useState } from "react";
 
 const PersonalInfo = ({data, isReadOnly, getData}) => {
-
+    
     const userAccountTypes = [
         {
             value: 'Leval1',

@@ -39,7 +39,7 @@ module.exports={
         }
     },
     addEmployee: async (data) => {
-        console.log("   ___addEmployee")
+        console.log("___addEmployee")
         try {
             const [results] = await pool.query(
                 `INSERT INTO employee(EmployeeID, EmployeeName, DateOfBirth, Gender, MaritalStatus, Address, Country, DepartmentID, JobTitleID, PayGradeID, EmploymentStatusID, SupervisorID, EmergencyContactID)
@@ -66,7 +66,7 @@ module.exports={
         }
     },
     addEmergencyContact: async (data, callBack) => {
-        console.log("   ___addEmergencyContact")
+        console.log("___addEmergencyContact")
         // First, insert the emergency contact
         // console.log(data)
         const connection=await pool.getConnection(); //we use single connection because multiple quires available
@@ -107,32 +107,102 @@ module.exports={
             return Promise.reject(error); //rejected Promise with the caught error as its reason
         }
     },
-    getUsers:(callBack)=>{
-        pool.query(
-            `select * from useraccount`,
-            [],
-            (error,results,fields)=>{
-                if(error){
-                    return callBack(error);
-                }
-                return callBack(null,results);
-            }
-        )
-    },
-    // Define getUsers as an async function that returns a Promise
-    // const getUsers:async () => {
-    //     try {
-    //         // Use await to wait for the query to complete and destructure the result
-    //         const [results] = await pool.query('SELECT * FROM useraccount');
-        
-    //         // Return the results
-    //         return results;
-
-    //     } catch (error) {
-    //         // If an error occurs, reject the Promise with the error
-    //         throw new Error(error);
-    //     }
+    // getUsers:(callBack)=>{
+    //     console.log("prints")
+    //     pool.query(
+    //         `select * from useraccount`,
+    //         [],
+    //         (error,results,fields)=>{
+    //             if(error){
+    //                 return callBack(error);
+    //             }
+    //             return callBack(null,results);
+    //         }
+    //     )
     // },
+    getUserss: async () => {
+        console.log("___getUsers")
+        try {
+            const [results] = await pool.query('SELECT * FROM useraccount');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching users: ${error.message}`);
+        }
+    },
+    
+    getEmployees : async () => {
+        console.log("___getEmployees")
+        try {
+            const [results] = await pool.query('SELECT EmployeeName FROM employee');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching employees: ${error.message}`);
+        }
+    },
+    getDepartments: async () => {
+        console.log("___getDepartments")
+        try {
+            const [results] = await pool.query('SELECT DepartmentName FROM department');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching departments: ${error.message}`);
+        }
+    },
+    getSupervisors: async () => {
+        console.log("___getSupervisors")
+        try {
+            const [results] = await pool.query('SELECT EmployeeName FROM employee');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching departments: ${error.message}`);
+        }
+    },
+    getJobTitles: async () => {
+        console.log("___getJobTitles")
+        try{
+            const [results] = await pool.query('SELECT JobTitleName FROM jobtitle');
+            return results;
+        } catch(error) {
+            throw new Error(`An error occurred while fetching job titles: ${error.message}`);
+        }
+    },
+    getCountries: async () => {
+        console.log('___getCountries')
+        try{
+            const [results] = await pool.query("SELECT CountryName FROM country");
+            return results;
+        }catch(error){
+            throw new Error(`An error occurred while fetching countries"+ ${error.message}`)
+        }
+    },
+    getEmployeeStatus: async () => {
+        console.log('___getEmployeeStatus')
+        try{
+            const [results] = await pool.query("SELECT EmploymentStatusName FROM employmentstatus");
+            return results;
+        }catch(error){
+            throw new Error(`An error occurred while fetching countries"+ ${error.message}`)
+        }
+    },
+    
+    getJobTitles: async () => {
+        console.log("___getJobTitles")
+        try{
+            const [results] = await pool.query('SELECT JobTitleName FROM jobtitle');
+            return results;
+        } catch(error) {
+            throw new Error(`An error occurred while fetching job titles: ${error.message}`);
+        }
+    },
+    getPayGrades: async () => {
+        console.log("___getPayGrades")
+        try{
+            const [results] = await pool.query('SELECT PayGradeName FROM paygrade');
+            return results;
+        } catch(error) {
+            throw new Error(`An error occurred while fetching job titles: ${error.message}`);
+        }
+    },
     getUserByUserID:(UserID,callBack)=>{
         pool.query(
             `select * from useraccount where UserID=?`,

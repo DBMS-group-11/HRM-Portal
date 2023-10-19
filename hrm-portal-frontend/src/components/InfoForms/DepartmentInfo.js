@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 const DepartmentInfo = ({data, isReadOnly, getData}) => {
 
+    
     const departmentTypes = [
         {
             value: 'IT',
@@ -187,7 +188,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
-                    value={supervisor}
+                    value={[0]}
                     {...(isReadOnly ? {} : {onChange: (e) => setSupervisor(e.target.value)})}
                 >
                     {supervisorList.map((option) => (
