@@ -2,8 +2,12 @@ import { Avatar, Box, Card, CardContent, CardMedia, Container, Grid, Toolbar } f
 import { Typography } from "@mui/material";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useState, useEffect } from "react";
+import { useCookies } from "react-cookie";
+import jwt from 'jwt-decode';
 
 const Home = () => {
+
+    const [cookies] = useCookies(['u-token']);
 
     const [noOfLeaves, setNoOfLeaves] = useState({
         Annual: 0,
@@ -24,10 +28,13 @@ const Home = () => {
             NoPay: 3
         }; 
         setNoOfLeaves(leavesData);
+        
+        const decoded = jwt(cookies['u-token']);
+        // console.log(decoded.result[0].EmployeeID);
 
         setEmpDetails({
-            name: 'John Doe',
-            employeeId: 'EM-0001',
+            name: decoded.result[0].Username,
+            employeeId: decoded.result[0].EmployeeID,
             status: 'Permanent',
             payGrade: 'Lv1',
             company: 'Jupiter Apparels (Pvt) Ltd',

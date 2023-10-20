@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from 'axios'
 import { useCookies } from 'react-cookie';
+import jwt from 'jwt-decode';
 
 const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
 
-    const [cookie, setCookie] = useCookies(['userLoggedIn']);
+    const [cookie, setCookie] = useCookies(['userLoggedIn', 'u-token']);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -32,7 +33,8 @@ const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
                 if(res.data.success==1){
                     navigate('/dashboard/home');
                     setLoggedIn(true);
-                    setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 90000)}); // cookie expires in 15 mins
+                    setCookie('u-token', res.data.token, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
+                    setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                 }
                 else if(res.data.success==0){
                     setErrorCredentials(true);
