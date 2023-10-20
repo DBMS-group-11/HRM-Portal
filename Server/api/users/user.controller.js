@@ -1,3 +1,4 @@
+const pool = require('../../db/database');
 const {
     create,
     getUserByUserID,
@@ -8,13 +9,15 @@ const {
     addEmployee,
     addUser,
     addEmergencyContact,
-    getEmployees,
     getSupervisors,
     getDepartments,
     getJobTitles,
     getCountries,
     getEmployeeStatus,
-    getPayGrades
+    getPayGrades,
+    addDependent,
+
+    getTotTakenLeaveCount
 } = require("./user.service");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -30,7 +33,7 @@ const sendErrorResponse = (res, message) => {
 module.exports = {
     login: async (req, res) => {   //login to the system - done
         console.log("> Login to system")
-        
+
         const data = req.body;
         try {
             const { email, password } = req.body;
@@ -76,22 +79,30 @@ module.exports = {
         }
     },
     register: async (req, res) => { // Registration - done
-        console.log("> Register")
-        console.log(getDepartments());
+        console.log("> Register");
         const body = req.body;
+        // console.log(body);
+        let connection;
         try {
+            //Get a connection from the pool
+            connection = await pool.getConnection();
+
+            //Start transaction
+            await connection.beginTransaction();
+
             // Add emergency contact
-            const emergencyResult = await addEmergencyContact(body.emergencyInfo);
+            const emergencyResult = await addEmergencyContact(connection, body.emergencyInfo);
             const EmergencyContactID = emergencyResult.EmergencyContactID;
+
             // Prepare data for registration
             data = {
-                "UserID": 5,
+                "UserID": 11,
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
                 "PasswordHash": "0000", //default password
-                "UserAccountLevelID": 2,
+                "UserAccountLevelID": body.personalInfo.userAccountType,
 
-                "EmployeeID": "E008",
+                "EmployeeID": "E009",
                 "EmployeeName": body.personalInfo.name,
                 "DateOfBirth": body.personalInfo.dob,
                 "Gender": body.personalInfo.gender,
@@ -107,35 +118,178 @@ module.exports = {
 
                 "EmergencyContactID": EmergencyContactID
             }
+            dependentInfo = {
+                "EmployeeID": data.EmployeeID,
+                "DependentName": body.personalInfo.dependentName,
+                "DependentAge": body.personalInfo.dependentAge
+            }
             // //Hash password
             // const salt = genSaltSync(10);
             // body.PasswordHash = hashSync(body.PasswordHash, salt);
 
             //Add employee
-            const employeeResult = await addEmployee(data);
+            const employeeResult = await addEmployee(connection, data);
             //Add user
-            const userResult = await addUser(data);
+            const userResult = await addUser(connection, data);
+            //Add dependent
+            const dependentResult = await addDependent(connection, dependentInfo);
+
+            //Commit transaction
+            await connection.commit();
+
             console.log("<")
             return res.json({
                 success: 1,
                 data: {
                     user: userResult,
-                    employee: employeeResult
+                    employee: employeeResult,
+                    dependentResult: dependentResult
                 },
                 message: "Registration successful",
             })
 
         } catch (error) {
+            //Rollback the transaction if any query fails
+            if (connection) {
+                await connection.rollback();
+            }
             console.log(error)
             console.log("<")
             return res.status(500).json({
                 success: 0,
                 message: "An error occurred during registration",
             });
+        } finally {
+            if (connection) {
+                connection.release();
+            }
         }
     },
-    myAccount: (req, res) => {
-
+    getRegisterSub: async (req, res) => { //Registration Sub - done
+        console.log(">getRegesterSub");
+        const departments = await getDepartments();
+        const supervisors = await getSupervisors();
+        const jobTitles = await getJobTitles();
+        const countries = await getCountries();
+        const EmployeeStatuses = await getEmployeeStatus();
+        const PayGrades = await getPayGrades();
+        try {
+            return res.json({
+                departments,
+                supervisors,
+                jobTitles,
+                countries,
+                EmployeeStatuses,
+                PayGrades
+            });
+        } catch (error) {
+            console.error("Actual error:", error); // Log the actual error
+            return res.status(500).json({
+                error: "An error occurred while fetching users"
+            });
+        }
+    },
+    myAccount: async (req, res) => {
+        console.log(">myAccount");
+        const userID = req.body["userID"];
+        try {
+            const connection = await pool.getConnection();
+    
+            const [personalInfo, departmentInfo, emergencyInfo, supervisor] = await Promise.all([
+                connection.query(`
+                    SELECT 
+                        employee.EmployeeName,
+                        employee.EmployeeID,
+                        employee.Address,
+                        employee.Country,
+                        useraccount.Username,
+                        useraccount.Email,
+                        useraccountlevel.UserAccountLevelName,
+                        employee.DateOfBirth,
+                        employee.MaritalStatus,
+                        employee.Gender,
+                        dependentinfo.DependentName,
+                        dependentinfo.DependentAge
+                    FROM 
+                        useraccount 
+                    JOIN 
+                        employee on useraccount.EmployeeID = employee.EmployeeID
+                    JOIN 
+                        dependentinfo on dependentinfo.EmployeeID = employee.EmployeeID
+                    JOIN 
+                        useraccountlevel on useraccount.UserAccountLevelID = useraccountlevel.UserAccountLevelID
+                    WHERE 
+                        useraccount.userID = ?`, [userID]
+                ),
+                connection.query(`
+                    SELECT 
+                        jobtitle.JobTitleName,
+                        department.DepartmentName,
+                        employmentstatus.EmploymentStatusName,
+                        paygrade.PayGradeName
+                    FROM 
+                        useraccount
+                    JOIN 
+                        employee ON useraccount.EmployeeID = employee.EmployeeID
+                    JOIN 
+                        jobtitle ON jobtitle.JobTitleID = employee.JobTitleID
+                    JOIN 
+                        department ON department.DepartmentID = employee.DepartmentID
+                    JOIN     
+                        employmentstatus ON employmentstatus.EmploymentStatusID = employee.EmploymentStatusID
+                    JOIN 
+                        paygrade ON paygrade.PayGradeID = employee.PayGradeID
+                    WHERE 
+                        useraccount.userID = ?`, [userID]
+                ),
+                connection.query(`
+                    SELECT 
+                        emergencycontact.PrimaryName,
+                        emergencycontact.PrimaryPhoneNumber,
+                        emergencycontact.SecondaryName,
+                        emergencycontact.SecondaryPhoneNumber,
+                        emergencycontact.Address
+                    FROM 
+                        useraccount
+                    JOIN 
+                        employee ON useraccount.EmployeeID = employee.EmployeeID
+                    JOIN 
+                        emergencycontact ON emergencycontact.EmergencyContactID = employee.EmergencyContactID
+                    WHERE 
+                        useraccount.userID = ?`, [userID]
+                ),
+                connection.query(`
+                    SELECT 
+                        t.EmployeeName
+                    FROM
+                        useraccount
+                    JOIN 
+                        employee ON useraccount.EmployeeID = employee.EmployeeID
+                    JOIN
+                        employee as t ON employee.SupervisorID = t.EmployeeID
+                    WHERE 
+                        useraccount.userID = ?`, [userID]
+                )
+            ]);
+    
+            connection.release();
+    
+            return res.json({
+                success: 1,
+                message: "My account accessed successfully",
+                personalInfo: personalInfo[0],
+                supervisor: supervisor[0],
+                departmentInfo: departmentInfo[0],
+                emergencyInfo: emergencyInfo[0]
+            });
+    
+        } catch (error) {
+            console.error("Actual error:", error);
+            return res.status(500).json({
+                success: 0,
+                message: "An error occurred while accessing my account"
+            });
+        }
     },
     createUser: (req, res) => {
         const body = req.body;
@@ -180,19 +334,7 @@ module.exports = {
             })
         })
     },
-    // getUsers: (req, res) => { //callback - based api call
-    //     getUsers((err, results) => {
-    //         if (err) {
-    //             console.log(err);
-    //             return;
-    //         }
-    //         return res.json({
-    //             success: 1,
-    //             data: results
-    //         });
-    //     })
-    // },
-    getUsers: async (req,res) => {
+    getUsers: async (req, res) => {
         console.log(">getUsers")
         try {
             const results = await getUserss();
@@ -205,44 +347,7 @@ module.exports = {
                 error: "An error occurred while fetching users"
             });
         }
-    },    
-    // getUsers: (req, res) => { //callback - based api call
-    //     getUsers((err, results) => {
-    //         if (err) {
-    //             console.log(err);
-    //             return;
-    //         }
-    //         return res.json({
-    //             success: 1,
-    //             data: results
-    //         });
-    //     })
-    // },
-    getRegisterSub: async (req,res) => {
-        console.log(">getRegesterSub");
-        const departments = await getDepartments();
-        const supervisors=await getSupervisors();
-        const jobTitles = await getJobTitles();
-        const countries=await getCountries();
-        const EmployeeStatuses = await getEmployeeStatus();
-        const PayGrades = await getPayGrades();
-        try {
-            return res.json({
-                departments,
-                supervisors,
-                jobTitles,
-                countries,
-                EmployeeStatuses,
-                PayGrades
-            });
-        } catch (error) {
-            console.error("Actual error:", error); // Log the actual error
-            return res.status(500).json({
-                error: "An error occurred while fetching users"
-            });
-        }
-    },    
-    
+    },
     updateUsers: (req, res) => {
         const body = req.body;
         try {
@@ -287,4 +392,30 @@ module.exports = {
             })
         })
     },
+
+    getReqLeaveSub: async (req, res) => {
+        console.log(">getReqLeaveSub");
+        // console.log(req.body)
+        const userID=req.body['userID']
+        // console.log(userID)
+        try {
+            const totLeaveCountArray = await getTotTakenLeaveCount(userID);
+            const totLeaveCount = totLeaveCountArray[0]["totLeaveCount"];
+            
+            // Construct the result object
+            const result = {
+                totTakenApprovedLeaveCount: totLeaveCount
+            };
+            // console.log(result);
+            return res.json({
+                success: 1,
+                result
+            });
+        } catch (error) {
+            console.error("Actual error:", error); 
+            return res.status(500).json({
+                error: "An error occurred while fetching leave count"
+            });
+        }
+    }
 }

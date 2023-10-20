@@ -1,28 +1,51 @@
-const pool=require("../../db/database");
+const pool = require("../../db/database");
 
-module.exports={
-    create:(data,callBack)=>{
-        pool.query(
-            `insert into useraccount(Username,Email,EmployeeID,PasswordHash,UserAccountLevelID) values(?,?,?,?,?)`,
-            [
-                data.Username,   //at the runtime ? will be repalce from these values
-                data.Email,
-                data.EmployeeID,
-                data.PasswordHash,
-                data.UserAccountLevelID
-            ],
-            (error,results,fields)=>{
-                if(error){
-                    return callBack(error);
-                }
-                return callBack(null,results);
+async function findIDs(data) {
+    console.log("___findIDs");
+    const connection = await pool.getConnection();
+    let newData = {};
+    const queries = {
+        'Country': 'SELECT CountryID FROM country WHERE CountryName=?',
+        'JobTitleID': 'SELECT JobTitleID FROM jobtitle WHERE JobTitleName = ?',
+        'DepartmentID': 'SELECT DepartmentID FROM department WHERE DepartmentName = ?',
+        'PayGradeID': 'SELECT PayGradeID FROM paygrade WHERE PayGradeName = ?',
+        'EmploymentStatusID': 'SELECT EmploymentStatusID FROM employmentstatus WHERE EmploymentStatusName =?',
+        // 'EmergencyContactID': 'SELECT EmergencyContactID FROM emergencycontact WHERE EmergencyContactName =?',
+        'SupervisorID': 'SELECT employeeID FROM employee WHERE EmployeeName =?',
+    };
+    // console.log("_____________________")
+    // console.log(data)
+    try {
+        await connection.beginTransaction();
+        for (const [key, query] of Object.entries(queries)) {
+            const [result] = await connection.query(query, [data[key]]);
+            if (result.length > 0) {
+                Object.assign(newData, result[0]);
+                // console.log(`${key}: ${JSON.stringify(result[0])}`);
+            } else {
+                console.log(`No result for ${key}`);
             }
-        );
-    },
-    addUser: async (data) => {
-        console.log('   ___addUser')
+        }
+        // console.log(newData);
+    } catch (err) {
+        console.log("Error of fetching IDs from database");
+    } finally {
+        connection.release();
+    }
+    return newData;
+}
+
+module.exports = {
+    addUser: async (connection, data) => {  //done
+        console.log('___addUser')
         try {
-            const [results] = await pool.query(
+            const UserAccountLevelID = await connection.query(
+                "SELECT UserAccountLevelID FROM useraccountlevel WHERE UserAccountLevelName=?",
+                [data.UserAccountLevelID]
+            );
+            data["UserAccountLevelID"] = UserAccountLevelID[0][0]["UserAccountLevelID"];
+
+            const [results] = await connection.query(
                 `INSERT INTO useraccount(UserID, Username, Email, EmployeeID, PasswordHash, UserAccountLevelID) VALUES (?, ?, ?, ?, ?, ?)`,
                 [
                     data.UserID,
@@ -33,15 +56,31 @@ module.exports={
                     data.UserAccountLevelID
                 ]
             );
-            return Promise.resolve(results);
+            // console.log(data)
+            console.log("User added Successfully")
+            // return Promise.resolve(results);
+            return results
         } catch (error) {
-            return Promise.reject(error);
+            console.log("Error")
+            console.log(error)
+            throw error;  // Propagate the error back to the caller
         }
     },
-    addEmployee: async (data) => {
+    addEmployee: async (connection,data) => { //done
         console.log("___addEmployee")
+        // console.log(data)
         try {
-            const [results] = await pool.query(
+            const newData = await findIDs(data);
+            
+            data['Country'] = newData['CountryID']
+            data['JobTitleID'] = newData['JobTitleID']
+            data['DepartmentID'] = newData['DepartmentID']
+            data['PayGradeID'] = newData['PayGradeID']
+            data['EmploymentStatusID'] = newData['EmploymentStatusID']
+            data['SupervisorID'] = newData['employeeID']
+            // console.log(data)
+
+            const [results] = await connection.query(
                 `INSERT INTO employee(EmployeeID, EmployeeName, DateOfBirth, Gender, MaritalStatus, Address, Country, DepartmentID, JobTitleID, PayGradeID, EmploymentStatusID, SupervisorID, EmergencyContactID)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
@@ -60,21 +99,26 @@ module.exports={
                     data.EmergencyContactID
                 ]
             );
-            return Promise.resolve(results);
+            console.log("Employee added successfully")
+            // return Promise.resolve(results);
+            return results;
         } catch (error) {
-            return Promise.reject(error);
+            // return Promise.reject(error);
+            console.log("Error")
+            console.log(error)
+            throw error;  // Propagate the error back to the caller
         }
     },
-    addEmergencyContact: async (data, callBack) => {
+    addEmergencyContact: async (connection,data) => {  //done
         console.log("___addEmergencyContact")
         // First, insert the emergency contact
         // console.log(data)
-        const connection=await pool.getConnection(); //we use single connection because multiple quires available
-        await connection.beginTransaction();
-        
-        try{
+        // const connection = await pool.getConnection(); //we use single connection because multiple quires available
+        // await connection.beginTransaction();
+
+        try {
             // Insert emergency contact
-            const [insertResults]=await connection.query(
+            const [insertResults] = await connection.query(
                 `INSERT INTO EmergencyContact(PrimaryName, PrimaryPhoneNumber, SecondaryName, SecondaryPhoneNumber, Address) 
                 VALUES(?,?,?,?,?)`,
                 [
@@ -85,8 +129,8 @@ module.exports={
                     data.Address
                 ]
             );
-            if(insertResults.affectedRows==0){
-                console.log("   No rows inserted!");
+            if (insertResults.affectedRows == 0) {
+                console.log("No rows inserted!");
                 throw new Error("No rows inserted!");
             }
             // After successful insertion, fetch the most recently added EmergencyContactID
@@ -96,17 +140,203 @@ module.exports={
                     LIMIT 1`
             );
 
-            await connection.commit();
-            connection.release();
-            console.log("   ____EmergencyContact successfully inserted")    
-            return Promise.resolve(selectResults[0]);
-        }catch(error){
-            console.log("   ____EmergencyContact inserted error: " + error)  
-            await connection.rollback(); //rolls back any changes made to the database 
-            connection.release(); // releases the database connection back to the connection pool
-            return Promise.reject(error); //rejected Promise with the caught error as its reason
+            // await connection.commit();
+            // connection.release();
+            // return Promise.resolve(selectResults[0]);
+            return selectResults[0];
+        } catch (error) {
+            // console.log("   ____EmergencyContact inserted error: " + error)
+            // await connection.rollback(); //rolls back any changes made to the database 
+            // connection.release(); // releases the database connection back to the connection pool
+            // return Promise.reject(error); //rejected Promise with the caught error as its reason
+            console.log('Error')
+            console.log(error)
+            throw error;  // Propagate the error back to the caller
         }
     },
+    getUserss: async () => {
+        console.log("___getUsers")
+        try {
+            const [results] = await pool.query('SELECT * FROM useraccount');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching users: ${error.message}`);
+        }
+    },
+    getEmployees: async () => {
+        console.log("___getEmployees")
+        try {
+            const [results] = await pool.query('SELECT EmployeeName FROM employee');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching employees: ${error.message}`);
+        }
+    },
+    getDepartments: async () => { //done
+        console.log("___getDepartments")
+        try {
+            const [results] = await pool.query('SELECT DepartmentName FROM department');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching departments: ${error.message}`);
+        }
+    },
+    getSupervisors: async () => { //done
+        console.log("___getSupervisors")
+        try {
+            const [results] = await pool.query('SELECT EmployeeID,EmployeeName FROM employee');
+            // console.log(results)
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching departments: ${error.message}`);
+        }
+    },
+    getJobTitles: async () => { //done
+        console.log("___getJobTitles")
+        try {
+            const [results] = await pool.query('SELECT JobTitleName FROM jobtitle');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching job titles: ${error.message}`);
+        }
+    },
+    getCountries: async () => { //done
+        console.log('___getCountries')
+        try {
+            const [results] = await pool.query("SELECT CountryName FROM country");
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching countries"+ ${error.message}`)
+        }
+    },
+    getEmployeeStatus: async () => { //done
+        console.log('___getEmployeeStatus')
+        try {
+            const [results] = await pool.query("SELECT EmploymentStatusName FROM employmentstatus");
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching countries"+ ${error.message}`)
+        }
+    },
+    getJobTitles: async () => { //done
+        console.log("___getJobTitles")
+        try {
+            const [results] = await pool.query('SELECT JobTitleName FROM jobtitle');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching job titles: ${error.message}`);
+        }
+    },
+    getPayGrades: async () => { //done
+        console.log("___getPayGrades")
+        try {
+            const [results] = await pool.query('SELECT PayGradeName FROM paygrade');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching job titles: ${error.message}`);
+        }
+    },
+    getTotTakenLeaveCount: async (userID) => {
+        console.log("___getTotTakenLeaveCount");
+        try {
+            console.log(userID);
+            const [results] = await pool.query(
+                'SELECT count(*) as totLeaveCount FROM useraccount JOIN employee ON useraccount.EmployeeID = employee.EmployeeID JOIN `leave` ON employee.EmployeeID = leave.EmployeeID WHERE useraccount.UserID = ? AND leave.Approved=1',
+                [userID]
+            );
+            // console.log(results);
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching total taken leave count: ${error.message}`);
+        }
+    } 
+    // addDependent: async (connection,data) => { //done
+    //     console.log("___addDependent")
+    //     // console.log(data)
+    //     try {
+    //         const [results] = await connection.query(
+    //             `insert into dependentinfo(EmployeeID,DependentName,DependentAge)
+    //             values(?,?,?)`,
+    //             [
+    //                 data.EmployeeID,
+    //                 data.DependentName,
+    //                 data.DependentAge
+    //             ]
+    //         )
+    //         console.log("depedent added successfully")
+    //         return results; // Return results to the caller
+    //     } catch (error) {
+    //         console.log("Error occurred while adding dependent")
+    //         throw new Error(`An error occurred while adding a dependent: ${error.message}`);
+    //     }
+    // },
+    // getUserByUserID: (UserID, callBack) => {
+    //     pool.query(
+    //         `select * from useraccount where UserID=?`,
+    //         [UserID],
+    //         (error, results, fields) => {
+    //             console.log(results)
+    //             if (error) {
+    //                 callBack(error);
+    //             }
+    //             return callBack(null, results);
+    //         }
+    //     )
+    // },
+    // getUserByUserEmail_: (Email, callBack) => {
+    //     console.log(Email)
+    //     pool.query(
+    //         `select * from useraccount where Email=?`,
+    //         [Email],
+    //         (error, results, fields) => {
+    //             if (error) {
+    //                 callBack(error);
+    //             }
+    //             return callBack(null, results);
+    //         }
+    //     )
+    // },
+    // getUserByUserEmail: async (Email) => {
+    //     console.log("__getUserByUserEmail")
+    //     try {
+    //         const [results] = await pool.query(`SELECT * FROM useraccount WHERE Email = ?`, [Email]);
+    //         // console.log(results)
+    //         return results;
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // },
+    // updateUser: (data, callBack) => {
+    //     pool.query(
+    //         `update useraccount set Username=?,Email=?,EmployeeID=?,PasswordHash=?,UserAccountLevelID=? where userID=?`,
+    //         [
+    //             data.Username,   //at the runtime ? will be repalce from these values
+    //             data.Email,
+    //             data.EmployeeID,
+    //             data.PasswordHash,
+    //             data.UserAccountLevelID,
+    //             data.UserID
+    //         ],
+    //         (error, results, fields) => {
+    //             if (error) {
+    //                 callBack(error);
+    //             }
+    //             return callBack(null, results);
+    //         }
+    //     );
+    // },
+    // deleteUser: (data, callBack) => {
+    //     pool.query(
+    //         `delete from useraccount where UserID = ?`,
+    //         [data.UserID],
+    //         (error, results, fields) => {
+    //             if (error) {
+    //                 callBack(error);
+    //             }
+    //             return callBack(null, results[0]);
+    //         }
+    //     );
+    // },
     // getUsers:(callBack)=>{
     //     console.log("prints")
     //     pool.query(
@@ -120,154 +350,22 @@ module.exports={
     //         }
     //     )
     // },
-    getUserss: async () => {
-        console.log("___getUsers")
-        try {
-            const [results] = await pool.query('SELECT * FROM useraccount');
-            return results;
-        } catch (error) {
-            throw new Error(`An error occurred while fetching users: ${error.message}`);
-        }
-    },
-    
-    getEmployees : async () => {
-        console.log("___getEmployees")
-        try {
-            const [results] = await pool.query('SELECT EmployeeName FROM employee');
-            return results;
-        } catch (error) {
-            throw new Error(`An error occurred while fetching employees: ${error.message}`);
-        }
-    },
-    getDepartments: async () => {
-        console.log("___getDepartments")
-        try {
-            const [results] = await pool.query('SELECT DepartmentName FROM department');
-            return results;
-        } catch (error) {
-            throw new Error(`An error occurred while fetching departments: ${error.message}`);
-        }
-    },
-    getSupervisors: async () => {
-        console.log("___getSupervisors")
-        try {
-            const [results] = await pool.query('SELECT EmployeeName FROM employee');
-            return results;
-        } catch (error) {
-            throw new Error(`An error occurred while fetching departments: ${error.message}`);
-        }
-    },
-    getJobTitles: async () => {
-        console.log("___getJobTitles")
-        try{
-            const [results] = await pool.query('SELECT JobTitleName FROM jobtitle');
-            return results;
-        } catch(error) {
-            throw new Error(`An error occurred while fetching job titles: ${error.message}`);
-        }
-    },
-    getCountries: async () => {
-        console.log('___getCountries')
-        try{
-            const [results] = await pool.query("SELECT CountryName FROM country");
-            return results;
-        }catch(error){
-            throw new Error(`An error occurred while fetching countries"+ ${error.message}`)
-        }
-    },
-    getEmployeeStatus: async () => {
-        console.log('___getEmployeeStatus')
-        try{
-            const [results] = await pool.query("SELECT EmploymentStatusName FROM employmentstatus");
-            return results;
-        }catch(error){
-            throw new Error(`An error occurred while fetching countries"+ ${error.message}`)
-        }
-    },
-    
-    getJobTitles: async () => {
-        console.log("___getJobTitles")
-        try{
-            const [results] = await pool.query('SELECT JobTitleName FROM jobtitle');
-            return results;
-        } catch(error) {
-            throw new Error(`An error occurred while fetching job titles: ${error.message}`);
-        }
-    },
-    getPayGrades: async () => {
-        console.log("___getPayGrades")
-        try{
-            const [results] = await pool.query('SELECT PayGradeName FROM paygrade');
-            return results;
-        } catch(error) {
-            throw new Error(`An error occurred while fetching job titles: ${error.message}`);
-        }
-    },
-    getUserByUserID:(UserID,callBack)=>{
-        pool.query(
-            `select * from useraccount where UserID=?`,
-            [UserID],
-            (error,results,fields)=>{
-                console.log(results)
-                if(error){
-                    callBack(error);
-                }
-                return callBack(null,results);
-            }
-        )
-    },
-    getUserByUserEmail_:(Email,callBack)=>{
-        console.log(Email)
-        pool.query(
-            `select * from useraccount where Email=?`,
-            [Email],
-            (error,results,fields)=>{
-                if(error){
-                    callBack(error);
-                }
-                return callBack(null,results);
-            }
-        )
-    },
-    getUserByUserEmail: async (Email) => {
-        console.log("  __getUserByUserEmail")
-        try {
-            const [results] = await pool.query(`SELECT * FROM useraccount WHERE Email = ?`, [Email]);
-            // console.log(results)
-            return results;
-        } catch (error) {
-            throw error;
-        }
-    },
-    updateUser:(data, callBack) => {
-        pool.query(
-            `update useraccount set Username=?,Email=?,EmployeeID=?,PasswordHash=?,UserAccountLevelID=? where userID=?`,
-            [
-                data.Username,   //at the runtime ? will be repalce from these values
-                data.Email,
-                data.EmployeeID,
-                data.PasswordHash,
-                data.UserAccountLevelID,
-                data.UserID
-            ],
-            (error, results, fields) => {
-                if (error) {
-                    callBack(error);
-                }
-                return callBack(null, results);
-            }
-        );
-    },
-    deleteUser: (data, callBack) => {
-        pool.query(
-        `delete from useraccount where UserID = ?`,
-        [data.UserID],
-        (error, results, fields) => {
-            if (error) {
-                callBack(error);
-            }
-            return callBack(null, results[0]);
-        }
-        );
-    }
+    // create: (data, callBack) => {
+    //     pool.query(
+    //         `insert into useraccount(Username,Email,EmployeeID,PasswordHash,UserAccountLevelID) values(?,?,?,?,?)`,
+    //         [
+    //             data.Username,   //at the runtime ? will be repalce from these values
+    //             data.Email,
+    //             data.EmployeeID,
+    //             data.PasswordHash,
+    //             data.UserAccountLevelID
+    //         ],
+    //         (error, results, fields) => {
+    //             if (error) {
+    //                 return callBack(error);
+    //             }
+    //             return callBack(null, results);
+    //         }
+    //     );
+    // },
 };

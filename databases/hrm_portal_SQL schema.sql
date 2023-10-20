@@ -28,7 +28,7 @@ CREATE TABLE if not exists `Branch` (
 );
 -- -------------------------------------------------------------------------------
 CREATE TABLE if not exists `PayGrade` (
-  `PayGradeID` NUMERIC(10,0),
+  `PayGradeID` 	NUMERIC(10,0),
   `PayGradeName` VARCHAR(20),
   `AnnualLeaveCount` NUMERIC(3,0),
   `CasualLeaveCount` NUMERIC(3,0),
@@ -84,7 +84,7 @@ CREATE TABLE if not exists `Employee` (
   FOREIGN KEY (`EmergencyContactID`) REFERENCES `EmergencyContact`(`EmergencyContactID`)
 );
 CREATE TABLE if not exists `DependentInfo` (
-  `DependentInfoID` NUMERIC(10,0), 
+  `DependentInfoID` INT AUTO_INCREMENT, 
   `EmployeeID` VARCHAR(10),
   `DependentName` VARCHAR(20),
   `DependentAge` NUMERIC(10,0),
