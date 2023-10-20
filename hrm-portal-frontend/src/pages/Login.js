@@ -38,7 +38,6 @@ const Login = ({setLoggedIn}) => {
                         }
                         setCookieBoxOpen(false)
                     }}
-                    TransitionComponent={'TransitionRight'}
                     message="This website uses cookies to enhance the user experience."
                     action={
                         <Button color="inherit" onClick={()=>setCookieBoxOpen(false)}>
@@ -76,7 +75,6 @@ const Login = ({setLoggedIn}) => {
                     open={snackBarOpen}
                     autoHideDuration={6000}
                     onClose={handleSnackBarClose}
-                    TransitionComponent={'TransitionRight'}
                     message="Try to Remember your Password next time!"
                 />
             </Grid>

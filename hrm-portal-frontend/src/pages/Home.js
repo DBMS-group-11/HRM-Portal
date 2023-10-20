@@ -61,7 +61,7 @@ const Home = () => {
 
             </Toolbar>
             <Grid container spacing={2} marginTop={2}>
-                <Grid item xs={6} paddingX={4}>
+                <Grid item md={12} lg={6} paddingX={4}>
                     <PieChart
                         //shades of blue
                         colors={['#2196f3', '#1976d2', '#0d47a1', '#82b1ff', '#e3f2fd']}
@@ -89,7 +89,7 @@ const Home = () => {
                         height={400}
                     />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item md={12} lg={6}>
                     <Grid container spacing={2} alignItems={'center'} height={'100%'}>
                         <Grid item xs={12}>
                             <Grid
@@ -130,7 +130,7 @@ const Home = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item md={12} lg={6}>
                     <Card elevation={0}>
                         <CardContent>
                             <Typography variant="h6" component="div">
@@ -149,7 +149,7 @@ const Home = () => {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item md={12} lg={6}>
                     <Card elevation={0}>
                         <CardMedia
                             component="img"

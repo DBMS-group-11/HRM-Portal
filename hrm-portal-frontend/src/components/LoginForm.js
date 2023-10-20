@@ -32,7 +32,10 @@ const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
                 if(res.data.success==1){
                     navigate('/dashboard/home');
                     setLoggedIn(true);
-                    setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 minutes
+                    setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 90000)}); // cookie expires in 15 mins
+                }
+                else if(res.data.success==0){
+                    setErrorCredentials(true);
                 }
             }).catch(err=>{
                 console.log("Axios post Error");

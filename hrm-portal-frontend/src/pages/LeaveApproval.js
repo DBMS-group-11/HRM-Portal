@@ -1,16 +1,44 @@
 import { Container, TextField, Typography,Button } from "@mui/material";
 import Grid from '@mui/material/Grid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckCircleOutline, DoNotDisturb } from '@mui/icons-material';
 import dayjs from 'dayjs';
+import { useLocation } from "react-router-dom";
 
 const LeaveApproval = () => {
 
-    const [reason, setReason] = useState('');
-    const [leaveType, setLeaveType] = useState('');
-    const [fromDate, setFromDate] = useState('');
-    const [toDate, setToDate] = useState('');
-    const [noOfDays, setNoOfDays] = useState('');
+    // const [name, setName] = useState('');
+    // const [jobTitle, setJobTitle] = useState('');
+    // const [department, setDepartment] = useState('');
+    // const [reason, setReason] = useState('');
+    // const [leaveType, setLeaveType] = useState('');
+    // const [fromDate, setFromDate] = useState('');
+    // const [toDate, setToDate] = useState('');
+    // const [noOfDays, setNoOfDays] = useState('');
+    const [leaveData, setLeaveData] = useState({});
+
+    const location = useLocation();
+    useEffect(() => {
+        console.log(location.state.id);
+        // fetch data with leaveId = location.state.id
+        const data = {
+            name: 'Sajitha',
+            jobTitle: 'Software Engineer',
+            department: 'IT',
+            payGrade: 'Level 1',
+            totalLeaves: 50,
+            leavesTaken: 4,
+            leavesLeft: 46,
+            reason: 'Sick',
+            leaveType: 'Annual',
+            fromDate: '2021-10-01',
+            toDate: '2021-10-02',
+            noOfDays: 2
+        }
+
+        setLeaveData(data);
+
+    },[]);
 
     return ( 
         <Container sx={{marginY:2}} maxWidth={'md'}>
@@ -26,33 +54,32 @@ const LeaveApproval = () => {
                 </Grid>
                 <Grid item xs={4}>
                     <TextField
-                        id="filled-basic"
+                        id="name"
                         InputProps={{readOnly: true}}
-                        value={"Sajitha"}
                         label="Name"
                         variant="standard"
                         fullWidth
-                        onChange={(e) => setReason(e.target.value)}
+                        value={leaveData.name}
                     />
                 </Grid>
                 <Grid item xs={4}>
                     <TextField
-                        id="filled-basic"
+                        id="job-title"
                         InputProps={{readOnly: true}}
                         label="Job Title"
                         variant="standard"
                         fullWidth
-                        onChange={(e) => setReason(e.target.value)}
+                        value={leaveData.jobTitle}
                     />
                 </Grid>                    
                 <Grid item xs={4}>
                     <TextField
-                        id="filled-basic"
+                        id="department"
                         InputProps={{readOnly: true}}
                         label="Department"
                         variant="standard"
                         fullWidth
-                        onChange={(e) => setReason(e.target.value)}
+                        value={leaveData.department}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -63,67 +90,64 @@ const LeaveApproval = () => {
                         marginTop={1}
                     >
                         <Grid item xs={3} textAlign={'center'}>
-                            <Typography variant="h4">Lv 1</Typography>
+                            <Typography variant="h4">{leaveData.payGrade}</Typography>
                             <Typography variant="caption">Pay Grade</Typography>
                         </Grid>
                         <Grid item xs={3} textAlign={'center'}>
-                            <Typography variant="h4">50</Typography>
+                            <Typography variant="h4">{leaveData.totalLeaves}</Typography>
                             <Typography variant="caption">Total Leaves</Typography>
                         </Grid>
                         <Grid item xs={3} textAlign={'center'}>
-                            <Typography variant="h4">4</Typography>
+                            <Typography variant="h4">{leaveData.leavesTaken}</Typography>
                             <Typography variant="caption">Leaves Taken</Typography>
                         </Grid>
                         <Grid item xs={3} textAlign={'center'}>
-                            <Typography variant="h4">46</Typography>
+                            <Typography variant="h4">{leaveData.leavesLeft}</Typography>
                             <Typography variant="caption">Leaves Left</Typography>
                         </Grid>
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
-                        id="filled-basic"
+                        id="reason"
                         InputProps={{readOnly: true}}
                         label="Reason"
                         variant="standard"
                         fullWidth
                         multiline
                         rows={2}
-                        onChange={(e) => setReason(e.target.value)}
+                        value={leaveData.reason}
                     />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
-                        id="filled-basic"
+                        id=";ease-type"
                         InputProps={{readOnly: true}}
                         label="Leave Type"
                         variant="standard"
                         fullWidth
-                        SelectProps={{
-                            native: true,
-                        }}
-                        onChange={(e) => setLeaveType(e.target.value)}
+                        value={leaveData.leaveType}
                     >
                     </TextField>
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
-                        id="filled-basic"
+                        id="no-of-days"
                         InputProps={{readOnly: true}}
                         label="No. of Days"
                         variant="standard"
                         fullWidth
-                        value={noOfDays}
+                        value={leaveData.noOfDays}
                     />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
-                        id="start-date"
+                        id="from-date"
                         InputProps={{readOnly: true}}
                         label="From"
                         variant="standard"
                         fullWidth
-                        value={fromDate}
+                        value={leaveData.fromDate}
                     />
                 </Grid>
                 <Grid item xs={6}>
@@ -133,7 +157,7 @@ const LeaveApproval = () => {
                         label="To"
                         variant="standard"
                         fullWidth
-                        value={toDate}
+                        value={leaveData.toDate}
                     />
                 </Grid>
                 <Grid item xs={12}>

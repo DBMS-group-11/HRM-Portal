@@ -32,8 +32,8 @@ const ManageLeave = () => {
   const navigate = useNavigate();
 
   const handleRowClick = (row) => {
-    console.log(row);
-    navigate('/dashboard/manage-leaves/leave-approval');
+    // sending id as state to the next page
+    navigate('/dashboard/manage-leaves/leave-approval', {state: {id: row.row.id}});
   }
 
   return ( 

@@ -20,7 +20,7 @@ const theme = createTheme({
 })
 function App() {
 
-  const [cookies] = useCookies(['userLoggedIn']);
+  const [cookies, updateCookies] = useCookies(['userLoggedIn']);
 
   // ------
   const [isLogged, setIsLogged] = useState(false);
@@ -36,7 +36,9 @@ function App() {
           <Route exact path='/' element={
             cookies.userLoggedIn ? <Navigate to="/dashboard/home" /> : <Navigate to="/login" />
           }/>
-          <Route exact path='/login' element={<Login setLoggedIn={handleLogin}/>}/>
+          <Route exact path='/login' element={
+            cookies.userLoggedIn ? <Navigate to="/dashboard/home" /> : <Login setLoggedIn={handleLogin}/>
+          }/>
           {cookies.userLoggedIn && (
             <Route exact path='/dashboard' element={<Dashboard/>}>
               <Route path='/dashboard/home' element={<Home/>}/>

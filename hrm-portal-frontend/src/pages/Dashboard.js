@@ -18,6 +18,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Outlet, useNavigate } from "react-router-dom";
+import { useCookies } from 'react-cookie';
 
 const drawerWidth = 320;
 const drawerLinks = [
@@ -55,13 +56,13 @@ const drawerLinks = [
         icon:<AccountCircleIcon />,
         path:'/dashboard/myAccount',
         active:false
-    },
-    {
-        label:'Log out',
-        icon:<LogoutIcon />,
-        path:'/login',
-        active:false
     }
+    // {
+    //     label:'Log out',
+    //     icon:<LogoutIcon />,
+    //     path:'/login',
+    //     active:false
+    // }
 ];
 
 
@@ -71,6 +72,8 @@ function Dashboard(props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const navigate = useNavigate();
+
+  const [cookies, setCookie, removeCookie] = useCookies(['userLoggedIn']);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -112,6 +115,21 @@ function Dashboard(props) {
                 </ListItemButton>
             </ListItem>
         ))}
+            <ListItem>
+                <ListItemButton
+                    onClick={() => {
+                        drawerLinks.forEach((link) => {
+                            link.active = false;
+                        });
+                        drawerLinks[0].active = true;
+                        navigate('/login');
+                        removeCookie('userLoggedIn', { path: '/' });
+                    }}
+                >
+                    <ListItemIcon sx={{ml:3}}><LogoutIcon /></ListItemIcon>
+                    <ListItemText>Log out</ListItemText>
+                </ListItemButton>
+            </ListItem>
       </List>
     </Box>
   );
