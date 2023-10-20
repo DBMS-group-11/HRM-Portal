@@ -249,123 +249,123 @@ module.exports = {
         } catch (error) {
             throw new Error(`An error occurred while fetching total taken leave count: ${error.message}`);
         }
-    } 
-    // addDependent: async (connection,data) => { //done
-    //     console.log("___addDependent")
-    //     // console.log(data)
-    //     try {
-    //         const [results] = await connection.query(
-    //             `insert into dependentinfo(EmployeeID,DependentName,DependentAge)
-    //             values(?,?,?)`,
-    //             [
-    //                 data.EmployeeID,
-    //                 data.DependentName,
-    //                 data.DependentAge
-    //             ]
-    //         )
-    //         console.log("depedent added successfully")
-    //         return results; // Return results to the caller
-    //     } catch (error) {
-    //         console.log("Error occurred while adding dependent")
-    //         throw new Error(`An error occurred while adding a dependent: ${error.message}`);
-    //     }
-    // },
-    // getUserByUserID: (UserID, callBack) => {
-    //     pool.query(
-    //         `select * from useraccount where UserID=?`,
-    //         [UserID],
-    //         (error, results, fields) => {
-    //             console.log(results)
-    //             if (error) {
-    //                 callBack(error);
-    //             }
-    //             return callBack(null, results);
-    //         }
-    //     )
-    // },
-    // getUserByUserEmail_: (Email, callBack) => {
-    //     console.log(Email)
-    //     pool.query(
-    //         `select * from useraccount where Email=?`,
-    //         [Email],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 callBack(error);
-    //             }
-    //             return callBack(null, results);
-    //         }
-    //     )
-    // },
-    // getUserByUserEmail: async (Email) => {
-    //     console.log("__getUserByUserEmail")
-    //     try {
-    //         const [results] = await pool.query(`SELECT * FROM useraccount WHERE Email = ?`, [Email]);
-    //         // console.log(results)
-    //         return results;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // },
-    // updateUser: (data, callBack) => {
-    //     pool.query(
-    //         `update useraccount set Username=?,Email=?,EmployeeID=?,PasswordHash=?,UserAccountLevelID=? where userID=?`,
-    //         [
-    //             data.Username,   //at the runtime ? will be repalce from these values
-    //             data.Email,
-    //             data.EmployeeID,
-    //             data.PasswordHash,
-    //             data.UserAccountLevelID,
-    //             data.UserID
-    //         ],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 callBack(error);
-    //             }
-    //             return callBack(null, results);
-    //         }
-    //     );
-    // },
-    // deleteUser: (data, callBack) => {
-    //     pool.query(
-    //         `delete from useraccount where UserID = ?`,
-    //         [data.UserID],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 callBack(error);
-    //             }
-    //             return callBack(null, results[0]);
-    //         }
-    //     );
-    // },
-    // getUsers:(callBack)=>{
-    //     console.log("prints")
-    //     pool.query(
-    //         `select * from useraccount`,
-    //         [],
-    //         (error,results,fields)=>{
-    //             if(error){
-    //                 return callBack(error);
-    //             }
-    //             return callBack(null,results);
-    //         }
-    //     )
-    // },
-    // create: (data, callBack) => {
-    //     pool.query(
-    //         `insert into useraccount(Username,Email,EmployeeID,PasswordHash,UserAccountLevelID) values(?,?,?,?,?)`,
-    //         [
-    //             data.Username,   //at the runtime ? will be repalce from these values
-    //             data.Email,
-    //             data.EmployeeID,
-    //             data.PasswordHash,
-    //             data.UserAccountLevelID
-    //         ],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 return callBack(error);
-    //             }
-    //             return callBack(null, results);
-    //         }
-    //     );
-    // },
+    } ,
+    addDependent: async (connection,data) => { //done
+        console.log("___addDependent")
+        // console.log(data)
+        try {
+            const [results] = await connection.query(
+                `insert into dependentinfo(EmployeeID,DependentName,DependentAge)
+                values(?,?,?)`,
+                [
+                    data.EmployeeID,
+                    data.DependentName,
+                    data.DependentAge
+                ]
+            )
+            console.log("depedent added successfully")
+            return results; // Return results to the caller
+        } catch (error) {
+            console.log("Error occurred while adding dependent")
+            throw new Error(`An error occurred while adding a dependent: ${error.message}`);
+        }
+    },
+    getUserByUserID: (UserID, callBack) => {
+        pool.query(
+            `select * from useraccount where UserID=?`,
+            [UserID],
+            (error, results, fields) => {
+                console.log(results)
+                if (error) {
+                    callBack(error);
+                }
+                return callBack(null, results);
+            }
+        )
+    },
+    getUserByUserEmail_: (Email, callBack) => {
+        console.log(Email)
+        pool.query(
+            `select * from useraccount where Email=?`,
+            [Email],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error);
+                }
+                return callBack(null, results);
+            }
+        )
+    },
+    getUserByUserEmail: async (Email) => {
+        console.log("__getUserByUserEmail")
+        try {
+            const [results] = await pool.query(`SELECT * FROM useraccount WHERE Email = ?`, [Email]);
+            // console.log(results)
+            return results;
+        } catch (error) {
+            throw error;
+        }
+    },
+    updateUser: (data, callBack) => {
+        pool.query(
+            `update useraccount set Username=?,Email=?,EmployeeID=?,PasswordHash=?,UserAccountLevelID=? where userID=?`,
+            [
+                data.Username,   //at the runtime ? will be repalce from these values
+                data.Email,
+                data.EmployeeID,
+                data.PasswordHash,
+                data.UserAccountLevelID,
+                data.UserID
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error);
+                }
+                return callBack(null, results);
+            }
+        );
+    },
+    deleteUser: (data, callBack) => {
+        pool.query(
+            `delete from useraccount where UserID = ?`,
+            [data.UserID],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error);
+                }
+                return callBack(null, results[0]);
+            }
+        );
+    },
+    getUsers:(callBack)=>{
+        console.log("prints")
+        pool.query(
+            `select * from useraccount`,
+            [],
+            (error,results,fields)=>{
+                if(error){
+                    return callBack(error);
+                }
+                return callBack(null,results);
+            }
+        )
+    },
+    create: (data, callBack) => {
+        pool.query(
+            `insert into useraccount(Username,Email,EmployeeID,PasswordHash,UserAccountLevelID) values(?,?,?,?,?)`,
+            [
+                data.Username,   //at the runtime ? will be repalce from these values
+                data.Email,
+                data.EmployeeID,
+                data.PasswordHash,
+                data.UserAccountLevelID
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    return callBack(error);
+                }
+                return callBack(null, results);
+            }
+        );
+    },
 };

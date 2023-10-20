@@ -1,4 +1,9 @@
 const{
+    createUser,
+    getUserByUserID,
+    getUsers,
+    updateUsers,
+    deleteUser,
     login,
     register,
     getRegisterSub,
@@ -18,10 +23,10 @@ const {checkToken}=require("../../auth/token_validation");
 // router.post("/login",login); //done
 // router.post("/add_employee",add)
 
-// router.post("/",createUser);
-// // router.get("/:id",getUserByUserID);
-// router.patch("/",updateUsers);
-// router.delete("/",deleteUser);
+router.post("/",createUser);
+router.get("/:id",getUserByUserID);
+router.patch("/",updateUsers);
+router.delete("/",deleteUser);
 ////////////////////////
 router.post("/login",login); //user login
 
@@ -30,9 +35,9 @@ router.get("/getRegisterSub",getRegisterSub);
 
 router.post("/myAccount",myAccount); //employee personal account
 
-// router.get("/",getUsers); //register sub apis
+router.get("/",getUsers); //register sub apis
 
 // -------------------
-router.post("/getReqLeaveSub",getReqLeaveSub);
+router.post("/getReqLeaveSub",getReqLeaveSub); 
 
 module.exports=router;
