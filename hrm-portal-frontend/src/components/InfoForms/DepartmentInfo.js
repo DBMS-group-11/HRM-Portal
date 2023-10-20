@@ -13,7 +13,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
     const [payGradeTypes, setPayGradeTypes] = useState([]);
     const [jobTitleTypes, setJobTitleTypes] = useState([]);
 
-    const [jobTitle, setJobTitle] = useState('');
+    const [jobTitle, setJobTitle] = useState('Software Engineer');
     const [department, setDepartment] = useState('IT');
     const [status, setStatus] = useState('Permanent');
     const [payGrade, setPayGrade] = useState('Level1');
@@ -23,7 +23,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
         // fetching initial data
         axios.get("http://localhost:3000/api/users/getRegisterSub")
         .then(res=> {
-            console.log(res.data);
+            // console.log(res.data);
             setDepartmentTypes([]);
             setJobStatusTypes([]);
             setSupervisorList([]);
@@ -58,7 +58,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
         }).catch(err=>{
             console.log("Axios get error");
         }).finally(()=>{
-            console.log("final");
+            // console.log("final");
         });
 
     }, []);

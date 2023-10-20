@@ -2,8 +2,12 @@ import { Avatar, Box, Card, CardContent, CardMedia, Container, Grid, Toolbar } f
 import { Typography } from "@mui/material";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useState, useEffect } from "react";
+import { useCookies } from "react-cookie";
+import jwt from 'jwt-decode';
 
 const Home = () => {
+
+    const [cookies] = useCookies(['u-token']);
 
     const [noOfLeaves, setNoOfLeaves] = useState({
         Annual: 0,
@@ -24,10 +28,13 @@ const Home = () => {
             NoPay: 3
         }; 
         setNoOfLeaves(leavesData);
+        
+        const decoded = jwt(cookies['u-token']);
+        // console.log(decoded.result[0].EmployeeID);
 
         setEmpDetails({
-            name: 'John Doe',
-            employeeId: 'EM-0001',
+            name: decoded.result[0].Username,
+            employeeId: decoded.result[0].EmployeeID,
             status: 'Permanent',
             payGrade: 'Lv1',
             company: 'Jupiter Apparels (Pvt) Ltd',
@@ -61,7 +68,7 @@ const Home = () => {
 
             </Toolbar>
             <Grid container spacing={2} marginTop={2}>
-                <Grid item xs={6} paddingX={4}>
+                <Grid item md={12} lg={6} paddingX={4}>
                     <PieChart
                         //shades of blue
                         colors={['#2196f3', '#1976d2', '#0d47a1', '#82b1ff', '#e3f2fd']}
@@ -89,7 +96,7 @@ const Home = () => {
                         height={400}
                     />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item md={12} lg={6}>
                     <Grid container spacing={2} alignItems={'center'} height={'100%'}>
                         <Grid item xs={12}>
                             <Grid
@@ -130,7 +137,7 @@ const Home = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item md={12} lg={6}>
                     <Card elevation={0}>
                         <CardContent>
                             <Typography variant="h6" component="div">
@@ -149,7 +156,7 @@ const Home = () => {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item md={12} lg={6}>
                     <Card elevation={0}>
                         <CardMedia
                             component="img"

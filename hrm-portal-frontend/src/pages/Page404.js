@@ -10,7 +10,7 @@ const Page404 = () => {
             <img src="404_image.png" alt="404" width={'60%'}/>
             <br /> <br />
             <Button variant="outlined" component={Link} to="/" sx={{marginTop:2}}>
-                Go Back to Home
+                Go Back to login
             </Button>
         </Container>
      );

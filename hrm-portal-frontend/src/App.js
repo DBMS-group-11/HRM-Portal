@@ -11,6 +11,7 @@ import AddEmployee from './pages/AddEmployee';
 import LeaveApproval from './pages/LeaveApproval';
 import Home from './pages/Home';
 import { useState } from "react";
+import { useCookies } from 'react-cookie';
 
 const theme = createTheme({
   typography:{
@@ -19,19 +20,26 @@ const theme = createTheme({
 })
 function App() {
 
-  const [isLogged, setIsLogged] = useState(false);
+  const [cookies, updateCookies] = useCookies(['userLoggedIn']);
 
+  // ------
+  const [isLogged, setIsLogged] = useState(false);
   const handleLogin = (e) => {
     setIsLogged(e);
   }
+  // ---- remove theses
 
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          <Route exact path='/' element={<Navigate to="/login" />}/>
-          <Route exact path='/login' element={<Login setLoggedIn={handleLogin}/>}/>
-          {isLogged && (
+          <Route exact path='/' element={
+            cookies.userLoggedIn ? <Navigate to="/dashboard/home" /> : <Navigate to="/login" />
+          }/>
+          <Route exact path='/login' element={
+            cookies.userLoggedIn ? <Navigate to="/dashboard/home" /> : <Login setLoggedIn={handleLogin}/>
+          }/>
+          {cookies.userLoggedIn && (
             <Route exact path='/dashboard' element={<Dashboard/>}>
               <Route path='/dashboard/home' element={<Home/>}/>
               <Route path='/dashboard/myAccount' element={<MyAccount/>}/>
