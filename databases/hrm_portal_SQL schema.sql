@@ -113,7 +113,7 @@ CREATE TABLE if not exists `UserAccount` (
 );
 -- -------------------------------------------------------------------------------
 CREATE TABLE if not exists `Leave` (
-  `LeaveID` NUMERIC(10,0),
+  `LeaveID` INT auto_increment,
   `LeaveLogDateTime` DATETIME,
   `EmployeeID` VARCHAR(10),
   `Approved` BOOLEAN, 
@@ -357,11 +357,11 @@ VALUES
     (4, "nimali89", "EM-0004", "nimali89@gmail.com", "password", 4);
     
 -- Sample data for leave table
-INSERT INTO `leave`(LeaveID,LeaveLogDateTime,EmployeeID,Approved,Reason,LeaveType,FirstAbsentDate,LastAbsentDate,LeaveDayCount,ApprovedDateTime,ApprovedByID)
+INSERT INTO `leave`(LeaveLogDateTime,EmployeeID,Approved,Reason,LeaveType,FirstAbsentDate,LastAbsentDate,LeaveDayCount,ApprovedDateTime,ApprovedByID)
 VALUES
-	(1, '2023-10-16 10:25:31', "EM-0003", 1, "Personal leave", "Casual", '2023-10-18', '2023-10-20', 3, '2023-10-17 04:00:31', "EM-0002"),
-    (2, '2023-10-16 09:47:19', "EM-0004", 1, "Sick leave", "Annual", '2023-10-17', '2023-10-17', 1, '2023-10-16 04:03:56', "EM-0002"),
-    (3, '2023-10-17 12:41:43', "EM-0003", 0, "Personal reasons", "Annual", '2023-10-20', '2023-10-21', 2, '2023-10-18 10:12:42', "EM-0001");
+	('2023-10-16 10:25:31', "EM-0003", 1, "Personal leave", "Casual", '2023-10-18', '2023-10-20', 3, '2023-10-17 04:00:31', "EM-0002"),
+    ('2023-10-16 09:47:19', "EM-0004", 1, "Sick leave", "Annual", '2023-10-17', '2023-10-17', 1, '2023-10-16 04:03:56', "EM-0002"),
+    ('2023-10-17 12:41:43', "EM-0003", 0, "Personal reasons", "Annual", '2023-10-20', '2023-10-21', 2, '2023-10-18 10:12:42', "EM-0001");
     
     
 

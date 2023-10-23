@@ -19,6 +19,8 @@ const {
 
     getLastUserID,
     getLastEmployeeID,
+    reqLeave,
+    getEmployeeIDByUserID,
 
     getTotTakenLeaveCount
 } = require("./user.service");
@@ -112,7 +114,7 @@ module.exports = {
             var EmployeeID = parts[0] + '-' + integerPart;
 
             // console.log(EmployeeID);
-            
+
             // Prepare data for registration
             data = {
                 "UserID": UserID,
@@ -184,15 +186,25 @@ module.exports = {
             }
         }
     },
-    getRegisterSub: async (req, res) => { //Registration Sub - done
-        console.log(">getRegesterSub");
-        const departments = await getDepartments();
-        const supervisors = await getSupervisors();
-        const jobTitles = await getJobTitles();
-        const countries = await getCountries();
-        const EmployeeStatuses = await getEmployeeStatus();
-        const PayGrades = await getPayGrades();
+    getRegisterSub : async (req, res) => {
+        console.log("___getRegisterSub")
         try {
+            const [
+                departments,
+                supervisors,
+                jobTitles,
+                countries,
+                EmployeeStatuses,
+                PayGrades
+            ] = await Promise.all([
+                getDepartments(),
+                getSupervisors(),
+                getJobTitles(),
+                getCountries(),
+                getEmployeeStatus(),
+                getPayGrades()
+            ]);
+    
             return res.json({
                 departments,
                 supervisors,
@@ -204,7 +216,7 @@ module.exports = {
         } catch (error) {
             console.error("Actual error:", error); // Log the actual error
             return res.status(500).json({
-                error: "An error occurred while fetching users"
+                error: "An error occurred while fetching registration data"
             });
         }
     },
@@ -411,7 +423,6 @@ module.exports = {
             })
         })
     },
-
     getReqLeaveSub: async (req, res) => {
         console.log(">getReqLeaveSub");
         // console.log(req.body)
@@ -435,6 +446,28 @@ module.exports = {
             return res.status(500).json({
                 error: "An error occurred while fetching leave count"
             });
+        }
+    },
+    reqALeave : async (req, res) =>{
+        console.log(">reqALeave")
+        const data=req.body;
+        try{
+            // console.log(data['UserID']);
+            const EmployeeID = await getEmployeeIDByUserID(data['UserID']);
+            data["EmployeeID"]=EmployeeID
+            // console.log(data)
+            const result=await reqLeave(data);
+            // console.log(result);
+            return res.status(200).json({
+                success: 1,
+                result : result
+            })
+
+        }catch(err){
+            return res.json({
+                success: 0,
+                message: err.message
+            })
         }
     }
 }

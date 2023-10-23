@@ -288,6 +288,29 @@ module.exports = {
             throw new Error(`An error occurred while fetching last employee ID: ${error.message}`);
         }
     },
+    reqLeave: async (data) => {
+        console.log("__reqLeave");
+        try {
+            const [results] = await pool.query(
+                `INSERT INTO \`leave\` (LeaveLogDateTime, EmployeeID, Approved, Reason, LeaveType, FirstAbsentDate, LastAbsentDate, LeaveDayCount, ApprovedDateTime, ApprovedByID)
+                VALUES (?, ?, 0, ?, ?, ?, ?, ?, null, null)`,
+                [
+                    data.LeaveLogDateTime,
+                    data.EmployeeID,
+                    data.reason,
+                    data.leaveType,
+                    data.fromDate,
+                    data.toDate,
+                    data.noOfDays,
+                ]
+            );
+            console.log("Leave requested successfully");
+            return results; // Return results to the caller
+    
+        } catch (error) {
+            throw new Error(`An error occurred while requesting leave: ${error.message}`);
+        }
+    },    
     getUserByUserID: (UserID, callBack) => {
         pool.query(
             `select * from useraccount where UserID=?`,
@@ -324,66 +347,93 @@ module.exports = {
             throw error;
         }
     },
-    updateUser: (data, callBack) => {
-        pool.query(
-            `update useraccount set Username=?,Email=?,EmployeeID=?,PasswordHash=?,UserAccountLevelID=? where userID=?`,
-            [
-                data.Username,   //at the runtime ? will be repalce from these values
-                data.Email,
-                data.EmployeeID,
-                data.PasswordHash,
-                data.UserAccountLevelID,
-                data.UserID
-            ],
-            (error, results, fields) => {
-                if (error) {
-                    callBack(error);
-                }
-                return callBack(null, results);
+    getEmployeeIDByUserID: async (UserID) => {
+        console.log("___getEmployeeIDByUserID");
+        console.log(UserID);
+    
+        try {
+            const [results] = await pool.query(`
+                SELECT employee.EmployeeID
+                FROM employee
+                JOIN useraccount ON employee.EmployeeID = useraccount.EmployeeID
+                WHERE useraccount.UserID = ?`,
+                [UserID]
+            );
+    
+            if (results.length === 0) {
+                // No results found for the given UserID
+                return null;
             }
-        );
+    
+            const employeeID = results[0].EmployeeID;
+            // console.log(employeeID)
+            return employeeID;
+        } catch (error) {
+            // Handle any database query errors here
+            console.error("Error in getEmployeeIDByUserID:", error);
+            throw error; // You may choose to handle or rethrow the error as needed
+        }
     },
-    deleteUser: (data, callBack) => {
-        pool.query(
-            `delete from useraccount where UserID = ?`,
-            [data.UserID],
-            (error, results, fields) => {
-                if (error) {
-                    callBack(error);
-                }
-                return callBack(null, results[0]);
-            }
-        );
-    },
-    getUsers:(callBack)=>{
-        console.log("prints")
-        pool.query(
-            `select * from useraccount`,
-            [],
-            (error,results,fields)=>{
-                if(error){
-                    return callBack(error);
-                }
-                return callBack(null,results);
-            }
-        )
-    },
-    create: (data, callBack) => {
-        pool.query(
-            `insert into useraccount(Username,Email,EmployeeID,PasswordHash,UserAccountLevelID) values(?,?,?,?,?)`,
-            [
-                data.Username,   //at the runtime ? will be repalce from these values
-                data.Email,
-                data.EmployeeID,
-                data.PasswordHash,
-                data.UserAccountLevelID
-            ],
-            (error, results, fields) => {
-                if (error) {
-                    return callBack(error);
-                }
-                return callBack(null, results);
-            }
-        );
-    },
+    // updateUser: (data, callBack) => {
+    //     pool.query(
+    //         `update useraccount set Username=?,Email=?,EmployeeID=?,PasswordHash=?,UserAccountLevelID=? where userID=?`,
+    //         [
+    //             data.Username,   //at the runtime ? will be repalce from these values
+    //             data.Email,
+    //             data.EmployeeID,
+    //             data.PasswordHash,
+    //             data.UserAccountLevelID,
+    //             data.UserID
+    //         ],
+    //         (error, results, fields) => {
+    //             if (error) {
+    //                 callBack(error);
+    //             }
+    //             return callBack(null, results);
+    //         }
+    //     );
+    // },
+    // deleteUser: (data, callBack) => {
+    //     pool.query(
+    //         `delete from useraccount where UserID = ?`,
+    //         [data.UserID],
+    //         (error, results, fields) => {
+    //             if (error) {
+    //                 callBack(error);
+    //             }
+    //             return callBack(null, results[0]);
+    //         }
+    //     );
+    // },
+    // getUsers:(callBack)=>{
+    //     console.log("prints")
+    //     pool.query(
+    //         `select * from useraccount`,
+    //         [],
+    //         (error,results,fields)=>{
+    //             if(error){
+    //                 return callBack(error);
+    //             }
+    //             return callBack(null,results);
+    //         }
+    //     )
+    // },
+    // create: (data, callBack) => {
+    //     pool.query(
+    //         `insert into useraccount(Username,Email,EmployeeID,PasswordHash,UserAccountLevelID) values(?,?,?,?,?)`,
+    //         [
+    //             data.Username,   //at the runtime ? will be repalce from these values
+    //             data.Email,
+    //             data.EmployeeID,
+    //             data.PasswordHash,
+    //             data.UserAccountLevelID
+    //         ],
+    //         (error, results, fields) => {
+    //             if (error) {
+    //                 return callBack(error);
+    //             }
+    //             return callBack(null, results);
+    //         }
+    //     );
+    // },
 };
