@@ -270,6 +270,24 @@ module.exports = {
             throw new Error(`An error occurred while adding a dependent: ${error.message}`);
         }
     },
+    getLastUserID: async(connection) => {
+        console.log("___getLastUserID")
+        try {
+            const [results] = await connection.query('SELECT UserID FROM useraccount ORDER BY UserID DESC LIMIT 1');
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching last user ID: ${error.message}`);
+        }
+    },
+    getLastEmployeeID: async(connection) => {
+        console.log("___getLastEmployeeID")
+        try{
+            const [results] = await connection.query('SELECT EmployeeID FROM employee ORDER BY EmployeeID DESC LIMIT 1');
+            return results
+        }catch(error){
+            throw new Error(`An error occurred while fetching last employee ID: ${error.message}`);
+        }
+    },
     getUserByUserID: (UserID, callBack) => {
         pool.query(
             `select * from useraccount where UserID=?`,

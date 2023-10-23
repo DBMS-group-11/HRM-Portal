@@ -17,6 +17,9 @@ const {
     getPayGrades,
     addDependent,
 
+    getLastUserID,
+    getLastEmployeeID,
+
     getTotTakenLeaveCount
 } = require("./user.service");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
@@ -94,15 +97,31 @@ module.exports = {
             const emergencyResult = await addEmergencyContact(connection, body.emergencyInfo);
             const EmergencyContactID = emergencyResult.EmergencyContactID;
 
+            const lastUserIDResult = await getLastUserID(connection); //get UserID of last Added user
+            // console.log(lastUserIDResult)
+            var UserID = parseInt(lastUserIDResult[0]['UserID']) + 1;
+            // console.log(lastUserID)
+            const lastEmployeeResult = await getLastEmployeeID(connection); //get Last Employee ID of last Added employee
+            var EmployeeID = lastEmployeeResult[0]['EmployeeID'];
+            // console.log(EmployeeID);
+
+            const parts = EmployeeID.split('-');
+            var integerPart = parseInt(parts[1]);
+            integerPart++;
+            integerPart = integerPart.toString().padStart(4, '0');
+            var EmployeeID = parts[0] + '-' + integerPart;
+
+            // console.log(EmployeeID);
+            
             // Prepare data for registration
             data = {
-                "UserID": 11,
+                "UserID": UserID,
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
                 "PasswordHash": "0000", //default password
                 "UserAccountLevelID": body.personalInfo.userAccountType,
 
-                "EmployeeID": "E009",
+                "EmployeeID": EmployeeID,
                 "EmployeeName": body.personalInfo.name,
                 "DateOfBirth": body.personalInfo.dob,
                 "Gender": body.personalInfo.gender,
@@ -194,7 +213,7 @@ module.exports = {
         const userID = req.body["userID"];
         try {
             const connection = await pool.getConnection();
-    
+
             const [personalInfo, departmentInfo, emergencyInfo, supervisor] = await Promise.all([
                 connection.query(`
                     SELECT 
@@ -271,9 +290,9 @@ module.exports = {
                         useraccount.userID = ?`, [userID]
                 )
             ]);
-    
+
             connection.release();
-    
+
             return res.json({
                 success: 1,
                 message: "My account accessed successfully",
@@ -282,7 +301,7 @@ module.exports = {
                 departmentInfo: departmentInfo[0],
                 emergencyInfo: emergencyInfo[0]
             });
-    
+
         } catch (error) {
             console.error("Actual error:", error);
             return res.status(500).json({
@@ -396,12 +415,12 @@ module.exports = {
     getReqLeaveSub: async (req, res) => {
         console.log(">getReqLeaveSub");
         // console.log(req.body)
-        const userID=req.body['userID']
+        const userID = req.body['userID']
         // console.log(userID)
         try {
             const totLeaveCountArray = await getTotTakenLeaveCount(userID);
             const totLeaveCount = totLeaveCountArray[0]["totLeaveCount"];
-            
+
             // Construct the result object
             const result = {
                 totTakenApprovedLeaveCount: totLeaveCount
@@ -412,7 +431,7 @@ module.exports = {
                 result
             });
         } catch (error) {
-            console.error("Actual error:", error); 
+            console.error("Actual error:", error);
             return res.status(500).json({
                 error: "An error occurred while fetching leave count"
             });

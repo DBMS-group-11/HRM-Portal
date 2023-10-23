@@ -38,6 +38,6 @@ router.post("/myAccount",myAccount); //employee personal account
 router.get("/",getUsers); //register sub apis
 
 // -------------------
-router.post("/getReqLeaveSub",getReqLeaveSub); 
+router.post("/getReqLeaveSub",getReqLeaveSub); //getTotalLeaveCountByUSerID
 
 module.exports=router;
