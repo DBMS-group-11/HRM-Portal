@@ -6,13 +6,16 @@ const{
     deleteUser,
 
     login,
+
     register,
     getRegisterSub,
+
     myAccount,
 
     reqALeave,
-    
     getReqLeaveSub,
+
+    homeSub,
 }=require("./user.controller");
 
 const router=require("express").Router();
@@ -46,5 +49,6 @@ router.post("/getReqLeaveSub",getReqLeaveSub); //getTotalLeaveCountByUSerID
 
 router.post("/reqALeave",reqALeave); //request a leave
 
+router.post("/homeSub",homeSub); //get required details for home page
 
 module.exports=router;

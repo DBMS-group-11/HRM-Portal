@@ -36,6 +36,11 @@ const sendErrorResponse = (res, message) => {
 };
 
 module.exports = {
+    homeSub: (req, res) =>{
+        console.log('> HomeSub')
+        const data = req.body
+        
+    },
     login: async (req, res) => {   //login to the system - done
         console.log("> Login to system")
 
