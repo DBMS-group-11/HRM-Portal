@@ -5,7 +5,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useState, useEffect } from 'react';
-
+import { useCookies } from 'react-cookie';
+import dayjs from 'dayjs';
+import axios from 'axios';
 
 const RequestALeave = () => {
 
@@ -14,39 +16,51 @@ const RequestALeave = () => {
     },[]);
 
     const [reason, setReason] = useState('');
-    const [leaveType, setLeaveType] = useState('');
+    const [leaveType, setLeaveType] = useState('Casual');
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [noOfDays, setNoOfDays] = useState('');
+    const [ isLoading, setIsLoading] = useState(false);
+    const [ cookies ] = useCookies(['x-uData']);
 
     const leaveTypes = [
+        // leave types : 'Annual','Casual','Maternity','No-Pay'
         {
-            value: 'Casual Leave',
+            value: 'Casual',
             label: 'Casual Leave'
         },
         {
-            value: 'Sick Leave',
-            label: 'Sick Leave'
+            value: 'Annual',
+            label: 'Annual Leave'
         },
         {
-            value: 'Maternity Leave',
+            value: 'Maternity',
             label: 'Maternity Leave'
         },
         {
-            value: 'Comp Off',
-            label: 'Comp Off'
-        },
-        {
-            value: 'Other',
-            label: 'Other'
+            value: 'No-Pay',
+            label: 'No-Pay'
         }
     ];
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const leaveData = {reason, leaveType, fromDate, toDate, noOfDays};
+        setIsLoading(true);
+        const EmployeeID = cookies['x-uData'].EmployeeID;
+        const LeaveLogDateTime = dayjs().format("YYYY/MM/DD hh:mm")
+        const leaveData = { LeaveLogDateTime, EmployeeID, reason, leaveType, fromDate, toDate, noOfDays};
 
         console.log(leaveData);
+        axios.post('http://localhost:3000/api/users/reqALeave',leaveData)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log(err);
+        })        
+        .finally(() => {
+            setIsLoading(false);
+        })
     }
 
     return ( 
@@ -121,10 +135,10 @@ const RequestALeave = () => {
                     <DatePicker
                         label="From *"
                         onChange={(newValue) => {
-                            setFromDate(newValue);
+                            setFromDate(dayjs(newValue).format("YYYY/MM/DD"));
                             if(toDate){
-                                const diffTime = Math.abs(toDate - newValue);
-                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                                const diffTime = dayjs(toDate).diff(dayjs(newValue), 'day');
+                                const diffDays = Math.abs(diffTime) + 1;
                                 setNoOfDays(diffDays);
                             }
                         }}
@@ -134,10 +148,10 @@ const RequestALeave = () => {
                     <DatePicker
                         label="To *"
                         onChange={(newValue) => {
-                            setToDate(newValue)
+                            setToDate(dayjs(newValue).format("YYYY/MM/DD"))
                             if(fromDate){
-                                const diffTime = Math.abs(newValue - fromDate);
-                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                                const diffTime = dayjs(fromDate).diff(dayjs(newValue), 'day');
+                                const diffDays = Math.abs(diffTime) + 1;
                                 setNoOfDays(diffDays);
                             }
                         }}
@@ -171,6 +185,7 @@ const RequestALeave = () => {
                         fullWidth
                         endIcon={<SendIcon/>}
                         onClick={handleSubmit}
+                        disabled={isLoading}
                     >
                         Submit
                     </Button>

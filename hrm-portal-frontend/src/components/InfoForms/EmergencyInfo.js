@@ -12,16 +12,16 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
 
     useEffect(() => {
         if(isReadOnly){
-            setName1(data && data.emergencyName1 || '');
-            setTelNo1(data && data.emergencyTel1 || '');
-            setName2(data && data.emergencyName2 || '');
-            setTelNo2(data && data.emergencyTel2 || '');
-            setEmergencyAddress(data && data.address || '');
+            setName1(data && data.emergencyInfo.name1 || '');
+            setTelNo1(data && data.emergencyInfo.telNo1 || '');
+            setName2(data && data.emergencyInfo.name2 || '');
+            setTelNo2(data && data.emergencyInfo.telNo2 || '');
+            setEmergencyAddress(data && data.emergencyInfo.emergencyAddress || '');
         }else{
-            let formData = {name1, telNo1, name2, telNo2};
+            let formData = {name1, telNo1, name2, telNo2, emergencyAddress};
             getData(formData);
         }
-    } , [isReadOnly, data, name1, telNo1, name2, telNo2]);
+    } , [isReadOnly, data, name1, telNo1, name2, telNo2, emergencyAddress]);
 
     return (
         <Container sx={{marginY:2, border:1, borderColor:'grey.400', borderRadius:2, padding:4}}>

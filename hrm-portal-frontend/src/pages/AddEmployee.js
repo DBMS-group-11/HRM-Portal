@@ -40,6 +40,7 @@ const AddEmployee = ({children}) => {
                 navigate('/dashboard/home');
             }
         }).catch(err => {
+            console.log(err);
             console.log("Axios post error");
         }).finally(() => {
             console.log("final");
