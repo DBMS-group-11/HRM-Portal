@@ -22,6 +22,15 @@ const {
     reqLeave,
     getEmployeeIDByUserID,
 
+    getPersonalInfo,
+    getDependentInfo,
+    getJobTitleInfo,
+    getDepartmentInfo,
+    getSupervisorsInfo,
+    getEmployeeStatusInfo,
+    getPayGradesInfo,
+    getEmergencyInfo,
+
     getTotTakenLeaveCount
 } = require("./user.service");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
@@ -99,7 +108,7 @@ module.exports = {
     register: async (req, res) => { // Registration - done
         console.log("> Register");
         const body = req.body;
-        // console.log(body);
+        console.log(body);
         let connection;
         try {
             //Get a connection from the pool
@@ -199,7 +208,7 @@ module.exports = {
             }
         }
     },
-    getRegisterSub : async (req, res) => {
+    getRegisterSub : async (req, res) => { //done
         console.log("___getRegisterSub")
         try {
             const [
@@ -233,109 +242,61 @@ module.exports = {
             });
         }
     },
-    myAccount: async (req, res) => {
+    myAccount : async (req, res) => {
         console.log(">myAccount");
-        console.log(req.body)
-        const userID = req.body["userID"];
-        const EmployeeID=req.body["EmployeeID"];
-        // console.log(EmployeeID)
+        console.log(req.body);
+        const data = req.body;
+        let connection;
         try {
-            const connection = await pool.getConnection();
+            connection = await pool.getConnection();
 
-            const [personalInfo, departmentInfo, emergencyInfo, supervisor] = await Promise.all([
-                connection.query(`
-                    SELECT 
-                        employee.EmployeeName,
-                        employee.EmployeeID,
-                        employee.Address,
-                        employee.Country,
-                        useraccount.Username,
-                        useraccount.Email,
-                        useraccountlevel.UserAccountLevelName,
-                        employee.DateOfBirth,
-                        employee.MaritalStatus,
-                        employee.Gender,
-                        dependentinfo.DependentName,
-                        dependentinfo.DependentAge
-                    FROM 
-                        useraccount 
-                    JOIN 
-                        employee on useraccount.EmployeeID = employee.EmployeeID
-                    JOIN 
-                        dependentinfo on dependentinfo.EmployeeID = employee.EmployeeID
-                    JOIN 
-                        useraccountlevel on useraccount.UserAccountLevelID = useraccountlevel.UserAccountLevelID
-                    WHERE 
-                        useraccount.userID = ?`, [userID]
-                ),
-                connection.query(`
-                    SELECT 
-                        jobtitle.JobTitleName,
-                        department.DepartmentName,
-                        employmentstatus.EmploymentStatusName,
-                        paygrade.PayGradeName
-                    FROM 
-                        useraccount
-                    JOIN 
-                        employee ON useraccount.EmployeeID = employee.EmployeeID
-                    JOIN 
-                        jobtitle ON jobtitle.JobTitleID = employee.JobTitleID
-                    JOIN 
-                        department ON department.DepartmentID = employee.DepartmentID
-                    JOIN     
-                        employmentstatus ON employmentstatus.EmploymentStatusID = employee.EmploymentStatusID
-                    JOIN 
-                        paygrade ON paygrade.PayGradeID = employee.PayGradeID
-                    WHERE 
-                        useraccount.userID = ?`, [userID]
-                ),
-                connection.query(`
-                    SELECT 
-                        emergencycontact.PrimaryName,
-                        emergencycontact.PrimaryPhoneNumber,
-                        emergencycontact.SecondaryName,
-                        emergencycontact.SecondaryPhoneNumber,
-                        emergencycontact.Address
-                    FROM 
-                        useraccount
-                    JOIN 
-                        employee ON useraccount.EmployeeID = employee.EmployeeID
-                    JOIN 
-                        emergencycontact ON emergencycontact.EmergencyContactID = employee.EmergencyContactID
-                    WHERE 
-                        useraccount.userID = ?`, [userID]
-                ),
-                connection.query(`
-                    SELECT 
-                        t.EmployeeName
-                    FROM
-                        useraccount
-                    JOIN 
-                        employee ON useraccount.EmployeeID = employee.EmployeeID
-                    JOIN
-                        employee as t ON employee.SupervisorID = t.EmployeeID
-                    WHERE 
-                        useraccount.userID = ?`, [userID]
-                )
+            const [
+                PersonalInfo,
+                DependentInfo,
+
+                JobTitleInfo,
+                DepartmentInfo,
+                SupervisorsInfo,
+                EmployeeStatusInfo,
+                PayGradesInfo,
+
+                EmergencyInfo
+
+            ]= await Promise.all([
+                getPersonalInfo(connection,data),
+                getDependentInfo(connection,data),
+
+                getJobTitleInfo(connection,data),
+                getDepartmentInfo(connection,data),
+                getSupervisorsInfo(connection,data),
+                getEmployeeStatusInfo(connection,data),
+                getPayGradesInfo(connection,data),
+
+                getEmergencyInfo(connection,data)
             ]);
-
-            connection.release();
 
             return res.json({
                 success: 1,
                 message: "My account accessed successfully",
-                personalInfo: personalInfo[0],
-                supervisor: supervisor[0],
-                departmentInfo: departmentInfo[0],
-                emergencyInfo: emergencyInfo[0]
-            });
+                PersonalInfo,
+                DependentInfo,
+                JobTitleInfo,
+                DepartmentInfo,
+                SupervisorsInfo,
+                EmployeeStatusInfo,
+                PayGradesInfo,
+                EmergencyInfo
 
+            });
+    
         } catch (error) {
-            console.error("Actual error:", error);
+            console.error("An error occurred while accessing my account:", error);
             return res.status(500).json({
                 success: 0,
-                message: "An error occurred while accessing my account"
+                message: `An error occurred while accessing my account: ${error.message}`
             });
+        } finally {
+            if (connection) connection.release();
         }
     },
     createUser: (req, res) => {
@@ -464,7 +425,7 @@ module.exports = {
             });
         }
     },
-    reqALeave : async (req, res) =>{
+    reqALeave : async (req, res) =>{ //done
         console.log(">reqALeave")
         const data=req.body;
         // console.log(data)
@@ -472,14 +433,16 @@ module.exports = {
             // console.log(data['UserID']);
             // const EmployeeID = await getEmployeeIDByUserID(data['UserID']);
             // data["EmployeeID"]=EmployeeID
-            // console.log(data)
+            console.log(data)
             const result=await reqLeave(data);
             // console.log(result);
+            console.log("<");
             return res.status(200).json({
                 success: 1,
                 result : result
             })
         }catch(err){
+            console.log("<")
             return res.json({
                 success: 0,
                 message: err.message

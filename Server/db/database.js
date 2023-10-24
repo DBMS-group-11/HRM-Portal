@@ -22,17 +22,17 @@ const pool = mysql.createPool({
 //The .promise() method added to the MySQL pool object converts the callback-based API to a Promise-based API, enabling the use of async/await. In your code, it seems that you have both callback-based and Promise-based implementations.
 
 // Optional: Add event handlers to log database events
-pool.on('acquire', function(connection) {
-    console.log(`Connection ${connection.threadId} acquired`);
-});
+// pool.on('acquire', function(connection) {
+//     console.log(`Connection ${connection.threadId} acquired`);
+// });
 
-pool.on('release', function(connection) {
-    console.log(`Connection ${connection.threadId} released`);
-});
+// pool.on('release', function(connection) {
+//     console.log(`Connection ${connection.threadId} released`);
+// });
 
-pool.on('enqueue', function() {
-    console.log('Waiting for available connection slot');
-});
+// pool.on('enqueue', function() {
+//     console.log('Waiting for available connection slot');
+// });
 
 // Export the pool to be used in other parts of your application
 module.exports = pool;

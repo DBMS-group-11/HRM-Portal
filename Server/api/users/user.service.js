@@ -361,66 +361,200 @@ module.exports = {
             throw error; // You may choose to handle or rethrow the error as needed
         }
     },
-    // updateUser: (data, callBack) => {
-    //     pool.query(
-    //         `update useraccount set Username=?,Email=?,EmployeeID=?,PasswordHash=?,UserAccountLevelID=? where userID=?`,
-    //         [
-    //             data.Username,   //at the runtime ? will be repalce from these values
-    //             data.Email,
-    //             data.EmployeeID,
-    //             data.PasswordHash,
-    //             data.UserAccountLevelID,
-    //             data.UserID
-    //         ],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 callBack(error);
-    //             }
-    //             return callBack(null, results);
-    //         }
-    //     );
-    // },
-    // deleteUser: (data, callBack) => {
-    //     pool.query(
-    //         `delete from useraccount where UserID = ?`,
-    //         [data.UserID],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 callBack(error);
-    //             }
-    //             return callBack(null, results[0]);
-    //         }
-    //     );
-    // },
-    // getUsers:(callBack)=>{
-    //     console.log("prints")
-    //     pool.query(
-    //         `select * from useraccount`,
-    //         [],
-    //         (error,results,fields)=>{
-    //             if(error){
-    //                 return callBack(error);
-    //             }
-    //             return callBack(null,results);
-    //         }
-    //     )
-    // },
-    // create: (data, callBack) => {
-    //     pool.query(
-    //         `insert into useraccount(Username,Email,EmployeeID,PasswordHash,UserAccountLevelID) values(?,?,?,?,?)`,
-    //         [
-    //             data.Username,   //at the runtime ? will be repalce from these values
-    //             data.Email,
-    //             data.EmployeeID,
-    //             data.PasswordHash,
-    //             data.UserAccountLevelID
-    //         ],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 return callBack(error);
-    //             }
-    //             return callBack(null, results);
-    //         }
-    //     );
-    // },
+    getPersonalInfo : async (connection, data) => {
+        console.log("___getPersonalInfo: Fetching personal info for EmployeeID:", data.EmployeeID);
+        const sqlQuery = `
+            SELECT 
+                employee.EmployeeName,
+                employee.EmployeeID,
+                employee.Address,
+                employee.Country,
+                useraccount.Username,
+                useraccount.Email,
+                employee.DateOfBirth,
+                employee.MaritalStatus,
+                employee.Gender
+            FROM useraccount 
+            JOIN employee ON employee.EmployeeID = useraccount.EmployeeID
+            WHERE employee.EmployeeID = ?
+        `;
+        try {
+            const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
+            if(results.length == 0){
+                return null;
+            }
+            return { personalInfo: results[0] };
+        } catch (error) {
+            console.error("Failed to fetch personal info:", error);
+            throw new Error(`An error occurred while fetching personal info: ${error.message}`);
+        }
+    },
+    getDependentInfo : async (connection, data) => {
+        console.log("___getDependentInfo: Fetching dependent info for EmployeeID:", data.EmployeeID);
+        const sqlQuery = `
+            SELECT 
+                DependentName, 
+                DependentAge 
+            FROM 
+                dependentinfo 
+            WHERE 
+                EmployeeID = ?
+        `;
+        try {
+            const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
+            if(results.length == 0){
+                return null;
+            }
+
+            return results;
+        } catch (error) {
+            console.error("Failed to fetch dependent info:", error);
+            throw new Error(`An error occurred while fetching dependent info: ${error.message}`);
+        }
+    },
+    getJobTitleInfo : async (connection, data) => {
+        console.log("___getJobTitleInfo: Fetching job title info for EmployeeID:", data.EmployeeID);
+        const sqlQuery = `
+            SELECT 
+                jobtitle.JobTitleName 
+            FROM 
+                jobtitle 
+            JOIN 
+                employee ON employee.JobTitleID = jobtitle.JobTitleID 
+            WHERE 
+                employee.EmployeeID = ?
+        `;
+        try {
+            const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
+            if(results.length == 0){
+                return null;
+            }
+            return results;
+        } catch (error) {
+            console.error("Failed to fetch job title info:", error);
+            throw new Error(`An error occurred while fetching job title info: ${error.message}`);
+        }
+    },
+    getDepartmentInfo : async (connection, data) => {
+        console.log("___getDepartmentInfo: Fetching department info for EmployeeID:", data.EmployeeID);
+        const sqlQuery = `
+            SELECT 
+                DepartmentName 
+            FROM 
+                department 
+            JOIN 
+                employee ON department.DepartmentID = employee.DepartmentID 
+            WHERE 
+                employee.EmployeeID = ?
+        `;
+        try {
+            const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
+            if(results.length == 0){
+                return null;
+            }
+            return results[0];
+        } catch (error) {
+            console.error("Failed to fetch department info:", error);
+            throw new Error(`An error occurred while fetching department info: ${error.message}`);
+        }
+    },
+    getSupervisorsInfo: async(connection, data) => {
+        console.log("___getSupervisorsInfo: Fetching supervisor info for EmployeeID:", data.EmployeeID);
+    
+        const sqlQuery = `
+            SELECT 
+                supervisor.EmployeeName AS SupervisorName, 
+                supervisor.EmployeeID AS SupervisorID 
+            FROM 
+                employee AS e
+            JOIN 
+                employee AS supervisor ON e.SupervisorID = supervisor.EmployeeID
+            WHERE 
+                e.EmployeeID = ?
+        `;
+    
+        try {
+            const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
+            if(results.length == 0){
+                return null;
+            }
+            return results[0];  // Assuming an employee has only one supervisor.
+        } catch (error) {
+            console.error("Failed to fetch supervisor info:", error);
+            throw new Error(`An error occurred while fetching supervisor info: ${error.message}`);
+        }
+    },    
+    getEmployeeStatusInfo : async (connection, data) => {
+        console.log("___getEmployeeStatusInfo: Fetching employee status info for EmployeeID:", data.EmployeeID);
+        const sqlQuery = `
+            SELECT 
+                EmploymentStatusName 
+            FROM 
+                employmentstatus 
+            JOIN 
+                employee ON employee.EmploymentStatusID = employmentstatus.EmploymentStatusID 
+            WHERE 
+                employee.EmployeeID = ?
+        `;
+        try {
+            const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
+            if(results.length == 0){
+                return null;
+            }
+            return results;
+        } catch (error) {
+            console.error("Failed to fetch employee status info:", error);
+            throw new Error(`An error occurred while fetching employee status info: ${error.message}`);
+        }
+    },
+    getPayGradesInfo : async (connection, data) => {
+        console.log("___getPayGradesInfo: Fetching paygrade info for EmployeeID:", data.EmployeeID);
+        const sqlQuery = `
+            SELECT 
+                PayGradeName 
+            FROM 
+                paygrade 
+            JOIN 
+                employee ON employee.PayGradeID = paygrade.PayGradeID 
+            WHERE 
+                employee.EmployeeID = ?
+        `;
+        try {
+            const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
+            if(results.length == 0) {
+                return null;
+            }
+            return results;
+        } catch (error) {
+            console.error("Failed to fetch paygrade info:", error);
+            throw new Error(`An error occurred while fetching paygrade info: ${error.message}`);
+        }
+    },
+    getEmergencyInfo : async (connection, data) => {
+        console.log('___getEmergencyInfo: Fetching emergency info for EmployeeID:', data.EmployeeID);
+        const sqlQuery = `
+            SELECT 
+                emergencycontact.PrimaryName,
+                emergencycontact.PrimaryPhoneNumber,
+                emergencycontact.SecondaryName,
+                emergencycontact.SecondaryPhoneNumber,
+                emergencycontact.Address 
+            FROM 
+                emergencycontact 
+            JOIN 
+                employee ON emergencycontact.EmergencyContactID = employee.EmergencyContactID
+            WHERE 
+                employee.EmployeeID = ?
+        `;
+        try {
+            const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
+            if(results.length == 0){
+                return null;
+            }
+            return results;
+        } catch (error) {
+            console.error("Failed to fetch emergency info:", error);
+            throw new Error(`An error occurred while fetching emergency info: ${error.message}`);
+        }
+    }    
 };

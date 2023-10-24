@@ -6,7 +6,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
     
     const userAccountTypes = [
         {
-            value: 'Leval1',
+            value: 'Level1',
             label: 'Employee'
         },
         {
