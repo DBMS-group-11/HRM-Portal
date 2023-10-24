@@ -7,7 +7,7 @@ import jwt from 'jwt-decode';
 
 const Home = () => {
 
-    const [cookies] = useCookies(['u-token']);
+    const [cookies] = useCookies(['u-token', 'x-uData']);
 
     const [noOfLeaves, setNoOfLeaves] = useState({
         Annual: 0,
@@ -34,7 +34,7 @@ const Home = () => {
 
         setEmpDetails({
             name: decoded.result[0].Username,
-            employeeId: decoded.result[0].EmployeeID,
+            employeeId: cookies['x-uData'].EmployeeID,
             status: 'Permanent',
             payGrade: 'Lv1',
             company: 'Jupiter Apparels (Pvt) Ltd',
