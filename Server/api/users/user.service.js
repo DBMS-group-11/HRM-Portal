@@ -324,19 +324,6 @@ module.exports = {
             }
         )
     },
-    getUserByUserEmail_: (Email, callBack) => {
-        console.log(Email)
-        pool.query(
-            `select * from useraccount where Email=?`,
-            [Email],
-            (error, results, fields) => {
-                if (error) {
-                    callBack(error);
-                }
-                return callBack(null, results);
-            }
-        )
-    },
     getUserByUserEmail: async (Email) => {
         console.log("__getUserByUserEmail")
         try {

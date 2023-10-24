@@ -39,7 +39,7 @@ router.get("/getRegisterSub",getRegisterSub); //get additional information from 
 
 router.post("/myAccount",myAccount); //employee personal account
 
-router.get("/",getUsers); //get Userx
+router.get("/",getUsers); //get Users
 
 // // -------------------
 router.post("/getReqLeaveSub",getReqLeaveSub); //getTotalLeaveCountByUSerID

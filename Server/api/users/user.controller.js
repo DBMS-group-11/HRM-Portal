@@ -40,9 +40,14 @@ module.exports = {
         console.log("> Login to system")
 
         const data = req.body;
+        // console.log(data)
         try {
             const { email, password } = req.body;
+
+            // console.log(email)
+            // console.log(password)
             const results = await getUserByUserEmail(email);
+            // console.log(results)
             if (!results) {
                 return res.json({
                     success: 0,
@@ -57,11 +62,14 @@ module.exports = {
                 const jsontoken = sign({ result: results }, "qwe1234", {
                     expiresIn: "1h"
                 });
+        
                 //required response
                 const values = {
                     UserID: results[0].UserID,
+                    EmployeeID:results[0].EmployeeID,
                     UserAccountLevelID: results[0].UserAccountLevelID
                 };
+                // console.log(values)
                 console.log("   ___login successful\n<")
                 return res.json({
                     success: 1,
@@ -222,7 +230,10 @@ module.exports = {
     },
     myAccount: async (req, res) => {
         console.log(">myAccount");
+        console.log(req.body)
         const userID = req.body["userID"];
+        const EmployeeID=req.body["EmployeeID"];
+        // console.log(EmployeeID)
         try {
             const connection = await pool.getConnection();
 
@@ -451,10 +462,11 @@ module.exports = {
     reqALeave : async (req, res) =>{
         console.log(">reqALeave")
         const data=req.body;
+        // console.log(data)
         try{
             // console.log(data['UserID']);
-            const EmployeeID = await getEmployeeIDByUserID(data['UserID']);
-            data["EmployeeID"]=EmployeeID
+            // const EmployeeID = await getEmployeeIDByUserID(data['UserID']);
+            // data["EmployeeID"]=EmployeeID
             // console.log(data)
             const result=await reqLeave(data);
             // console.log(result);
@@ -462,7 +474,6 @@ module.exports = {
                 success: 1,
                 result : result
             })
-
         }catch(err){
             return res.json({
                 success: 0,
