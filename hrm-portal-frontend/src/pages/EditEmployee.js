@@ -5,14 +5,15 @@ import EmergencyInfo from "../components/InfoForms/EmergencyInfo";
 import { useEffect, useState } from "react";
 import UserCredentialsForm from "../components/userCredentialsForm";
 import { CloseOutlined, EditOutlined } from "@mui/icons-material";
-import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
-const MyAccount = () => {
+const EditEmployee = () => {
 
     const [data, setData] = useState(null);
-    const [isReadOnly, setIsReadOnly] = useState(true);
+    const [isReadOnly, setIsReadOnly] = useState(false);
     const [myData, setMyData] = useState({});
-    const [cookies] = useCookies(['x-ual']);
+
+    const navigate = useNavigate();
 
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
@@ -46,7 +47,7 @@ const MyAccount = () => {
     /////////////////////////////////
 
     useEffect(() => {
-        document.title = "My Account | HRM-Portal";
+        document.title = "Edit Employee | HRM-Portal";
         // fetch('http://localhost:8000/employees')
         // .then(res => {
         //     return res.json();
@@ -85,8 +86,7 @@ const MyAccount = () => {
     }, []);
     return ( 
             <Box maxWidth={"840px"} margin={'auto'}>
-                {cookies['x-ual'] <= 2 && (
-                    <Box sx={{textAlign:'right'}}>
+                <Box sx={{textAlign:'right'}}>
                     {
                         !isReadOnly && (
                             <Button variant="contained" sx={{paddingX:4}} onClick={handleSubmit}>
@@ -96,18 +96,16 @@ const MyAccount = () => {
                     }
                     <IconButton
                         sx={{marginLeft:2, boxShadow:1}}
-                        onClick={() => setIsReadOnly(!isReadOnly)}
+                        onClick={() => navigate('/dashboard/supervisees')}
                     >
-                        {isReadOnly ? <EditOutlined /> : <CloseOutlined />}
+                        <CloseOutlined />
                     </IconButton>
                 </Box>
-                )}
                 <PersonalInfo data={data} isReadOnly={isReadOnly} getData={getPersonalInfo}/>
                 <DepartmentInfo data={data} isReadOnly={isReadOnly} getData={getDepartmentInfo}/>
                 <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo}/>
-                <UserCredentialsForm />
             </Box>
      );
 }
  
-export default MyAccount;
+export default EditEmployee;

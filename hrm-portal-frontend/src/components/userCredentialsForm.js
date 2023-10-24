@@ -30,7 +30,7 @@ const UserCredentialsForm = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <TextField
-                            id="email"
+                            id="user-email"
                             label="email"
                             variant="standard"
                             fullWidth
