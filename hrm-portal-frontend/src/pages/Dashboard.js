@@ -19,6 +19,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Outlet, useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
+import { useState, useEffect } from "react";
+
 
 const drawerWidth = 320;
 const drawerLinks = [
@@ -26,36 +28,42 @@ const drawerLinks = [
         label:'Home',
         icon:<HomeIcon />,
         path:'/dashboard/home',
-        active:true
+        active:true,
+        visibilityLevel:4
     },
     {
         label:'Request A Leave',
         icon:<AddCircleOutlineIcon />,
         path:'/dashboard/request-a-leave',
-        active:false
+        active:false,
+        visibilityLevel:4
     },
     {
         label:'Manage Leaves',
         icon:<AssignmentTurnedInIcon />,
         path:'/dashboard/manage-leaves',
-        active:false
+        active:false,
+        visibilityLevel:3
     },
     {
         label:'Supervisees',
         icon:<Groups2Icon />,
-        path:'/dashboard',
-        active:false
+        path:'/dashboard/supervisees',
+        active:false,
+        visibilityLevel:2
     },
     {
         label:'Add Employee',
         icon:<PersonAddIcon />,
         path:'/dashboard/add-employee',
-        active:false
+        active:false,
+        visibilityLevel:2
     },{
         label:'My Account',
         icon:<AccountCircleIcon />,
         path:'/dashboard/myAccount',
-        active:false
+        active:false,
+        visibilityLevel:4
     }
     // {
     //     label:'Log out',
@@ -69,15 +77,21 @@ const drawerLinks = [
 function Dashboard(props) {
     
   const { window, children } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [userlevelID, setUserlevelID] = useState(0);
 
   const navigate = useNavigate();
 
-  const [cookies, setCookie, removeCookie] = useCookies(['userLoggedIn']);
+  const [cookies, setCookie, removeCookie] = useCookies(['userLoggedIn', 'x-ual']);
+  
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  useEffect(()=>{
+    setUserlevelID(cookies['x-ual']);
+  }, []);
 
   const drawer = (
     <Box sx={{height:'100%',backgroundColor:'#e5f5ff', borderTopRightRadius:'16px', borderBottomRightRadius:'16px'}}>
@@ -96,25 +110,29 @@ function Dashboard(props) {
       </Toolbar>
       {/* <Divider /> */}
       <List>
-        {drawerLinks.map((drawerLink) => (
-            <ListItem key={drawerLink.label}>
-                <ListItemButton
-                    selected={drawerLink.active}
-                    onClick={() => {
-                        drawerLink.active = true;
-                        drawerLinks.forEach((link) => {
-                            if(link.label !== drawerLink.label){
-                                link.active = false;
-                            }
-                        });
-                        navigate(drawerLink.path);
-                    }}
-                >
-                    <ListItemIcon sx={{ml:3}}>{drawerLink.icon}</ListItemIcon>
-                    <ListItemText>{drawerLink.label}</ListItemText>
-                </ListItemButton>
-            </ListItem>
-        ))}
+        {drawerLinks.map((drawerLink) => {
+            if(userlevelID <= drawerLink.visibilityLevel){
+                return(
+                    <ListItem key={drawerLink.label}>
+                        <ListItemButton
+                            selected={drawerLink.active}
+                            onClick={() => {
+                                drawerLink.active = true;
+                                drawerLinks.forEach((link) => {
+                                    if(link.label !== drawerLink.label){
+                                        link.active = false;
+                                    }
+                                });
+                                navigate(drawerLink.path);
+                            }}
+                        >
+                            <ListItemIcon sx={{ml:3}}>{drawerLink.icon}</ListItemIcon>
+                            <ListItemText>{drawerLink.label}</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                )
+            }
+        })}
             <ListItem>
                 <ListItemButton
                     onClick={() => {
@@ -124,6 +142,7 @@ function Dashboard(props) {
                         drawerLinks[0].active = true;
                         navigate('/login');
                         removeCookie('userLoggedIn', { path: '/' });
+                        removeCookie('x-ual', { path: '/' });
                     }}
                 >
                     <ListItemIcon sx={{ml:3}}><LogoutIcon /></ListItemIcon>

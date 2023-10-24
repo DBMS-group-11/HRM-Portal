@@ -124,7 +124,7 @@ const RequestALeave = () => {
                             setFromDate(newValue);
                             if(toDate){
                                 const diffTime = Math.abs(toDate - newValue);
-                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                                 setNoOfDays(diffDays);
                             }
                         }}
@@ -137,7 +137,7 @@ const RequestALeave = () => {
                             setToDate(newValue)
                             if(fromDate){
                                 const diffTime = Math.abs(newValue - fromDate);
-                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                                 setNoOfDays(diffDays);
                             }
                         }}

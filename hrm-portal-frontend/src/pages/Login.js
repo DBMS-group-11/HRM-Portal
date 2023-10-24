@@ -31,7 +31,7 @@ const Login = ({setLoggedIn}) => {
             {cookieBoxOpen && (
                 <Snackbar
                     open={cookieBoxOpen}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                     onClose={(e,r)=>{
                         if(r==='clickaway'){
                             return;
@@ -75,7 +75,7 @@ const Login = ({setLoggedIn}) => {
                     open={snackBarOpen}
                     autoHideDuration={6000}
                     onClose={handleSnackBarClose}
-                    message="Try to Remember your Password next time!"
+                    message="No password parachute here! Time to dig out those memory superpowers!"
                 />
             </Grid>
         </>
