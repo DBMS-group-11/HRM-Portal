@@ -15,7 +15,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
 
     const [jobTitle, setJobTitle] = useState('Software Engineer');
     const [department, setDepartment] = useState('IT');
-    const [status, setStatus] = useState('Permanent');
+    const [status, setStatus] = useState('Intern (fulltime)');
     const [payGrade, setPayGrade] = useState('Level1');
     const [supervisor, setSupervisor] = useState('');
 
@@ -65,11 +65,11 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
     
     useEffect(() => {        
         if(isReadOnly){
-            setJobTitle(data && data.jobTitle || '');
-            setDepartment(data && data.department || '');
-            setStatus(data && data.jobStatus || '');
-            setPayGrade(data && data.payGrade || '');
-            setSupervisor(data && data.supervisor || '');
+            setJobTitle(data && data.departmentInfo.jobTitle || '');
+            setDepartment(data && data.departmentInfo.department || '');
+            setStatus(data && data.departmentInfo.status || '');
+            setPayGrade(data && data.departmentInfo.payGrade || '');
+            setSupervisor(data && data.departmentInfo.supervisor || '');
         }else{
             let formData = {jobTitle, department, status, payGrade, supervisor};
             getData(formData);

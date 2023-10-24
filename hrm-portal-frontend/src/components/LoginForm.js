@@ -32,10 +32,16 @@ const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
                 if(res.data.success==1){
                     navigate('/dashboard/home');
                     setLoggedIn(true);
+
+                    const userData = {
+                        EmployeeID:res.data.values.EmployeeID,
+                        UserID:res.data.values.UserID
+                    };
+
                     setCookie('u-token', res.data.token, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                     setCookie('x-ual', res.data.values.UserAccountLevelID, { path: '/' , expires: new Date(Date.now() + 900000)}); // ual - user acount level : cookie expires in 15 mins
                     setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
-                    setCookie('x-uData', {EmployeeID:res.data.values.EmployeeID}, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
+                    setCookie('x-uData', userData, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                 }
                 else if(res.data.success==0){
                     setErrorCredentials(true);

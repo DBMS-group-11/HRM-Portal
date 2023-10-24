@@ -6,16 +6,18 @@ import { useEffect, useState } from "react";
 import UserCredentialsForm from "../components/userCredentialsForm";
 import { CloseOutlined, EditOutlined } from "@mui/icons-material";
 import { useCookies } from "react-cookie";
+import axios from "axios";
 
 const MyAccount = () => {
 
     const [data, setData] = useState(null);
     const [isReadOnly, setIsReadOnly] = useState(true);
     const [myData, setMyData] = useState({});
-    const [cookies] = useCookies(['x-ual']);
+    const [cookies] = useCookies(['x-ual', 'x-uData']);
 
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
+        myData.personalInfo = {...e, employeeID: cookies['x-uData'].EmployeeID};
     };
 
     const getDepartmentInfo = (e) => {
@@ -31,6 +33,8 @@ const MyAccount = () => {
         e.preventDefault();
         console.log('submit');
         console.log(myData);
+        setData(myData)
+        setIsReadOnly(true);
         // axios.post("http://localhost:3000/api/users/reg",myData)
         // .then(res=>{
         //     console.log(res.data.success);
@@ -47,39 +51,40 @@ const MyAccount = () => {
 
     useEffect(() => {
         document.title = "My Account | HRM-Portal";
-        // fetch('http://localhost:8000/employees')
-        // .then(res => {
-        //     return res.json();
-        // })
-        // .then(data => {
-        //     setData(data);
-        // }).catch(err => {
-        //     console.log(err);
-        // })
+        axios.post('http://localhost:3000/api/users/myAccount',cookies['x-uData'].UserID)
+        .then(res =>{
+            console.log(res);
+        })
 
         setData({
-            name: "John Doe",
-            employeeId: "EMP-0001",
-            address: "No. 123, Main Street, Colombo 01",
-            country: "Sri Lanka",
-            username: "johndoe",
-            email: "johnd@mail.com",
-            userAccountType: "Level4",
-            dob: "01/01/1990",
-            maritalStatus: "Unmarried",
-            gender: "Male",
-            jobTitle: "Software Engineer",
-            department: "Software Development",
-            jobStatus: "Permanent",
-            payGrade: "PG-1",
-            supervisor: "Rajapakse",
-            emergencyName1: "Jane Doe",
-            emergencyTel1: "0771234567",
-            emergencyName2: "Sirisena",
-            emergencyTel2: "0777654321",
-            emergencyaddress: "No. 123, Main Street, Colombo 01",
-            dependentName: "Jane Doe",
-            dependentAge: 10
+            "personalInfo": {
+                "name": "John Doe",
+                "employeeID":cookies['x-uData'].EmployeeID,
+                "address": "No. 123, Main Street, Colombo 01",
+                "country": "Sri Lanka",
+                "username": "johndoe",
+                "email": "johnd@mail.com",
+                "userAccountType": "Level4",
+                "dob": "01/01/1990",
+                "maritalStatus": "Unmarried",
+                "gender": "Male",
+                "dependentName": "Jane Doe",
+                "dependentAge": 10
+            },
+            "departmentInfo": {
+                "jobTitle": "Software Engineer",
+                "department": "Software Development",
+                "status": "Permanent",
+                "payGrade": "PG-1",
+                "supervisor": "Rajapakse"
+            },
+            "emergencyInfo": {
+                "name1": "Jane Doe",
+                "telNo1": "0771234567",
+                "name2": "Sirisena",
+                "telNo2": "0777654321",
+                "emergencyAddress": "No. 123, Main Street, Colombo 01"
+            }
         });
 
     }, []);

@@ -38,18 +38,18 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
 
     useEffect(() => {
         if(isReadOnly){
-            setName(data && data.name || '');
-            setEmployeeId(data && data.employeeId || '');
-            setAddress(data && data.address || '');
-            setCountry(data && data.country || '');
-            setUsername(data && data.username || '');
-            setEmail(data && data.email || '');
-            setUserAccountType(data && data.userAccountType || '');
-            setDob(data && data.dob || '');
-            setMaritalStatus(data && data.maritalStatus || '');
-            setGender(data && data.gender || '');
-            setDependentName(data && data.dependentName || '');
-            setDependentAge(data && data.dependentAge || '');
+            setName(data && data.personalInfo.name || '');
+            setEmployeeId(data && data.personalInfo.employeeID || '');
+            setAddress(data && data.personalInfo.address || '');
+            setCountry(data && data.personalInfo.country || '');
+            setUsername(data && data.personalInfo.username || '');
+            setEmail(data && data.personalInfo.email || '');
+            setUserAccountType(data && data.personalInfo.userAccountType || '');
+            setDob(data && data.personalInfo.dob || '');
+            setMaritalStatus(data && data.personalInfo.maritalStatus || '');
+            setGender(data && data.personalInfo.gender || '');
+            setDependentName(data && data.personalInfo.dependentName || '');
+            setDependentAge(data && data.personalInfo.dependentAge || '');
         }
         else{
             let formData = {name, address, country, username, email, userAccountType, dob, maritalStatus, gender, dependentName, dependentAge};
