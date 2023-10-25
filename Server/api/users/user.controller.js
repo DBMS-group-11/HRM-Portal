@@ -31,7 +31,9 @@ const {
     getPayGradesInfo,
     getEmergencyInfo,
 
-    getTotTakenLeaveCount
+    getTotTakenLeaveCount,
+    getTotApprovedLeaveCount,
+    getTotApprovedLeaveCountByType
 } = require("./user.service");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -45,11 +47,58 @@ const sendErrorResponse = (res, message) => {
 };
 
 module.exports = {
-    homeSub: (req, res) =>{
-        console.log('> HomeSub')
-        const data = req.body
-        
-    },
+    homeSub: async(req, res) => {
+        console.log('> HomeSub');
+        const data=req.body
+        // console.log(data)
+        let connection;
+        try {
+            connection = await pool.getConnection();
+
+            // If you have multiple asynchronous tasks, you can add them in Promise.all
+            const [
+                PersonalInfo,
+                EmployeeStatusInfo,
+                PayGradesInfo,
+                TotApprovedLeaveCount,
+                TotApprovedLeaveCountByType,
+            ] = await Promise.all([
+                getPersonalInfo(connection,data),
+                getEmployeeStatusInfo(connection,data), 
+                getPayGradesInfo(connection,data),
+                getTotApprovedLeaveCount(connection,data),
+                getTotApprovedLeaveCountByType(connection,data)
+            ]);
+            console.log(PersonalInfo)
+            const PersonalInfoForHome={
+                EmployeeID:PersonalInfo.personalInfo.EmployeeID,
+                CountryID:PersonalInfo.personalInfo.CountryID,
+                Username:PersonalInfo.personalInfo.Username,
+                Gender: PersonalInfo.personalInfo.Gender,
+            }
+
+    
+            return res.json({
+                success: 1,
+                message: "success",
+                PersonalInfoForHome,
+                EmployeeStatusInfo,
+                PayGradesInfo,
+                TotApprovedLeaveCount,
+                TotApprovedLeaveCountByType
+            });
+        } catch (error) {
+            console.error("Error in homeSub:", error.message);
+            return res.status(500).json({
+                success: 0,
+                message: "Internal Server Error"
+            });
+        } finally {
+            if (connection) {
+                connection.release();
+            }
+        }
+    },    
     login: async (req, res) => {   //login to the system - done
         console.log("> Login to system")
 

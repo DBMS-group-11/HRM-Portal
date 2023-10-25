@@ -66,12 +66,12 @@ module.exports = {
             throw error;  // Propagate the error back to the caller
         }
     },
-    addEmployee: async (connection,data) => { //done
+    addEmployee: async (connection, data) => { //done
         console.log("___addEmployee")
         // console.log(data)
         try {
             const newData = await findIDs(data);
-            
+
             data['Country'] = newData['CountryID']
             data['JobTitleID'] = newData['JobTitleID']
             data['DepartmentID'] = newData['DepartmentID']
@@ -109,7 +109,7 @@ module.exports = {
             throw error;  // Propagate the error back to the caller
         }
     },
-    addEmergencyContact: async (connection,data) => {  //done
+    addEmergencyContact: async (connection, data) => {  //done
         console.log("___addEmergencyContact")
         // First, insert the emergency contact
         // console.log(data)
@@ -239,7 +239,7 @@ module.exports = {
     getTotTakenLeaveCount: async (userID) => {
         console.log("___getTotTakenLeaveCount");
         try {
-            console.log(userID);
+            // console.log(userID);
             const [results] = await pool.query(
                 'SELECT count(*) as totLeaveCount FROM useraccount JOIN employee ON useraccount.EmployeeID = employee.EmployeeID JOIN `leave` ON employee.EmployeeID = leave.EmployeeID WHERE useraccount.UserID = ? AND leave.Approved=1',
                 [userID]
@@ -249,8 +249,33 @@ module.exports = {
         } catch (error) {
             throw new Error(`An error occurred while fetching total taken leave count: ${error.message}`);
         }
-    } ,
-    addDependent: async (connection,data) => { //done
+    },
+    getTotApprovedLeaveCount: async (connection, data) => {
+        console.log("___getTotApprovedLeaveCount");
+        try {
+            const [results] = await connection.query(`SELECT count(*) as totApprovedLeaveCount FROM \`leave\` WHERE \`leave\`.Approved=1 and \`leave\`.EmployeeID=?`,
+                [data.EmployeeID]
+            );
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching total approved leave count: ${error.message}`);
+        }
+    },
+    getTotApprovedLeaveCountByType: async (connection, data) => {
+        console.log("___getTotApprovedLeaveCountByType");
+        try {
+            const [results] = await connection.query(`
+                    SELECT LeaveType, COUNT(*) as CountApprovedByType 
+                    FROM \`leave\` 
+                    WHERE \`leave\`.Approved=1 and \`leave\`.EmployeeID=? 
+                    GROUP BY LeaveType
+                `, [data.EmployeeID]);
+            return results;
+        } catch (error) {
+            throw new Error(`An error occurred while fetching total approved leave count by types: ${error.message}`);
+        }
+    },
+    addDependent: async (connection, data) => { //done
         console.log("___addDependent")
         // console.log(data)
         try {
@@ -270,7 +295,7 @@ module.exports = {
             throw new Error(`An error occurred while adding a dependent: ${error.message}`);
         }
     },
-    getLastUserID: async(connection) => {
+    getLastUserID: async (connection) => {
         console.log("___getLastUserID")
         try {
             const [results] = await connection.query('SELECT UserID FROM useraccount ORDER BY UserID DESC LIMIT 1');
@@ -279,17 +304,17 @@ module.exports = {
             throw new Error(`An error occurred while fetching last user ID: ${error.message}`);
         }
     },
-    getLastEmployeeID: async(connection) => {
+    getLastEmployeeID: async (connection) => {
         console.log("___getLastEmployeeID")
-        try{
+        try {
             const [results] = await connection.query('SELECT EmployeeID FROM employee ORDER BY EmployeeID DESC LIMIT 1');
             return results
-        }catch(error){
+        } catch (error) {
             throw new Error(`An error occurred while fetching last employee ID: ${error.message}`);
         }
     },
     reqLeave: async (data) => {
-        console.log("__reqLeave");
+        console.log("___reqLeave");
         try {
             const [results] = await pool.query(
                 `INSERT INTO \`leave\` (LeaveLogDateTime, EmployeeID, Approved, Reason, LeaveType, FirstAbsentDate, LastAbsentDate, LeaveDayCount, ApprovedDateTime, ApprovedByID)
@@ -306,11 +331,11 @@ module.exports = {
             );
             console.log("Leave requested successfully");
             return results; // Return results to the caller
-    
+
         } catch (error) {
             throw new Error(`An error occurred while requesting leave: ${error.message}`);
         }
-    },    
+    },
     getUserByUserID: (UserID, callBack) => {
         pool.query(
             `select * from useraccount where UserID=?`,
@@ -337,7 +362,7 @@ module.exports = {
     getEmployeeIDByUserID: async (UserID) => {
         console.log("___getEmployeeIDByUserID");
         console.log(UserID);
-    
+
         try {
             const [results] = await pool.query(`
                 SELECT employee.EmployeeID
@@ -346,12 +371,12 @@ module.exports = {
                 WHERE useraccount.UserID = ?`,
                 [UserID]
             );
-    
+
             if (results.length === 0) {
                 // No results found for the given UserID
                 return null;
             }
-    
+
             const employeeID = results[0].EmployeeID;
             // console.log(employeeID)
             return employeeID;
@@ -361,7 +386,7 @@ module.exports = {
             throw error; // You may choose to handle or rethrow the error as needed
         }
     },
-    getPersonalInfo : async (connection, data) => {
+    getPersonalInfo: async (connection, data) => {
         console.log("___getPersonalInfo: Fetching personal info for EmployeeID:", data.EmployeeID);
         const sqlQuery = `
             SELECT 
@@ -380,7 +405,7 @@ module.exports = {
         `;
         try {
             const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
-            if(results.length == 0){
+            if (results.length == 0) {
                 return null;
             }
             return { personalInfo: results[0] };
@@ -389,7 +414,7 @@ module.exports = {
             throw new Error(`An error occurred while fetching personal info: ${error.message}`);
         }
     },
-    getDependentInfo : async (connection, data) => {
+    getDependentInfo: async (connection, data) => {
         console.log("___getDependentInfo: Fetching dependent info for EmployeeID:", data.EmployeeID);
         const sqlQuery = `
             SELECT 
@@ -402,7 +427,7 @@ module.exports = {
         `;
         try {
             const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
-            if(results.length == 0){
+            if (results.length == 0) {
                 return null;
             }
 
@@ -412,7 +437,7 @@ module.exports = {
             throw new Error(`An error occurred while fetching dependent info: ${error.message}`);
         }
     },
-    getJobTitleInfo : async (connection, data) => {
+    getJobTitleInfo: async (connection, data) => {
         console.log("___getJobTitleInfo: Fetching job title info for EmployeeID:", data.EmployeeID);
         const sqlQuery = `
             SELECT 
@@ -426,7 +451,7 @@ module.exports = {
         `;
         try {
             const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
-            if(results.length == 0){
+            if (results.length == 0) {
                 return null;
             }
             return results;
@@ -435,7 +460,7 @@ module.exports = {
             throw new Error(`An error occurred while fetching job title info: ${error.message}`);
         }
     },
-    getDepartmentInfo : async (connection, data) => {
+    getDepartmentInfo: async (connection, data) => {
         console.log("___getDepartmentInfo: Fetching department info for EmployeeID:", data.EmployeeID);
         const sqlQuery = `
             SELECT 
@@ -449,7 +474,7 @@ module.exports = {
         `;
         try {
             const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
-            if(results.length == 0){
+            if (results.length == 0) {
                 return null;
             }
             return results[0];
@@ -458,9 +483,9 @@ module.exports = {
             throw new Error(`An error occurred while fetching department info: ${error.message}`);
         }
     },
-    getSupervisorsInfo: async(connection, data) => {
+    getSupervisorsInfo: async (connection, data) => {
         console.log("___getSupervisorsInfo: Fetching supervisor info for EmployeeID:", data.EmployeeID);
-    
+
         const sqlQuery = `
             SELECT 
                 supervisor.EmployeeName AS SupervisorName, 
@@ -472,10 +497,10 @@ module.exports = {
             WHERE 
                 e.EmployeeID = ?
         `;
-    
+
         try {
             const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
-            if(results.length == 0){
+            if (results.length == 0) {
                 return null;
             }
             return results[0];  // Assuming an employee has only one supervisor.
@@ -483,8 +508,8 @@ module.exports = {
             console.error("Failed to fetch supervisor info:", error);
             throw new Error(`An error occurred while fetching supervisor info: ${error.message}`);
         }
-    },    
-    getEmployeeStatusInfo : async (connection, data) => {
+    },
+    getEmployeeStatusInfo: async (connection, data) => {
         console.log("___getEmployeeStatusInfo: Fetching employee status info for EmployeeID:", data.EmployeeID);
         const sqlQuery = `
             SELECT 
@@ -498,7 +523,7 @@ module.exports = {
         `;
         try {
             const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
-            if(results.length == 0){
+            if (results.length == 0) {
                 return null;
             }
             return results;
@@ -507,7 +532,7 @@ module.exports = {
             throw new Error(`An error occurred while fetching employee status info: ${error.message}`);
         }
     },
-    getPayGradesInfo : async (connection, data) => {
+    getPayGradesInfo: async (connection, data) => {
         console.log("___getPayGradesInfo: Fetching paygrade info for EmployeeID:", data.EmployeeID);
         const sqlQuery = `
             SELECT 
@@ -521,7 +546,7 @@ module.exports = {
         `;
         try {
             const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
-            if(results.length == 0) {
+            if (results.length == 0) {
                 return null;
             }
             return results;
@@ -530,7 +555,7 @@ module.exports = {
             throw new Error(`An error occurred while fetching paygrade info: ${error.message}`);
         }
     },
-    getEmergencyInfo : async (connection, data) => {
+    getEmergencyInfo: async (connection, data) => {
         console.log('___getEmergencyInfo: Fetching emergency info for EmployeeID:', data.EmployeeID);
         const sqlQuery = `
             SELECT 
@@ -548,7 +573,7 @@ module.exports = {
         `;
         try {
             const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
-            if(results.length == 0){
+            if (results.length == 0) {
                 return null;
             }
             return results;
@@ -556,5 +581,5 @@ module.exports = {
             console.error("Failed to fetch emergency info:", error);
             throw new Error(`An error occurred while fetching emergency info: ${error.message}`);
         }
-    }    
+    }
 };
