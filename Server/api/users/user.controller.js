@@ -36,7 +36,9 @@ const {
     getTotApprovedLeaveCountByType,
 
     fetchNotApprovedLeaves,
-    updateLeaves
+    updateLeaves,
+
+    getSupervisees
 } = require("./user.service");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -78,9 +80,7 @@ module.exports = {
                 CountryID:PersonalInfo.personalInfo.CountryID,
                 Username:PersonalInfo.personalInfo.Username,
                 Gender: PersonalInfo.personalInfo.Gender,
-            }
-
-    
+            }    
             return res.json({
                 success: 1,
                 message: "success",
@@ -552,6 +552,26 @@ module.exports = {
             if(connection)
                 connection.release();
         }
-    }
+    },
+    supervisees: async(req, res) => {
+        console.log("> supervisees")
+        let connection;
+        try{
+            connection=await pool.getConnection();
+            const result = await getSupervisees(connection);
+            return res.status(200).json({
+                success:1,
+                supervisees:result
+            });
+        }catch(error){
+            return res.status(500).json({
+                success:0,
+                message: error.message
+            });
+        }finally{
+            if(connection)
+                connection.release();
+        }
+    },
     
 }

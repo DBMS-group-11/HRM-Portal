@@ -618,6 +618,20 @@ module.exports = {
             console.error("Error updating leaves:", error.message);
             throw new Error(`An error occurred while updating leaves: ${error.message}`);
         }
+    },
+    getSupervisees: async (connection) => {
+        console.log("___getSupervisees");
+        try{
+            const [results] = await connection.query(
+                `SELECT * FROM employee WHERE EmployeeID in(SELECT SupervisorID FROM employee WHERE SupervisorID IS NOT NULL)`
+            );
+            if (results.length == 0) {
+                return null;
+            }
+            return results;
+        }catch(error){
+            console.log("Error getting supervisees",error.message)
+            throw new Error(`An error occurred while getting supervisees: ${error.message}`);
+        }
     }
-    
 };
