@@ -53,7 +53,7 @@ const MyAccount = () => {
         document.title = "My Account | HRM-Portal";
         axios.post('http://localhost:3000/api/users/myAccount',cookies['x-uData'].UserID)
         .then(res =>{
-            console.log(res);
+            console.log(res.data);
         })
 
         setData({
