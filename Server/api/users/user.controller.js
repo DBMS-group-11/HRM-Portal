@@ -33,7 +33,10 @@ const {
 
     getTotTakenLeaveCount,
     getTotApprovedLeaveCount,
-    getTotApprovedLeaveCountByType
+    getTotApprovedLeaveCountByType,
+
+    fetchNotApprovedLeaves,
+    updateLeaves
 } = require("./user.service");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -69,7 +72,7 @@ module.exports = {
                 getTotApprovedLeaveCount(connection,data),
                 getTotApprovedLeaveCountByType(connection,data)
             ]);
-            console.log(PersonalInfo)
+            // console.log(PersonalInfo)
             const PersonalInfoForHome={
                 EmployeeID:PersonalInfo.personalInfo.EmployeeID,
                 CountryID:PersonalInfo.personalInfo.CountryID,
@@ -497,5 +500,58 @@ module.exports = {
                 message: err.message
             })
         }
+    },
+    getNotApprovedLeaves: async (req, res) => {
+        console.log("> Entering getNotApprovedLeaves");
+    
+        let connection;
+        try {
+            connection = await pool.getConnection();
+    
+            // Assuming the actual database function is called fetchNotApprovedLeaves
+            const result = await fetchNotApprovedLeaves(connection);
+    
+            console.log("< Exiting getNotApprovedLeaves with success");
+            
+            return res.status(200).json({
+                success: 1,
+                result: result
+            });
+    
+        } catch (err) {
+            console.error("< Exiting getNotApprovedLeaves with error:", err.message);
+            
+            return res.status(500).json({  // Use 500 or an appropriate error code
+                success: 0,
+                message: err.message
+            });
+    
+        } finally {
+            // Ensure that the connection is always released
+            if (connection) {
+                connection.release();
+            }
+        }
+    },
+    approveLeaves: async(req, res) => {
+        console.log("> ApproveLeaves")
+        let connection;
+        try{
+            connection=await pool.getConnection();
+            const result = await updateLeaves(connection,req.body);
+            return res.status(200).json({
+                success:1,
+                result:result
+            });
+        }catch(error){
+            return res.status(500).json({
+                success:0,
+                message: error.message
+            });
+        }finally{
+            if(connection)
+                connection.release();
+        }
     }
+    
 }

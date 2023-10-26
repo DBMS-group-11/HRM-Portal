@@ -16,6 +16,9 @@ const{
     getReqLeaveSub,
 
     homeSub,
+
+    getNotApprovedLeaves,
+    approveLeaves
 }=require("./user.controller");
 
 const router=require("express").Router();
@@ -50,5 +53,8 @@ router.post("/getReqLeaveSub",getReqLeaveSub); //getTotalLeaveCountByUSerID
 router.post("/reqALeave",reqALeave); //request a leave
 
 router.post("/homeSub",homeSub); //get required details for home page
+
+router.get("/getNotApprovedLeaves",getNotApprovedLeaves);//get Leaves not approved yet
+router.patch("/approveLeaves",approveLeaves);
 
 module.exports=router;
