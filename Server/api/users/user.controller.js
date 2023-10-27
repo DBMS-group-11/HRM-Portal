@@ -30,6 +30,7 @@ const {
     getEmployeeStatusInfo,
     getPayGradesInfo,
     getEmergencyInfo,
+    editUserCredentials,
 
     getTotTakenLeaveCount,
     getTotApprovedLeaveCount,
@@ -573,5 +574,28 @@ module.exports = {
                 connection.release();
         }
     },
+    editUserCredentials: async(req, res) => {
+        console.log("> editUserCredentials")
+        let connection;
+        try{
+            connection=await pool.getConnection();
+            const result = await editUserCredentials(connection,req.body);
+            connection.release();
+            return res.status(200).json({
+                success:1,
+                result:result
+            });
+
+        }catch(error){
+            return res.status(500).json({
+                success:0,
+                message: error.message
+            });
+        }finally{
+            if(connection){
+                connection.release();
+            }
+        }
+    }
     
 }

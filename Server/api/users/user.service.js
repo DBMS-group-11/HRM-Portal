@@ -633,5 +633,23 @@ module.exports = {
             console.log("Error getting supervisees",error.message)
             throw new Error(`An error occurred while getting supervisees: ${error.message}`);
         }
+    },
+    editUserCredentials: async  (connection,data) => {
+        console.log("___editUserCredentials");
+        // console.log(data)
+        try{
+            const [results] = await connection.query(
+                `UPDATE useraccount SET PasswordHash =? WHERE Email =? AND PasswordHash=? `,
+                [data.newPassword,data.email, data.oldPassword]
+            );
+            if (results.length == 0) {
+                return null;
+            }
+            return results;
+        }catch(error){
+            console.log("Error editing user credentials",error.message)
+            throw new Error(`An error occurred while editing user credentials: ${error.message}`);
+        }
     }
+
 };
