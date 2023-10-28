@@ -3,7 +3,6 @@ const {
     create,
     getUserByUserID,
     getUserss,
-    updateUser,
     deleteUser,
     getUserByUserEmail,
     addEmployee,
@@ -32,7 +31,15 @@ const {
     getEmployeeStatusInfo,
     getPayGradesInfo,
     getEmergencyInfo,
+
     editUserCredentials,
+
+    getEmployeeDetails,
+    updateEmergencyContact,
+    updateEmployee,
+    getUserAccountLevelIDByUserAccountLevelName,
+    updateUser,
+    updateDependent,
 
     getTotTakenLeaveCount,
     getTotApprovedLeaveCount,
@@ -376,6 +383,93 @@ module.exports = {
             });
         } finally {
             if (connection) connection.release();
+        }
+    },
+    editMyAccount: async (req, res) => {
+        console.log("> editMyAccount");
+        const body = req.body;
+        let connection;
+        try {
+            //Get a connection from the pool
+            connection = await pool.getConnection();
+
+            //Start transaction
+            await connection.beginTransaction();
+            const employeeDetails = await getEmployeeDetails(connection,body.personalInfo.EmployeeID);
+
+            //update the emegency information
+            body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
+            const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
+        
+            // Prepare data for update employee information
+            employeeData = {
+                "EmployeeID":body.personalInfo.EmployeeID, 
+                "EmployeeName": body.personalInfo.name, 
+                "DateOfBirth": body.personalInfo.dob, 
+                "Gender": body.personalInfo.gender, 
+                "MaritalStatus": body.personalInfo.maritalStatus, 
+
+                "Address": body.personalInfo.address, 
+                "Country": body.personalInfo.country, 
+                "DepartmentID": body.departmentInfo.department, 
+                "JobTitleID": body.departmentInfo.jobTitle, 
+                "PayGradeID": body.departmentInfo.payGrade,
+                "EmploymentStatusID": body.departmentInfo.status, 
+                "SupervisorID": body.departmentInfo.supervisor, 
+            }
+            userData={
+                "UserID": body.personalInfo.UserID,
+                "EmployeeID":body.personalInfo.EmployeeID, 
+                "Username": body.personalInfo.username,
+                "Email": body.personalInfo.email,
+                // "PasswordHash": "0000", //default password
+                "UserAccountLevelName": body.personalInfo.userAccountType,
+                
+            }
+            dependentInfo = {
+                "EmployeeID": employeeData.EmployeeID,
+                "DependentName": body.personalInfo.dependentName,
+                "DependentAge": body.personalInfo.dependentAge
+            }
+            
+            const employeeResult = await updateEmployee(connection, employeeData);//update employee
+
+            const UserAccountLevelID=await getUserAccountLevelIDByUserAccountLevelName(connection,userData.UserAccountLevelName);
+            userData.UserAccountLevelID=UserAccountLevelID;
+            const userResult = await updateUser(connection, userData);//update user
+            
+            const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
+
+            //Commit transaction
+            await connection.commit();
+
+            console.log("<")
+            return res.json({
+                success: 1,
+                data: {
+                    user: userResult,
+                    employee: employeeResult,
+                    dependentResult: dependentResult,
+                    emergencyResult: emergencyResult
+                },
+                message: "Edit employee successful",
+            })
+
+        } catch (error) {
+            //Rollback the transaction if any query fails
+            if (connection) {
+                await connection.rollback();
+            }
+            console.log(error)
+            console.log("<")
+            return res.status(500).json({
+                success: 0,
+                message: "An error occurred during Edit employee",
+            });
+        } finally {
+            if (connection) {
+                connection.release();
+            }
         }
     },
     createUser: (req, res) => {

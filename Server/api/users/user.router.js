@@ -13,6 +13,7 @@ const{
 
     myAccount,
     editUserCredentials,
+    editMyAccount,
 
     reqALeave,
     getReqLeaveSub,
@@ -49,6 +50,7 @@ router.post("/addCustomAttribute",addCustomAttribute) //define new custom employ
 
 router.post("/myAccount",myAccount); //employee personal account
 router.patch("/editUserCredentials",editUserCredentials); //change userpassword
+router.put("/editMyAccount",editMyAccount); //update my account
 
 router.get("/",getUsers); //get Users
 

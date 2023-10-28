@@ -345,7 +345,7 @@ VALUES
 INSERT INTO dependentinfo(DependentInfoID, EmployeeID, DependentName, DependentAge)
 VALUES
   (1 , "EM-0001", 'Pasindu Perera', 15),
-  (2, "EM-0001", 'Tharushi Perera', 12),
+  (2, "EM-0002", 'Tharushi Perera', 12),
   (3, "EM-0003", 'Sachini Silva', 16);
 
 -- Sample data for userAccount table
