@@ -1,5 +1,6 @@
 import { Button, Container, TextField, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid';
+import axios from "axios";
 import { useState } from "react";
 
 const UserCredentialsForm = () => {
@@ -17,7 +18,28 @@ const UserCredentialsForm = () => {
             setError('Passwords do not match');
             return;
         }
-        console.log(userEmail, userPassword, newPassword);
+        // console.log(userEmail, userPassword, newPassword);
+        axios.patch('http://localhost:3000/api/users/editUserCredentials',{
+            email:userEmail,
+            oldPassword:userPassword,
+            newPassword:newPassword
+        })
+        .then( res => {
+            // console.log(res.data);
+            if(res.data.success === 1) {
+                console.log('success');
+                setChangePassword(false);
+                setUserEmail('');
+                setUserPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+            }
+            else {
+                setError(res.data.message);
+                console.log(res.data.message);
+            }
+        
+        })
     }
     
     return (
@@ -83,7 +105,13 @@ const UserCredentialsForm = () => {
                             variant="outlined"
                             color="primary"
                             sx={{width:'40%', m:'auto'}}
-                            onClick={()=> setChangePassword(false)}
+                            onClick={()=> {
+                                setChangePassword(false);
+                                setUserEmail('');
+                                setUserPassword('');
+                                setNewPassword('');
+                                setConfirmPassword('');
+                            }}
                         >
                             Cancel
                         </Button>

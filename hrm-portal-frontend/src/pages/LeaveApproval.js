@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { CheckCircleOutline, DoNotDisturb } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const LeaveApproval = () => {
 
@@ -16,10 +18,13 @@ const LeaveApproval = () => {
     // const [toDate, setToDate] = useState('');
     // const [noOfDays, setNoOfDays] = useState('');
     const [leaveData, setLeaveData] = useState({});
+    const [cookies] = useCookies(['x-uData']);
 
     const location = useLocation();
     useEffect(() => {
-        console.log(location.state.id);
+        console.log(location.state);
+        document.title = 'Leave Approval | HRM-Portal';
+
         // fetch data with leaveId = location.state.id
         const data = {
             name: 'Sajitha',
@@ -29,16 +34,35 @@ const LeaveApproval = () => {
             totalLeaves: 50,
             leavesTaken: 4,
             leavesLeft: 46,
-            reason: 'Sick',
-            leaveType: 'Annual',
-            fromDate: '2021-10-01',
-            toDate: '2021-10-02',
-            noOfDays: 2
+            reason: location.state.Reason,
+            leaveType: location.state.LeaveType,
+            fromDate: dayjs(location.state.FirstAbsentDate).format('YYYY-MM-DD'),
+            toDate: dayjs(location.state.LastAbsentDate).format('YYYY-MM-DD'),
+            noOfDays: location.state.LeaveDayCount,
         }
 
         setLeaveData(data);
 
     },[]);
+
+    const handleApprove = () => {
+        axios.post('http://localhost:3000/api/users/approveLeaves',{
+            "leaveID": location.state.LeaveID,
+            "EmployeeID": leaveData.EmployeeID,
+            "ApprovedByID":cookies['x-uData'].EmployeeID,
+            "ApprovedDateTime":dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        })
+        .then(res => {
+            console.log('Approved');
+            console.log(res.data);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+        
+        console.log('Approved');
+    }
+
 
     return ( 
         <Container sx={{marginY:2}} maxWidth={'md'}>

@@ -4,6 +4,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import jwt from 'jwt-decode';
+import axios from "axios";
 
 const Home = () => {
 
@@ -40,6 +41,27 @@ const Home = () => {
             company: 'Jupiter Apparels (Pvt) Ltd',
             branch: 'Colombo Branch',
             country: 'Sri Lanka'
+        });
+
+        axios.post('http://localhost:3000/api/users/homeSub',{
+            "userID": cookies['x-uData'].UserID,
+            "EmployeeID": cookies['x-uData'].EmployeeID
+        })
+        .then(res => {
+            console.log(res.data);
+            setEmpDetails({
+                name: res.data.PersonalInfoForHome.Username,
+                employeeId: res.data.PersonalInfoForHome.EmployeeID,
+                status: res.data.EmployeeStatusInfo[0].EmploymentStatusName,
+                payGrade: 'Lv' + res.data.PayGradesInfo[0].PayGradeName[6],
+                company: 'Jupiter Apparels (Pvt) Ltd',
+                branch: 'Colombo Branch',
+                country: 'Sri Lanka'
+            });
+            // console.log(res.data.EmployeeStatusInfo[0].EmploymentStatusName);
+        })
+        .catch(err => {
+            console.log(err);
         });
 
         setTotalLeavesTaken(leavesData.Annual + leavesData.Casual + leavesData.Maternity + leavesData.NoPay);

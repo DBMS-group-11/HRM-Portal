@@ -1,7 +1,8 @@
 import { Container, Typography } from "@mui/material"
 import { DataGrid } from '@mui/x-data-grid';
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const columns = [
     { field: 'emp_id', headerName: 'ID', width: 130 },
@@ -11,29 +12,60 @@ const columns = [
     { field: 'no-of-days', headerName: 'No of Days', width: 130 }
   ];
   
-  const rows = [
-    { id: 1, emp_id: 'EMP001', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-    { id: 2, emp_id: 'EMP002', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-    { id: 3, emp_id: 'EMP003', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-    { id: 4, emp_id: 'EMP004', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-    { id: 5, emp_id: 'EMP005', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-    { id: 6, emp_id: 'EMP006', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-    { id: 7, emp_id: 'EMP007', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-    { id: 8, emp_id: 'EMP008', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 }
-  ];
+  // const rows = [
+  //   { id: 1, emp_id: 'EMP001', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+  //   { id: 2, emp_id: 'EMP002', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+  //   { id: 3, emp_id: 'EMP003', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+  //   { id: 4, emp_id: 'EMP004', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+  //   { id: 5, emp_id: 'EMP005', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+  //   { id: 6, emp_id: 'EMP006', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+  //   { id: 7, emp_id: 'EMP007', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
+  //   { id: 8, emp_id: 'EMP008', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 }
+  // ];
 
 
 const ManageLeave = () => {
 
+  const [rows, setRows] = useState([]);
+  const [manageLeavesData, setManageLeavesData] = useState({});
+
   useEffect(() => {
     document.title = 'Manage Leave | HRM-Portal';
+
+    axios.get('http://localhost:3000/api/users/getNotApprovedLeaves')
+    .then(res => {
+      console.log(res.data.result);
+
+      setManageLeavesData(res.data.result);
+
+      let data = [];
+      for (let i = 0; i < res.data.result.length; i++) {
+        data.push({
+          id: i+1,
+          emp_id: res.data.result[i].EmployeeID,
+          // name: res.data.result[i].EmployeeName,
+          'job-title': res.data.result[i].JobTitleID,
+          department: res.data.result[i].DepartmentID,
+          'no-of-days': res.data.result[i].LeaveDayCount
+        });
+      }
+      // console.log(data);
+      setRows(data);
+
+    })
+    .catch(err => {
+      console.log(err);
+    });
+
   },[]);
 
   const navigate = useNavigate();
 
   const handleRowClick = (row) => {
     // sending id as state to the next page
-    navigate('/dashboard/manage-leaves/leave-approval', {state: {id: row.row.id}});
+    const leaveData = manageLeavesData.filter((leave) => leave.EmployeeID === row.row.emp_id)[0];
+    // console.log(leaveData);
+    navigate('/dashboard/manage-leaves/leave-approval', {state: leaveData});
   }
 
   return ( 
