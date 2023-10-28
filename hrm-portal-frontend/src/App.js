@@ -10,7 +10,7 @@ import ManageLeave from './pages/ManageLeave';
 import AddEmployee from './pages/AddEmployee';
 import LeaveApproval from './pages/LeaveApproval';
 import Home from './pages/Home';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCookies } from 'react-cookie';
 import Supervisees from './pages/Supervisees';
 import EditEmployee from './pages/EditEmployee';
@@ -23,12 +23,17 @@ const theme = createTheme({
 function App() {
 
   const [cookies, updateCookies] = useCookies(['userLoggedIn']);
+  const [userlevelID, setUserlevelID] = useState(0);
 
   // ------
   const [isLogged, setIsLogged] = useState(false);
   const handleLogin = (e) => {
     setIsLogged(e);
   }
+
+  useEffect(()=>{
+    setUserlevelID(cookies['x-ual']);
+  }, [], cookies);
   // ---- remove theses
 
   return (
@@ -45,15 +50,15 @@ function App() {
             <Route exact path='/dashboard' element={<Dashboard/>}>
               <Route path='/dashboard/home' element={<Home/>}/>
               <Route path='/dashboard/myAccount' element={<MyAccount/>}/>
-              <Route path='/dashboard/manage-leaves' element={<ManageLeave/>}/>
-              <Route path='/dashboard/manage-leaves/leave-approval' element={<LeaveApproval/>}/>
+              <Route path='/dashboard/manage-leaves' element={cookies['x-ual'] <= 3 ? <ManageLeave/> : <Navigate to="/404" />}/>
+              <Route path='/dashboard/manage-leaves/leave-approval' element={cookies['x-ual'] <= 3 ? <LeaveApproval/> : <Navigate to="/404" />}/>
               <Route path='/dashboard/supervisees' element={<Supervisees/>}/>
               <Route path='/dashboard/supervisees/edit-employee' element={<EditEmployee/>}/>
               <Route path='/dashboard/request-a-leave' element={<RequestALeave/>}/>
               <Route path='/dashboard/add-employee' element={<AddEmployee/>}/>
           </Route>
           )}
-          <Route path='*' element={<Navigate to="/404" />}/>
+          <Route path='/*' element={<Page404 />}/>
           <Route path='/404' element={<Page404/>}/>
         </Routes>
       </Router>

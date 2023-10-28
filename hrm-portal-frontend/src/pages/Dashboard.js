@@ -143,6 +143,8 @@ function Dashboard(props) {
                         navigate('/login');
                         removeCookie('userLoggedIn', { path: '/' });
                         removeCookie('x-ual', { path: '/' });
+                        removeCookie('u-token', { path: '/' });
+                        removeCookie('x-uData', { path: '/' });
                     }}
                 >
                     <ListItemIcon sx={{ml:3}}><LogoutIcon /></ListItemIcon>
