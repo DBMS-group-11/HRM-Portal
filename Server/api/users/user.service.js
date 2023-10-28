@@ -477,7 +477,7 @@ module.exports = {
             if (results.length == 0) {
                 return null;
             }
-            return results[0];
+            return results;
         } catch (error) {
             console.error("Failed to fetch department info:", error);
             throw new Error(`An error occurred while fetching department info: ${error.message}`);
@@ -611,7 +611,7 @@ module.exports = {
                 `UPDATE \`leave\`
                 SET \`Approved\` = 1, \`ApprovedByID\` = ?,ApprovedDateTime=?
                 WHERE \`EmployeeID\` = ?`,
-                [data.ApprovedByID,data.ApprovedDateTime, data.EmployeeID,]
+                [data.ApprovedByID, data.ApprovedDateTime, data.EmployeeID,]
             );
             return result;
         } catch (error) {
@@ -621,7 +621,7 @@ module.exports = {
     },
     getSupervisees: async (connection) => {
         console.log("___getSupervisees");
-        try{
+        try {
             const [results] = await connection.query(
                 `SELECT * FROM employee WHERE EmployeeID in(SELECT SupervisorID FROM employee WHERE SupervisorID IS NOT NULL)`
             );
@@ -629,27 +629,44 @@ module.exports = {
                 return null;
             }
             return results;
-        }catch(error){
-            console.log("Error getting supervisees",error.message)
+        } catch (error) {
+            console.log("Error getting supervisees", error.message)
             throw new Error(`An error occurred while getting supervisees: ${error.message}`);
         }
     },
-    editUserCredentials: async  (connection,data) => {
+    editUserCredentials: async (connection, data) => {
         console.log("___editUserCredentials");
         // console.log(data)
-        try{
+        try {
             const [results] = await connection.query(
                 `UPDATE useraccount SET PasswordHash =? WHERE Email =? AND PasswordHash=? `,
-                [data.newPassword,data.email, data.oldPassword]
+                [data.newPassword, data.email, data.oldPassword]
             );
             if (results.length == 0) {
                 return null;
             }
             return results;
-        }catch(error){
-            console.log("Error editing user credentials",error.message)
+        } catch (error) {
+            console.log("Error editing user credentials", error.message)
             throw new Error(`An error occurred while editing user credentials: ${error.message}`);
         }
-    }
+    },
+    addNewColumnForEmployee: async (connection, data) => {
+        console.log("___addNewColumnForEmployee");
+        console.log(data)
+        // Destructuring the data for readability.
+        const { column_name, column_type } = data;
 
+        try {
+            // Using placeholders for SQL parameters to prevent SQL injection.
+            const query = `ALTER TABLE employee ADD COLUMN ?? ??`;
+
+            const [result] = await connection.query(query, [column_name, column_type]);
+
+            return result;
+        } catch (error) {
+            console.error("Error adding new column to employee:", error.message);
+            throw new Error(`Failed to add the '${column_name}' column with type '${column_type}' to the 'employee' table. Details: ${error.message}`);
+        }
+    }
 };
