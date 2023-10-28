@@ -581,5 +581,75 @@ module.exports = {
             console.error("Failed to fetch emergency info:", error);
             throw new Error(`An error occurred while fetching emergency info: ${error.message}`);
         }
+    },
+    fetchNotApprovedLeaves: async (connection) => {
+        console.log("___fetchNotApprovedLeaves")
+        const sqlQuery = `
+            SELECT
+                *
+            FROM
+                \`leave\`
+            WHERE 
+                Approved=0
+        `;
+        try {
+            const [results] = await connection.query(sqlQuery);
+            if (results.length == 0) {
+                return null;
+            }
+            return results;
+        } catch (error) {
+            console.error("Failed to fetch leave info:", error);
+            throw new Error(`An error occurred while fetching leave info: ${error.message}`);
+        }
+    },
+    updateLeaves: async (connection, data) => {
+        console.log("___updateLeaves");
+        console.log(data);
+        try {
+            const [result] = await connection.execute(
+                `UPDATE \`leave\`
+                SET \`Approved\` = 1, \`ApprovedByID\` = ?,ApprovedDateTime=?
+                WHERE \`EmployeeID\` = ?`,
+                [data.ApprovedByID,data.ApprovedDateTime, data.EmployeeID,]
+            );
+            return result;
+        } catch (error) {
+            console.error("Error updating leaves:", error.message);
+            throw new Error(`An error occurred while updating leaves: ${error.message}`);
+        }
+    },
+    getSupervisees: async (connection) => {
+        console.log("___getSupervisees");
+        try{
+            const [results] = await connection.query(
+                `SELECT * FROM employee WHERE EmployeeID in(SELECT SupervisorID FROM employee WHERE SupervisorID IS NOT NULL)`
+            );
+            if (results.length == 0) {
+                return null;
+            }
+            return results;
+        }catch(error){
+            console.log("Error getting supervisees",error.message)
+            throw new Error(`An error occurred while getting supervisees: ${error.message}`);
+        }
+    },
+    editUserCredentials: async  (connection,data) => {
+        console.log("___editUserCredentials");
+        // console.log(data)
+        try{
+            const [results] = await connection.query(
+                `UPDATE useraccount SET PasswordHash =? WHERE Email =? AND PasswordHash=? `,
+                [data.newPassword,data.email, data.oldPassword]
+            );
+            if (results.length == 0) {
+                return null;
+            }
+            return results;
+        }catch(error){
+            console.log("Error editing user credentials",error.message)
+            throw new Error(`An error occurred while editing user credentials: ${error.message}`);
+        }
     }
+
 };

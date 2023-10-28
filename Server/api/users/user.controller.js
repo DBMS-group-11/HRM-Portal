@@ -30,10 +30,16 @@ const {
     getEmployeeStatusInfo,
     getPayGradesInfo,
     getEmergencyInfo,
+    editUserCredentials,
 
     getTotTakenLeaveCount,
     getTotApprovedLeaveCount,
-    getTotApprovedLeaveCountByType
+    getTotApprovedLeaveCountByType,
+
+    fetchNotApprovedLeaves,
+    updateLeaves,
+
+    getSupervisees
 } = require("./user.service");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -69,15 +75,13 @@ module.exports = {
                 getTotApprovedLeaveCount(connection,data),
                 getTotApprovedLeaveCountByType(connection,data)
             ]);
-            console.log(PersonalInfo)
+            // console.log(PersonalInfo)
             const PersonalInfoForHome={
                 EmployeeID:PersonalInfo.personalInfo.EmployeeID,
                 CountryID:PersonalInfo.personalInfo.CountryID,
                 Username:PersonalInfo.personalInfo.Username,
                 Gender: PersonalInfo.personalInfo.Gender,
-            }
-
-    
+            }    
             return res.json({
                 success: 1,
                 message: "success",
@@ -497,5 +501,101 @@ module.exports = {
                 message: err.message
             })
         }
+    },
+    getNotApprovedLeaves: async (req, res) => {
+        console.log("> Entering getNotApprovedLeaves");
+    
+        let connection;
+        try {
+            connection = await pool.getConnection();
+    
+            // Assuming the actual database function is called fetchNotApprovedLeaves
+            const result = await fetchNotApprovedLeaves(connection);
+    
+            console.log("< Exiting getNotApprovedLeaves with success");
+            
+            return res.status(200).json({
+                success: 1,
+                result: result
+            });
+    
+        } catch (err) {
+            console.error("< Exiting getNotApprovedLeaves with error:", err.message);
+            
+            return res.status(500).json({  // Use 500 or an appropriate error code
+                success: 0,
+                message: err.message
+            });
+    
+        } finally {
+            // Ensure that the connection is always released
+            if (connection) {
+                connection.release();
+            }
+        }
+    },
+    approveLeaves: async(req, res) => {
+        console.log("> ApproveLeaves")
+        let connection;
+        try{
+            connection=await pool.getConnection();
+            const result = await updateLeaves(connection,req.body);
+            return res.status(200).json({
+                success:1,
+                result:result
+            });
+        }catch(error){
+            return res.status(500).json({
+                success:0,
+                message: error.message
+            });
+        }finally{
+            if(connection)
+                connection.release();
+        }
+    },
+    supervisees: async(req, res) => {
+        console.log("> supervisees")
+        let connection;
+        try{
+            connection=await pool.getConnection();
+            const result = await getSupervisees(connection);
+            return res.status(200).json({
+                success:1,
+                supervisees:result
+            });
+        }catch(error){
+            return res.status(500).json({
+                success:0,
+                message: error.message
+            });
+        }finally{
+            if(connection)
+                connection.release();
+        }
+    },
+    editUserCredentials: async(req, res) => {
+        console.log("> editUserCredentials")
+        let connection;
+        try{
+            connection=await pool.getConnection();
+            const result = await editUserCredentials(connection,req.body);
+            connection.release();
+            return res.status(200).json({
+                success:1,
+                result:result
+            });
+
+        }catch(error){
+            return res.status(500).json({
+                success:0,
+                message: error.message
+            });
+        }finally{
+            if(connection){
+                connection.release();
+            }
+        }
     }
+    
 }

@@ -11,11 +11,17 @@ const{
     getRegisterSub,
 
     myAccount,
+    editUserCredentials,
 
     reqALeave,
     getReqLeaveSub,
 
     homeSub,
+
+    getNotApprovedLeaves,
+    approveLeaves,
+
+    supervisees
 }=require("./user.controller");
 
 const router=require("express").Router();
@@ -41,6 +47,7 @@ router.post("/reg",register); //add employee (user account also will be added)
 router.get("/getRegisterSub",getRegisterSub); //get additional information from database 
 
 router.post("/myAccount",myAccount); //employee personal account
+router.patch("/editUserCredentials",editUserCredentials); //change userpassword
 
 router.get("/",getUsers); //get Users
 
@@ -50,5 +57,10 @@ router.post("/getReqLeaveSub",getReqLeaveSub); //getTotalLeaveCountByUSerID
 router.post("/reqALeave",reqALeave); //request a leave
 
 router.post("/homeSub",homeSub); //get required details for home page
+
+router.get("/getNotApprovedLeaves",getNotApprovedLeaves);//get Leaves not approved yet
+router.patch("/approveLeaves",approveLeaves); //approve leaves 
+
+router.get("/supervisees",supervisees); //get all supervisees
 
 module.exports=router;
