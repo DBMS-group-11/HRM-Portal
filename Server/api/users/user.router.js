@@ -9,9 +9,11 @@ const{
 
     register,
     getRegisterSub,
+    addCustomAttribute,
 
     myAccount,
     editUserCredentials,
+    editMyAccount,
 
     reqALeave,
     getReqLeaveSub,
@@ -43,11 +45,12 @@ const {checkToken}=require("../../auth/token_validation");
 router.post("/login",login); //user login
 
 router.post("/reg",register); //add employee (user account also will be added)
-
 router.get("/getRegisterSub",getRegisterSub); //get additional information from database 
+router.post("/addCustomAttribute",addCustomAttribute) //define new custom employee attribute
 
 router.post("/myAccount",myAccount); //employee personal account
 router.patch("/editUserCredentials",editUserCredentials); //change userpassword
+router.put("/editMyAccount",editMyAccount); //update my account
 
 router.get("/",getUsers); //get Users
 

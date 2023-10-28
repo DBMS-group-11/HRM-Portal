@@ -3,7 +3,6 @@ const {
     create,
     getUserByUserID,
     getUserss,
-    updateUser,
     deleteUser,
     getUserByUserEmail,
     addEmployee,
@@ -16,6 +15,8 @@ const {
     getEmployeeStatus,
     getPayGrades,
     addDependent,
+
+    addNewColumnForEmployee,
 
     getLastUserID,
     getLastEmployeeID,
@@ -30,7 +31,15 @@ const {
     getEmployeeStatusInfo,
     getPayGradesInfo,
     getEmergencyInfo,
+
     editUserCredentials,
+
+    getEmployeeDetails,
+    updateEmergencyContact,
+    updateEmployee,
+    getUserAccountLevelIDByUserAccountLevelName,
+    updateUser,
+    updateDependent,
 
     getTotTakenLeaveCount,
     getTotApprovedLeaveCount,
@@ -53,9 +62,9 @@ const sendErrorResponse = (res, message) => {
 };
 
 module.exports = {
-    homeSub: async(req, res) => {
+    homeSub: async (req, res) => {
         console.log('> HomeSub');
-        const data=req.body
+        const data = req.body
         // console.log(data)
         let connection;
         try {
@@ -69,19 +78,19 @@ module.exports = {
                 TotApprovedLeaveCount,
                 TotApprovedLeaveCountByType,
             ] = await Promise.all([
-                getPersonalInfo(connection,data),
-                getEmployeeStatusInfo(connection,data), 
-                getPayGradesInfo(connection,data),
-                getTotApprovedLeaveCount(connection,data),
-                getTotApprovedLeaveCountByType(connection,data)
+                getPersonalInfo(connection, data),
+                getEmployeeStatusInfo(connection, data),
+                getPayGradesInfo(connection, data),
+                getTotApprovedLeaveCount(connection, data),
+                getTotApprovedLeaveCountByType(connection, data)
             ]);
             // console.log(PersonalInfo)
-            const PersonalInfoForHome={
-                EmployeeID:PersonalInfo.personalInfo.EmployeeID,
-                CountryID:PersonalInfo.personalInfo.CountryID,
-                Username:PersonalInfo.personalInfo.Username,
+            const PersonalInfoForHome = {
+                EmployeeID: PersonalInfo.personalInfo.EmployeeID,
+                CountryID: PersonalInfo.personalInfo.CountryID,
+                Username: PersonalInfo.personalInfo.Username,
                 Gender: PersonalInfo.personalInfo.Gender,
-            }    
+            }
             return res.json({
                 success: 1,
                 message: "success",
@@ -102,7 +111,7 @@ module.exports = {
                 connection.release();
             }
         }
-    },    
+    },
     login: async (req, res) => {   //login to the system - done
         console.log("> Login to system")
 
@@ -129,11 +138,11 @@ module.exports = {
                 const jsontoken = sign({ result: results }, "qwe1234", {
                     expiresIn: "1h"
                 });
-        
+
                 //required response
                 const values = {
                     UserID: results[0].UserID,
-                    EmployeeID:results[0].EmployeeID,
+                    EmployeeID: results[0].EmployeeID,
                     UserAccountLevelID: results[0].UserAccountLevelID
                 };
                 // console.log(values)
@@ -261,7 +270,7 @@ module.exports = {
             }
         }
     },
-    getRegisterSub : async (req, res) => { //done
+    getRegisterSub: async (req, res) => { //done
         console.log("___getRegisterSub")
         try {
             const [
@@ -279,7 +288,7 @@ module.exports = {
                 getEmployeeStatus(),
                 getPayGrades()
             ]);
-    
+
             return res.json({
                 departments,
                 supervisors,
@@ -295,7 +304,31 @@ module.exports = {
             });
         }
     },
-    myAccount : async (req, res) => {
+    addCustomAttribute: async (req, res) => {
+        const { column_name, column_type } = req.body;
+
+        // Basic validation (consider using a library for more robust validation).
+        if (!column_name || !column_type) {
+            return res.status(400).json({ error: 'Both column_name and column_type are required.' });
+        }
+
+        let connection;
+        try {
+            connection = await pool.getConnection();
+
+            const [result] = await addNewColumnForEmployee(connection, { column_name, column_type });
+
+            return res.status(200).json({ message: 'Column added successfully!', result });
+        } catch (error) {
+            console.error('Error while adding custom attribute:', error.message);
+            return res.status(500).json({ error: `Failed to add the column. Details: ${error.message}` });
+        } finally {
+            if (connection) {
+                connection.release();
+            }
+        }
+    },
+    myAccount: async (req, res) => {
         console.log(">myAccount");
         console.log(req.body);
         const data = req.body;
@@ -315,17 +348,17 @@ module.exports = {
 
                 EmergencyInfo
 
-            ]= await Promise.all([
-                getPersonalInfo(connection,data),
-                getDependentInfo(connection,data),
+            ] = await Promise.all([
+                getPersonalInfo(connection, data),
+                getDependentInfo(connection, data),
 
-                getJobTitleInfo(connection,data),
-                getDepartmentInfo(connection,data),
-                getSupervisorsInfo(connection,data),
-                getEmployeeStatusInfo(connection,data),
-                getPayGradesInfo(connection,data),
+                getJobTitleInfo(connection, data),
+                getDepartmentInfo(connection, data),
+                getSupervisorsInfo(connection, data),
+                getEmployeeStatusInfo(connection, data),
+                getPayGradesInfo(connection, data),
 
-                getEmergencyInfo(connection,data)
+                getEmergencyInfo(connection, data)
             ]);
 
             return res.json({
@@ -341,7 +374,7 @@ module.exports = {
                 EmergencyInfo
 
             });
-    
+
         } catch (error) {
             console.error("An error occurred while accessing my account:", error);
             return res.status(500).json({
@@ -350,6 +383,93 @@ module.exports = {
             });
         } finally {
             if (connection) connection.release();
+        }
+    },
+    editMyAccount: async (req, res) => {
+        console.log("> editMyAccount");
+        const body = req.body;
+        let connection;
+        try {
+            //Get a connection from the pool
+            connection = await pool.getConnection();
+
+            //Start transaction
+            await connection.beginTransaction();
+            const employeeDetails = await getEmployeeDetails(connection,body.personalInfo.EmployeeID);
+
+            //update the emegency information
+            body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
+            const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
+        
+            // Prepare data for update employee information
+            employeeData = {
+                "EmployeeID":body.personalInfo.EmployeeID, 
+                "EmployeeName": body.personalInfo.name, 
+                "DateOfBirth": body.personalInfo.dob, 
+                "Gender": body.personalInfo.gender, 
+                "MaritalStatus": body.personalInfo.maritalStatus, 
+
+                "Address": body.personalInfo.address, 
+                "Country": body.personalInfo.country, 
+                "DepartmentID": body.departmentInfo.department, 
+                "JobTitleID": body.departmentInfo.jobTitle, 
+                "PayGradeID": body.departmentInfo.payGrade,
+                "EmploymentStatusID": body.departmentInfo.status, 
+                "SupervisorID": body.departmentInfo.supervisor, 
+            }
+            userData={
+                "UserID": body.personalInfo.UserID,
+                "EmployeeID":body.personalInfo.EmployeeID, 
+                "Username": body.personalInfo.username,
+                "Email": body.personalInfo.email,
+                // "PasswordHash": "0000", //default password
+                "UserAccountLevelName": body.personalInfo.userAccountType,
+                
+            }
+            dependentInfo = {
+                "EmployeeID": employeeData.EmployeeID,
+                "DependentName": body.personalInfo.dependentName,
+                "DependentAge": body.personalInfo.dependentAge
+            }
+            
+            const employeeResult = await updateEmployee(connection, employeeData);//update employee
+
+            const UserAccountLevelID=await getUserAccountLevelIDByUserAccountLevelName(connection,userData.UserAccountLevelName);
+            userData.UserAccountLevelID=UserAccountLevelID;
+            const userResult = await updateUser(connection, userData);//update user
+            
+            const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
+
+            //Commit transaction
+            await connection.commit();
+
+            console.log("<")
+            return res.json({
+                success: 1,
+                data: {
+                    user: userResult,
+                    employee: employeeResult,
+                    dependentResult: dependentResult,
+                    emergencyResult: emergencyResult
+                },
+                message: "Edit employee successful",
+            })
+
+        } catch (error) {
+            //Rollback the transaction if any query fails
+            if (connection) {
+                await connection.rollback();
+            }
+            console.log(error)
+            console.log("<")
+            return res.status(500).json({
+                success: 0,
+                message: "An error occurred during Edit employee",
+            });
+        } finally {
+            if (connection) {
+                connection.release();
+            }
         }
     },
     createUser: (req, res) => {
@@ -478,23 +598,23 @@ module.exports = {
             });
         }
     },
-    reqALeave : async (req, res) =>{ //done
+    reqALeave: async (req, res) => { //done
         console.log(">reqALeave")
-        const data=req.body;
+        const data = req.body;
         // console.log(data)
-        try{
+        try {
             // console.log(data['UserID']);
             // const EmployeeID = await getEmployeeIDByUserID(data['UserID']);
             // data["EmployeeID"]=EmployeeID
             console.log(data)
-            const result=await reqLeave(data);
+            const result = await reqLeave(data);
             // console.log(result);
             console.log("<");
             return res.status(200).json({
                 success: 1,
-                result : result
+                result: result
             })
-        }catch(err){
+        } catch (err) {
             console.log("<")
             return res.json({
                 success: 0,
@@ -511,9 +631,41 @@ module.exports = {
     
             // Assuming the actual database function is called fetchNotApprovedLeaves
             const result = await fetchNotApprovedLeaves(connection);
+
+            for (let leave of result) {
+                let data = { "EmployeeID": leave.EmployeeID };
+    
+                const [
+                    PersonalInfo,
+                    JobTitleInfo,
+                    DepartmentInfo,
+                    PayGradesInfo,
+                    TotApprovedLeaveCount
+                ] = await Promise.all([
+                    getPersonalInfo(connection, data),
+                    getJobTitleInfo(connection, data),
+                    getDepartmentInfo(connection, data),
+                    getPayGradesInfo(connection, data),
+                    getTotApprovedLeaveCount(connection, data)
+                ]);
+    
+                // console.log(PersonalInfo);
+                // console.log(JobTitleInfo);
+                // console.log(DepartmentInfo);
+                // console.log(PayGradesInfo);
+                // console.log(TotApprovedLeaveCount)
+    
+                leave.EmployeeName = PersonalInfo.personalInfo["EmployeeName"];
+                leave.JobTitleName = JobTitleInfo[0]["JobTitleName"];
+                leave.DepartmentName = DepartmentInfo[0]["DepartmentName"];
+                leave.PayGradeName = PayGradesInfo[0]["PayGradeName"];
+                leave.TotApprovedLeaveCount=TotApprovedLeaveCount[0]["totApprovedLeaveCount"]
+            }
+    
+            // console.log(result);  // This will display the updated leaveData with the new status attribute for each leave
     
             console.log("< Exiting getNotApprovedLeaves with success");
-            
+    
             return res.status(200).json({
                 success: 1,
                 result: result
@@ -521,7 +673,7 @@ module.exports = {
     
         } catch (err) {
             console.error("< Exiting getNotApprovedLeaves with error:", err.message);
-            
+    
             return res.status(500).json({  // Use 500 or an appropriate error code
                 success: 0,
                 message: err.message
@@ -533,69 +685,69 @@ module.exports = {
                 connection.release();
             }
         }
-    },
-    approveLeaves: async(req, res) => {
+    },    
+    approveLeaves: async (req, res) => {
         console.log("> ApproveLeaves")
         let connection;
-        try{
-            connection=await pool.getConnection();
-            const result = await updateLeaves(connection,req.body);
+        try {
+            connection = await pool.getConnection();
+            const result = await updateLeaves(connection, req.body);
             return res.status(200).json({
-                success:1,
-                result:result
+                success: 1,
+                result: result
             });
-        }catch(error){
+        } catch (error) {
             return res.status(500).json({
-                success:0,
+                success: 0,
                 message: error.message
             });
-        }finally{
-            if(connection)
+        } finally {
+            if (connection)
                 connection.release();
         }
     },
-    supervisees: async(req, res) => {
+    supervisees: async (req, res) => {
         console.log("> supervisees")
         let connection;
-        try{
-            connection=await pool.getConnection();
+        try {
+            connection = await pool.getConnection();
             const result = await getSupervisees(connection);
             return res.status(200).json({
-                success:1,
-                supervisees:result
+                success: 1,
+                supervisees: result
             });
-        }catch(error){
+        } catch (error) {
             return res.status(500).json({
-                success:0,
+                success: 0,
                 message: error.message
             });
-        }finally{
-            if(connection)
+        } finally {
+            if (connection)
                 connection.release();
         }
     },
-    editUserCredentials: async(req, res) => {
+    editUserCredentials: async (req, res) => {
         console.log("> editUserCredentials")
         let connection;
-        try{
-            connection=await pool.getConnection();
-            const result = await editUserCredentials(connection,req.body);
+        try {
+            connection = await pool.getConnection();
+            const result = await editUserCredentials(connection, req.body);
             connection.release();
             return res.status(200).json({
-                success:1,
-                result:result
+                success: 1,
+                result: result
             });
 
-        }catch(error){
+        } catch (error) {
             return res.status(500).json({
-                success:0,
+                success: 0,
                 message: error.message
             });
-        }finally{
-            if(connection){
+        } finally {
+            if (connection) {
                 connection.release();
             }
         }
     }
-    
+
 }

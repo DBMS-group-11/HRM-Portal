@@ -2,6 +2,7 @@ const pool = require("../../db/database");
 
 async function findIDs(data) {
     console.log("___findIDs");
+    // console.log(data)
     const connection = await pool.getConnection();
     let newData = {};
     const queries = {
@@ -11,10 +12,8 @@ async function findIDs(data) {
         'PayGradeID': 'SELECT PayGradeID FROM paygrade WHERE PayGradeName = ?',
         'EmploymentStatusID': 'SELECT EmploymentStatusID FROM employmentstatus WHERE EmploymentStatusName =?',
         // 'EmergencyContactID': 'SELECT EmergencyContactID FROM emergencycontact WHERE EmergencyContactName =?',
-        'SupervisorID': 'SELECT employeeID FROM employee WHERE EmployeeName =?',
+        'SupervisorID': 'SELECT employeeID as SupervisorID FROM employee WHERE EmployeeName =?',
     };
-    // console.log("_____________________")
-    // console.log(data)
     try {
         await connection.beginTransaction();
         for (const [key, query] of Object.entries(queries)) {
@@ -23,6 +22,7 @@ async function findIDs(data) {
                 Object.assign(newData, result[0]);
                 // console.log(`${key}: ${JSON.stringify(result[0])}`);
             } else {
+                newData[key] = null;
                 console.log(`No result for ${key}`);
             }
         }
@@ -34,7 +34,6 @@ async function findIDs(data) {
     }
     return newData;
 }
-
 module.exports = {
     addUser: async (connection, data) => {  //done
         console.log('___addUser')
@@ -477,7 +476,7 @@ module.exports = {
             if (results.length == 0) {
                 return null;
             }
-            return results[0];
+            return results;
         } catch (error) {
             console.error("Failed to fetch department info:", error);
             throw new Error(`An error occurred while fetching department info: ${error.message}`);
@@ -605,13 +604,13 @@ module.exports = {
     },
     updateLeaves: async (connection, data) => {
         console.log("___updateLeaves");
-        console.log(data);
+        // console.log(data);
         try {
             const [result] = await connection.execute(
                 `UPDATE \`leave\`
                 SET \`Approved\` = 1, \`ApprovedByID\` = ?,ApprovedDateTime=?
-                WHERE \`EmployeeID\` = ?`,
-                [data.ApprovedByID,data.ApprovedDateTime, data.EmployeeID,]
+                WHERE \`EmployeeID\` = ? AND LeaveID=?`,
+                [data.ApprovedByID, data.ApprovedDateTime, data.EmployeeID, data.LeaveID]
             );
             return result;
         } catch (error) {
@@ -621,7 +620,7 @@ module.exports = {
     },
     getSupervisees: async (connection) => {
         console.log("___getSupervisees");
-        try{
+        try {
             const [results] = await connection.query(
                 `SELECT * FROM employee WHERE EmployeeID in(SELECT SupervisorID FROM employee WHERE SupervisorID IS NOT NULL)`
             );
@@ -629,27 +628,208 @@ module.exports = {
                 return null;
             }
             return results;
-        }catch(error){
-            console.log("Error getting supervisees",error.message)
+        } catch (error) {
+            console.log("Error getting supervisees", error.message)
             throw new Error(`An error occurred while getting supervisees: ${error.message}`);
         }
     },
-    editUserCredentials: async  (connection,data) => {
+    editUserCredentials: async (connection, data) => { //done
         console.log("___editUserCredentials");
         // console.log(data)
-        try{
+        try {
             const [results] = await connection.query(
                 `UPDATE useraccount SET PasswordHash =? WHERE Email =? AND PasswordHash=? `,
-                [data.newPassword,data.email, data.oldPassword]
+                [data.newPassword, data.email, data.oldPassword]
             );
             if (results.length == 0) {
                 return null;
             }
             return results;
-        }catch(error){
-            console.log("Error editing user credentials",error.message)
+        } catch (error) {
+            console.log("Error editing user credentials", error.message)
             throw new Error(`An error occurred while editing user credentials: ${error.message}`);
         }
-    }
+    },
+    getEmployeeDetails: async (connection, EmployeeID) => { //done
+        console.log("___getEmployeeDetails");
+        // console.log(EmployeeID)
+        try {
+            const [result] = await connection.query(`SELECT * FROM employee WHERE employee.EmployeeID=?`, [EmployeeID]);
+            // console.log(result);
+            return result;  // Return the fetched result
+        } catch (error) {
+            throw new Error(`An error occurred while fetching employee details: ${error.message}`);
+        }
+    },
+    updateEmergencyContact: async (connection, data) => {//done update emergency contact
+        console.log("___updateEmergencyContact");
+        // console.log(data);
+        try {
+            const query = `UPDATE emergencycontact 
+                            SET PrimaryName=?, PrimaryPhoneNumber=?, SecondaryName=?, SecondaryPhoneNumber=? 
+                            WHERE EmergencyContactID=?`;
+            const result = await connection.query(query, [data.name1, data.telNo1, data.name2, data.telNo2, data.EmergencyContactID]);
+            return result;
+        } catch (error) {
+            throw new Error(`An error occurred while updating emergency contact: ${error.message}`);
+        }
+    },
+    updateEmployee: async (connection, data) => { //done
+        console.log("___updateEmployee");
+        try {
+            const newData = await findIDs(data);
+            // console.log(newData);
+            if (!newData.CountryID || !newData.DepartmentID || !newData.JobTitleID || !newData.PayGradeID || !newData.EmploymentStatusID || typeof newData.SupervisorID === 'undefined') {
+                throw new Error("Required ID(s) missing from newData");
+            }
 
+            // console.log(data);
+            const query = `
+                UPDATE employee
+                SET 
+                    EmployeeName=?, 
+                    DateOfBirth=?, 
+                    Gender=?,
+                    MaritalStatus=?,
+                    Address=?,
+                    Country=?,
+                    DepartmentID=?,
+                    JobTitleID=?,
+                    PayGradeID=?,
+                    EmploymentStatusID=?,
+                    SupervisorID=?
+                WHERE
+                    EmployeeID=?
+            `;
+
+            const result = await connection.query(query, [
+                data.EmployeeName,
+                data.DateOfBirth,
+                data.Gender,
+                data.MaritalStatus,
+                data.Address,
+                newData.CountryID,
+                newData.DepartmentID,
+                newData.JobTitleID,
+                newData.PayGradeID,
+                newData.EmploymentStatusID,
+                newData.SupervisorID,
+                data.EmployeeID
+            ]);
+
+            return result;
+
+        } catch (error) {
+            console.error("Error in updateEmployee:", error.message);
+            throw new Error(`An error occurred: ${error.message}`);
+        }
+    },
+    getUserAccountLevelIDByUserAccountLevelName: async (connection, UserAccountLevelName) => { //done
+        console.log("___getUserAccountLevelIDByUserAccountLevel");
+
+        if (!UserAccountLevelName) {
+            console.error("UserAccountLevelName is not provided");
+            throw new Error("Required UserAccountLevelName missing");
+        }
+        try {
+            const [result] = await connection.query(`SELECT UserAccountLevelID FROM UserAccountLevel WHERE UserAccountLevelName=?`, [UserAccountLevelName]);
+
+            if (result && result.length > 0) {
+                console.log("Successfully fetched UserAccountLevelID:", result[0].UserAccountLevelID);
+                return result[0].UserAccountLevelID;
+            } else {
+                console.warn(`No UserAccountLevelID found for UserAccountLevelName: ${UserAccountLevelName}`);
+                return null;
+            }
+
+        } catch (error) {
+            console.error("Error in getUserAccountLevelIDByUserAccountLevelName:", error.message);
+            throw new Error(`An error occurred in getUserAccountLevelIDByUserAccountLevelName: ${error.message}`);
+        }
+    },
+    updateUser: async (connection, data) => { //done
+        console.log("___updateUser");
+        // console.log(data);
+
+        if (!data || !data.Username || !data.Email || !data.UserAccountLevelID || !data.UserID || !data.EmployeeID) {
+            console.error("Required fields are missing in updateUser");
+            throw new Error("Required fields are missing for updating the user.");
+        }
+
+        try {
+            const query = `
+                UPDATE useraccount
+                SET
+                    Username=?,
+                    Email=?,
+                    UserAccountLevelID=?
+                WHERE
+                    UserID=? AND EmployeeID=?
+            `;
+            const result = await connection.query(query, [data.Username, data.Email, data.UserAccountLevelID, data.UserID, data.EmployeeID]);
+
+            // console.log("Update successful:", result);
+            return result;
+        } catch (error) {
+            console.error("Error in updateUser:", error.message);
+            throw new Error(`An error occurred in updateUser: ${error.message}`);
+        }
+    },
+    updateDependent: async (connection, data) => { //done
+        console.log("___updateDependent");
+        // console.log(data);
+        try {
+            const queryForUpdateDependent = `
+                UPDATE dependentInfo
+                SET 
+                    DependentName=?, 
+                    DependentAge=?
+                WHERE
+                    EmployeeID=?
+            `;
+            const queryForAddDependent = `
+                INSERT INTO dependentInfo(EmployeeID, DependentName, DependentAge)
+                VALUES (?,?,?)
+            `;
+
+            var result = await connection.query(queryForUpdateDependent, [
+                data.DependentName,
+                data.DependentAge,
+                data.EmployeeID
+            ]);
+            const match = result[0].info.match(/Rows matched: (\d+)/);
+            const rowsMatched = match ? parseInt(match[1], 10) : 0;
+            if(rowsMatched==0){
+                result = await connection.query(queryForAddDependent, [
+                    data.EmployeeID,
+                    data.DependentName,
+                    data.DependentAge
+                ]);
+            }
+            console.log("Dependent info updated successfully for EmployeeID:", data.EmployeeID);
+            return result;
+
+        } catch (error) {
+            console.error("Error in updateDependent:", error.message);
+            throw new Error(`An error occurred in updateDependent: ${error.message}`);
+        }
+    },
+    addNewColumnForEmployee: async (connection, data) => {
+        console.log("___addNewColumnForEmployee");
+        console.log(data)
+        // Destructuring the data for readability.
+        const { column_name, column_type } = data;
+
+        try {
+            // Using placeholders for SQL parameters to prevent SQL injection.
+            const query = `ALTER TABLE employee ADD COLUMN ?? ??`;
+
+            const [result] = await connection.query(query, [column_name, column_type]);
+
+            return result;
+        } catch (error) {
+            console.error("Error adding new column to employee:", error.message);
+            throw new Error(`Failed to add the '${column_name}' column with type '${column_type}' to the 'employee' table. Details: ${error.message}`);
+        }
+    }
 };
