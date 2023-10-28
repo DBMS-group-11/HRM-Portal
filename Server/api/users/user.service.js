@@ -605,13 +605,13 @@ module.exports = {
     },
     updateLeaves: async (connection, data) => {
         console.log("___updateLeaves");
-        console.log(data);
+        // console.log(data);
         try {
             const [result] = await connection.execute(
                 `UPDATE \`leave\`
                 SET \`Approved\` = 1, \`ApprovedByID\` = ?,ApprovedDateTime=?
-                WHERE \`EmployeeID\` = ?`,
-                [data.ApprovedByID, data.ApprovedDateTime, data.EmployeeID,]
+                WHERE \`EmployeeID\` = ? AND LeaveID=?`,
+                [data.ApprovedByID, data.ApprovedDateTime, data.EmployeeID,data.LeaveID]
             );
             return result;
         } catch (error) {
