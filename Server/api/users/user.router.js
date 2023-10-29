@@ -22,6 +22,7 @@ const{
 
     getNotApprovedLeaves,
     approveLeaves,
+    denyLeaves,
 
     supervisees
 }=require("./user.controller");
@@ -63,6 +64,7 @@ router.post("/homeSub",homeSub); //get required details for home page
 
 router.get("/getNotApprovedLeaves",getNotApprovedLeaves);//get Leaves not approved yet
 router.patch("/approveLeaves",approveLeaves); //approve leaves 
+router.patch("/denyLeaves",denyLeaves); //deny leaves
 
 router.get("/supervisees",supervisees); //get all supervisees
 

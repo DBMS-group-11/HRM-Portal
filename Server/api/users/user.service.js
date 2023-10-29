@@ -618,6 +618,21 @@ module.exports = {
             throw new Error(`An error occurred while updating leaves: ${error.message}`);
         }
     },
+    updateLeaveForDenyReq: async (connection, data) => {
+        console.log('___updateLeaveForDenyReq');
+        try {
+            const result = await connection.execute(
+                `UPDATE \`leave\`
+                SET Approved=-1, ApprovedByID=?, ApprovedDateTime=?
+                WHERE EmployeeID=? AND LeaveID=?`, 
+                [data.ApprovedByID, data.ApprovedDateTime, data.EmployeeID, data.LeaveID]
+            );
+            return result;
+        } catch (error) {
+            console.error("Error in updateLeaveForDenyReq:", error.message);
+            throw new Error(`An error occurred in updateLeaveForDenyReq: ${error.message}`);
+        }
+    },    
     getSupervisees: async (connection) => {
         console.log("___getSupervisees");
         try {

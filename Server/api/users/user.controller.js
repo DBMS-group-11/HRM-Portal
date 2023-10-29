@@ -47,6 +47,7 @@ const {
 
     fetchNotApprovedLeaves,
     updateLeaves,
+    updateLeaveForDenyReq,
 
     getSupervisees
 } = require("./user.service");
@@ -707,6 +708,34 @@ module.exports = {
                 connection.release();
         }
     },
+    denyLeaves: async (req, res) => {
+        console.log("> denyLeaves");
+        let connection;
+        try {
+            connection = await pool.getConnection();
+            const result = await updateLeaveForDenyReq(connection, req.body);
+            
+            // Send a success response to the client
+            res.status(200).json({
+                success: 1,
+                message: "Leave has been successfully denied.",
+                result: result
+            });
+        } catch (error) {
+            // Handle the error and send an error response
+            console.error("Error in denyLeaves:", error.message);
+            res.status(500).json({  // Use 500 or an appropriate error code
+                success: 0,
+                message: `An error occurred: ${error.message}`
+            });
+        } finally {
+            // Ensure the connection is released
+            console.log("<")
+            if (connection) {
+                connection.release();
+            }
+        }
+    },    
     supervisees: async (req, res) => {
         console.log("> supervisees")
         let connection;
