@@ -4,7 +4,7 @@ import { Button, Snackbar, Typography } from '@mui/material';
 import LoginForm from '../components/LoginForm';
 import { useState, useEffect } from 'react';
 
-const Login = ({setLoggedIn}) => {
+const Login = ({ setLoggedIn }) => {
 
     const [snackBarOpen, setSnackBarOpen] = useState(false);
     const [cookieBoxOpen, setCookieBoxOpen] = useState(true);
@@ -12,7 +12,7 @@ const Login = ({setLoggedIn}) => {
 
     const handleSnackBarClick = () => {
         setSnackBarOpen(true);
-      };
+    };
 
     const handleSnackBarClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -21,12 +21,12 @@ const Login = ({setLoggedIn}) => {
 
         setSnackBarOpen(false);
     };
-    
+
     useEffect(() => {
         setLoggedIn(false);
-    },[]);
+    }, []);
 
-    return ( 
+    return (
         <>
             {cookieBoxOpen && (
                 <Snackbar
@@ -40,7 +40,7 @@ const Login = ({setLoggedIn}) => {
                     }}
                     message="This website uses cookies to enhance the user experience."
                     action={
-                        <Button color="inherit" onClick={()=>setCookieBoxOpen(false)}>
+                        <Button color="inherit" onClick={() => setCookieBoxOpen(false)}>
                             OK
                         </Button>
                     }
@@ -53,7 +53,7 @@ const Login = ({setLoggedIn}) => {
                     margin={'auto'}
                     height="100%"
                     sx={{
-                        backgroundImage:"url(/LoginBG.png)"
+                        backgroundImage: "url(/LoginBG.png)"
                     }}
                     display={'flex'}
                 >
@@ -79,7 +79,7 @@ const Login = ({setLoggedIn}) => {
                 />
             </Grid>
         </>
-     );
+    );
 }
- 
+
 export default Login;

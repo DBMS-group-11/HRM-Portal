@@ -23,6 +23,7 @@ const {
     reqLeave,
     getEmployeeIDByUserID,
 
+    getUserAccountLevelByUserID,
     getPersonalInfo,
     getDependentInfo,
     getJobTitleInfo,
@@ -49,7 +50,8 @@ const {
     updateLeaves,
     updateLeaveForDenyReq,
 
-    getSupervisees
+    getSupervisees,
+    updateDependentSupervisees
 } = require("./user.service");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -266,13 +268,14 @@ module.exports = {
                 message: "An error occurred during registration",
             });
         } finally {
+            console.log("<")
             if (connection) {
                 connection.release();
             }
         }
     },
     getRegisterSub: async (req, res) => { //done
-        console.log("___getRegisterSub")
+        console.log("> getRegisterSub")
         try {
             const [
                 departments,
@@ -289,7 +292,7 @@ module.exports = {
                 getEmployeeStatus(),
                 getPayGrades()
             ]);
-
+            console.log('<')
             return res.json({
                 departments,
                 supervisors,
@@ -331,13 +334,15 @@ module.exports = {
     },
     myAccount: async (req, res) => {
         console.log(">myAccount");
-        console.log(req.body);
+        // console.log(req.body);
         const data = req.body;
+        console.log(data)
         let connection;
         try {
             connection = await pool.getConnection();
 
             const [
+                UserAccountLv,
                 PersonalInfo,
                 DependentInfo,
 
@@ -350,6 +355,8 @@ module.exports = {
                 EmergencyInfo
 
             ] = await Promise.all([
+                getUserAccountLevelByUserID(connection,data),
+
                 getPersonalInfo(connection, data),
                 getDependentInfo(connection, data),
 
@@ -365,6 +372,7 @@ module.exports = {
             return res.json({
                 success: 1,
                 message: "My account accessed successfully",
+                UserAccountLv,
                 PersonalInfo,
                 DependentInfo,
                 JobTitleInfo,
@@ -383,13 +391,14 @@ module.exports = {
                 message: `An error occurred while accessing my account: ${error.message}`
             });
         } finally {
+            console.log("<")
             if (connection) connection.release();
         }
     },
     editMyAccount: async (req, res) => {
         console.log("> editMyAccount");
         const body = req.body;
-        console.log(body)
+        // console.log(body)
         let connection;
         try {
             //Get a connection from the pool
@@ -753,8 +762,97 @@ module.exports = {
                 message: error.message
             });
         } finally {
+            console.log('<')
             if (connection)
                 connection.release();
+        }
+    },
+    editSupervisees: async (req, res) => {
+        console.log("> editSupervisees");
+        const body = req.body;
+        // console.log(body)
+        let connection;
+        try {
+            //Get a connection from the pool
+            connection = await pool.getConnection();
+
+            //Start transaction
+            await connection.beginTransaction();
+            const employeeDetails = await getEmployeeDetails(connection,body.personalInfo.employeeID);
+
+            //update the emegency information
+            body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
+            const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
+        
+            // Prepare data for update employee information
+            employeeData = {
+                "EmployeeID":body.personalInfo.employeeID, 
+                "EmployeeName": body.personalInfo.name, 
+                "DateOfBirth": body.personalInfo.dob, 
+                "Gender": body.personalInfo.gender, 
+                "MaritalStatus": body.personalInfo.maritalStatus, 
+
+                "Address": body.personalInfo.address, 
+                "Country": body.personalInfo.country, 
+                "DepartmentID": body.departmentInfo.department, 
+                "JobTitleID": body.departmentInfo.jobTitle, 
+                "PayGradeID": body.departmentInfo.payGrade,
+                "EmploymentStatusID": body.departmentInfo.status, 
+                "SupervisorID": body.departmentInfo.supervisor, 
+            }
+            userData={
+                "UserID": body.personalInfo.UserID,
+                "EmployeeID":body.personalInfo.employeeID, 
+                "Username": body.personalInfo.username,
+                "Email": body.personalInfo.email,
+                // "PasswordHash": "0000", //default password
+                "UserAccountLevelName": body.personalInfo.userAccountType,
+                
+            }
+            dependentInfo = {
+                "EmployeeID": employeeData.EmployeeID,
+                "DependentName": body.personalInfo.dependentName,
+                "DependentAge": body.personalInfo.dependentAge
+            }
+            
+            const employeeResult = await updateEmployee(connection, employeeData);//update employee
+
+            const UserAccountLevelID=await getUserAccountLevelIDByUserAccountLevelName(connection,userData.UserAccountLevelName);
+            userData.UserAccountLevelID=UserAccountLevelID;
+            const userResult = await updateUser(connection, userData);//update user
+            
+            const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
+
+            //Commit transaction
+            await connection.commit();
+
+            console.log("<")
+            return res.json({
+                success: 1,
+                data: {
+                    user: userResult,
+                    employee: employeeResult,
+                    dependentResult: dependentResult,
+                    emergencyResult: emergencyResult
+                },
+                message: "Edit employee successful",
+            })
+
+        } catch (error) {
+            //Rollback the transaction if any query fails
+            if (connection) {
+                await connection.rollback();
+            }
+            console.log(error)
+            console.log("<")
+            return res.status(500).json({
+                success: 0,
+                message: "An error occurred during Edit employee",
+            });
+        } finally {
+            if (connection) {
+                connection.release();
+            }
         }
     },
     editUserCredentials: async (req, res) => {

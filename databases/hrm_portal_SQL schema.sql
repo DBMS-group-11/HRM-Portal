@@ -365,4 +365,4 @@ VALUES
     
     
 
--- DELETE FROM Employee WHERE EmployeeID = 'EM-0001';
+-- DELETE FROM Employee WHERE EmployeeID = 'EM-0001';leave

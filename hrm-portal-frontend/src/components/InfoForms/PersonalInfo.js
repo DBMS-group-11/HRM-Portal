@@ -205,7 +205,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                         label="Date of Birth"
-                        {...(dob != '' && {value: dayjs(dob)})}
+                        value={ dob != '' ? dayjs(dob) : dayjs()}
                         {...(isReadOnly ? {} : {onChange: (newValue) => setDob(dayjs(newValue).format("YYYY/MM/DD"))})}
                     />
                 </LocalizationProvider>

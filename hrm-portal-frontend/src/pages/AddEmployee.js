@@ -25,7 +25,7 @@ const AddEmployee = ({children}) => {
             return;
         }
         setSnackBarOpen(false);
-        navigate('dashboard/home')
+        navigate('/dashboard/home')
     };
 
 

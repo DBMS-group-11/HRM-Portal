@@ -6,6 +6,9 @@ import { useCookies } from "react-cookie";
 import jwt from 'jwt-decode';
 import axios from "axios";
 
+const sign = require('jwt-encode');
+const secret = 'secret';
+
 const Home = () => {
 
     const [cookies, updateCookies] = useCookies(['u-token', 'x-uData']);
@@ -22,6 +25,10 @@ const Home = () => {
 
     useEffect(() => {
         document.title = 'Home | HRM-Portal';
+
+        const xUdata = jwt(cookies['x-uData']);
+        console.log(xUdata);
+
         setIsLoading(true);
         //fetch data
         const leavesData = {
@@ -37,7 +44,7 @@ const Home = () => {
 
         setEmpDetails({
             name: decoded.result[0].Username,
-            employeeId: cookies['x-uData'].EmployeeID,
+            employeeId: xUdata.EmployeeID,
             status: 'Permanent',
             payGrade: 'Lv1',
             company: 'Jupiter Apparels (Pvt) Ltd',
@@ -46,8 +53,8 @@ const Home = () => {
         });
 
         axios.post('http://localhost:3000/api/users/homeSub',{
-            "userID": cookies['x-uData'].UserID,
-            "EmployeeID": cookies['x-uData'].EmployeeID
+            "userID": xUdata.UserID,
+            "EmployeeID": xUdata.EmployeeID
         })
         .then(res => {
             console.log(res.data);
@@ -88,9 +95,10 @@ const Home = () => {
                     }));
                 }
             });
-            let uData = cookies['x-uData'];
+            let uData = jwt(cookies['x-uData']);
             uData = {...uData, TotalLeavesTaken: res.data.TotApprovedLeaveCount[0].totApprovedLeaveCount};
-            updateCookies('x-uData', uData);
+            let jwtData = sign(uData, secret);
+            updateCookies('x-uData', jwtData, { path: '/' , expires: new Date(Date.now() + 900000)});
         })
         .catch(err => {
             console.log(err);

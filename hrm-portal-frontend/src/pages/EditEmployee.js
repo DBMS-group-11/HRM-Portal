@@ -68,7 +68,7 @@ const EditEmployee = () => {
                         "country": res.data.PersonalInfo?.personalInfo?.Country || "N/A",
                         "username": res.data.PersonalInfo?.personalInfo?.Username || "N/A",
                         "email": res.data.PersonalInfo?.personalInfo?.Email || "N/A",
-                        "userAccountType": 'N/A', // handle this, account lv can get from login
+                        "userAccountType":res.data.UserAccountLv?.[0]?.UserAccountLevelName || "N/A",
                         "dob": dayjs(res.data.PersonalInfo?.personalInfo?.DateOfBirth).format("YYYY/MM/DD") || "N/A",
                         "maritalStatus": res.data.PersonalInfo?.personalInfo?.MaritalStatus || "N/A",
                         "gender": res.data.PersonalInfo?.personalInfo?.Gender || "N/A",
