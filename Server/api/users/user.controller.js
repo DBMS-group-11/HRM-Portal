@@ -51,7 +51,7 @@ const {
     updateLeaveForDenyReq,
 
     getSupervisees,
-    updateDependentSupervisees
+    // updateDependentSupervisees
 } = require("./user.service");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");

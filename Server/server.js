@@ -1,7 +1,7 @@
 const express=require("express");
 require("dotenv").config();//to sucure privacy
 const app=express();//create a instant of express application
-const userRouter=require("./api/users/user.router");
+const userRouter=require("./routes/routes.js");
 const cors = require("cors"); // Import the cors package
 
 app.use(cors()); // Use the cors middleware to enable CORS
