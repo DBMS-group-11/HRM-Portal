@@ -36,17 +36,17 @@ const MyAccount = () => {
         console.log(myData);
         setData(myData)
         setIsReadOnly(true);
-        // axios.post("http://localhost:3000/api/users/reg",myData)
-        // .then(res=>{
-        //     console.log(res.data.success);
-        //     if(res.data.success===1){
-        //         navigate('/dashboard/home');
-        //     }
-        // }).catch(err => {
-        //     console.log("Axios post error");
-        // }).finally(() => {
-        //     console.log("final");
-        // });
+        axios.put("http://localhost:3000/api/users/editMyAccount",myData)
+        .then(res=>{
+            console.log(res.data.success);
+            if(res.data.success===1){
+                console.log("updated");
+            }
+        }).catch(err => {
+            console.log("Axios post error");
+        }).finally(() => {
+            console.log("final");
+        });
     };
     /////////////////////////////////
     useEffect(() => {
@@ -69,7 +69,7 @@ const MyAccount = () => {
                             "country": res.data.PersonalInfo?.personalInfo?.Country || "N/A",
                             "username": res.data.PersonalInfo?.personalInfo?.Username || "N/A",
                             "email": res.data.PersonalInfo?.personalInfo?.Email || "N/A",
-                            "userAccountType": "N/A", // handle this, account lv can get from login
+                            "userAccountType": 'Level'+cookies['x-ual'], // handle this, account lv can get from login
                             "dob": dayjs(res.data.PersonalInfo?.personalInfo?.DateOfBirth).format("YYYY/MM/DD") || "N/A",
                             "maritalStatus": res.data.PersonalInfo?.personalInfo?.MaritalStatus || "N/A",
                             "gender": res.data.PersonalInfo?.personalInfo?.Gender || "N/A",

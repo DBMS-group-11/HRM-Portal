@@ -43,9 +43,9 @@ const ManageLeave = () => {
         data.push({
           id: i+1,
           emp_id: res.data.result[i].EmployeeID,
-          // name: res.data.result[i].EmployeeName,
-          'job-title': res.data.result[i].JobTitleID,
-          department: res.data.result[i].DepartmentID,
+          name: res.data.result[i].EmployeeName,
+          'job-title': res.data.result[i].JobTitleName,
+          department: res.data.result[i].DepartmentName,
           'no-of-days': res.data.result[i].LeaveDayCount
         });
       }

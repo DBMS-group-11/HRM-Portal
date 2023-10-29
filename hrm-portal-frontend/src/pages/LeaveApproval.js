@@ -6,6 +6,8 @@ import dayjs from 'dayjs';
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
+
 
 const LeaveApproval = () => {
 
@@ -21,19 +23,21 @@ const LeaveApproval = () => {
     const [cookies] = useCookies(['x-uData']);
 
     const location = useLocation();
+    const navigate = useNavigate();
+
     useEffect(() => {
         console.log(location.state);
         document.title = 'Leave Approval | HRM-Portal';
 
         // fetch data with leaveId = location.state.id
         const data = {
-            name: 'Sajitha',
-            jobTitle: 'Software Engineer',
-            department: 'IT',
-            payGrade: 'Level 1',
+            name: location.state.EmployeeName,
+            jobTitle: location.state.JobTitleName,
+            department: location.state.DepartmentName,
+            payGrade: location.state.PayGradeName,
             totalLeaves: 50,
-            leavesTaken: 4,
-            leavesLeft: 46,
+            leavesTaken: location.state.TotApprovedLeaveCount,
+            leavesLeft: 50 - location.state.TotApprovedLeaveCount,
             reason: location.state.Reason,
             leaveType: location.state.LeaveType,
             fromDate: dayjs(location.state.FirstAbsentDate).format('YYYY-MM-DD'),
@@ -46,21 +50,39 @@ const LeaveApproval = () => {
     },[]);
 
     const handleApprove = () => {
-        axios.post('http://localhost:3000/api/users/approveLeaves',{
-            "leaveID": location.state.LeaveID,
-            "EmployeeID": leaveData.EmployeeID,
+        axios.patch('http://localhost:3000/api/users/approveLeaves',{
+            "LeaveID": location.state.LeaveID,
+            "EmployeeID": location.state.EmployeeID,
             "ApprovedByID":cookies['x-uData'].EmployeeID,
             "ApprovedDateTime":dayjs().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(res => {
             console.log('Approved');
             console.log(res.data);
+            navigate('/dashboard/manage-leaves');
         })
         .catch(err => {
             console.log(err);
         });
         
-        console.log('Approved');
+    }
+
+    const handleDeny = () => {
+        axios.patch('http://localhost:3000/api/users/denyLeaves',{
+            "LeaveID": location.state.LeaveID,
+            "EmployeeID": location.state.EmployeeID,
+            "ApprovedByID":cookies['x-uData'].EmployeeID,
+            "ApprovedDateTime":dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        })
+        .then(res => {
+            console.log('Denied');
+            console.log(res.data);
+            navigate('/dashboard/manage-leaves');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+        
     }
 
 
@@ -193,6 +215,7 @@ const LeaveApproval = () => {
                         fullWidth
                         color='error'
                         endIcon={<DoNotDisturb/>}
+                        onClick={handleDeny}
                     >
                         Deny
                     </Button>
@@ -202,6 +225,7 @@ const LeaveApproval = () => {
                         variant="contained"
                         fullWidth
                         endIcon={<CheckCircleOutline/>}
+                        onClick={handleApprove}
                     >
                         Approve
                     </Button>
