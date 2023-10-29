@@ -60,7 +60,7 @@ const Supervisees = () => {
 
   const handleRowClick = (row) => {
     // sending id as state to the next page
-    navigate('/dashboard/supervisees/edit-employee', {state: {id: row.row.id}});
+    navigate('/dashboard/supervisees/edit-employee', {state: {EmployeeID: row.row.emp_id}});
   }
 
   return ( 

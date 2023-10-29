@@ -95,52 +95,6 @@ const MyAccount = () => {
             });
     }, []);
     
-    
-
-    // useEffect(() => {
-    //     document.title = "My Account | HRM-Portal";
-    //     // console.log(cookies)
-    //     // console.log(cookies['x-uData'].UserID)
-    //     //userID:cookies['x-uData'].UserID,
-    //     const data={EmployeeID:cookies['x-uData'].EmployeeID}
-    //     console.log(data)
-    //     axios.post('http://localhost:3000/api/users/myAccount',data)
-    //         .then(res => {
-    //             console.log(res);
-    //         })
-
-    //     setData({
-    //         "personalInfo": {
-    //             "name": "John Doe",
-    //             "employeeID": cookies['x-uData'].EmployeeID,
-    //             "address": "No. 123, Main Street, Colombo 01",
-    //             "country": "Sri Lanka",
-    //             "username": "johndoe",
-    //             "email": "johnd@mail.com",
-    //             "userAccountType": "Level4",
-    //             "dob": "01/01/1990",
-    //             "maritalStatus": "Unmarried",
-    //             "gender": "Male",
-    //             "dependentName": "Jane Doe",
-    //             "dependentAge": 10
-    //         },
-    //         "departmentInfo": {
-    //             "jobTitle": "Software Engineer",
-    //             "department": "Software Development",
-    //             "status": "Permanent",
-    //             "payGrade": "PG-1",
-    //             "supervisor": "Rajapakse"
-    //         },
-    //         "emergencyInfo": {
-    //             "name1": "Jane Doe",
-    //             "telNo1": "0771234567",
-    //             "name2": "Sirisena",
-    //             "telNo2": "0777654321",
-    //             "emergencyAddress": "No. 123, Main Street, Colombo 01"
-    //         }
-    //     });
-
-    // }, []);
     return (
         <Box maxWidth={"840px"} margin={'auto'}>
             {cookies['x-ual'] <= 2 && (
