@@ -388,6 +388,7 @@ module.exports = {
     editMyAccount: async (req, res) => {
         console.log("> editMyAccount");
         const body = req.body;
+        console.log(body)
         let connection;
         try {
             //Get a connection from the pool
@@ -395,7 +396,7 @@ module.exports = {
 
             //Start transaction
             await connection.beginTransaction();
-            const employeeDetails = await getEmployeeDetails(connection,body.personalInfo.EmployeeID);
+            const employeeDetails = await getEmployeeDetails(connection,body.personalInfo.employeeID);
 
             //update the emegency information
             body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
@@ -403,7 +404,7 @@ module.exports = {
         
             // Prepare data for update employee information
             employeeData = {
-                "EmployeeID":body.personalInfo.EmployeeID, 
+                "EmployeeID":body.personalInfo.employeeID, 
                 "EmployeeName": body.personalInfo.name, 
                 "DateOfBirth": body.personalInfo.dob, 
                 "Gender": body.personalInfo.gender, 
@@ -419,7 +420,7 @@ module.exports = {
             }
             userData={
                 "UserID": body.personalInfo.UserID,
-                "EmployeeID":body.personalInfo.EmployeeID, 
+                "EmployeeID":body.personalInfo.employeeID, 
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
                 // "PasswordHash": "0000", //default password

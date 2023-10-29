@@ -18,7 +18,7 @@ const MyAccount = () => {
 
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
-        myData.personalInfo = { ...e, employeeID: cookies['x-uData'].EmployeeID };
+        myData.personalInfo = { ...e, employeeID: cookies['x-uData'].EmployeeID ,UserID:cookies['x-uData'].UserID};
     };
 
     const getDepartmentInfo = (e) => {

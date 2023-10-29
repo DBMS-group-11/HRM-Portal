@@ -652,6 +652,7 @@ module.exports = {
     },
     getEmployeeDetails: async (connection, EmployeeID) => { //done
         console.log("___getEmployeeDetails");
+        console.log(EmployeeID)
         // console.log(EmployeeID)
         try {
             const [result] = await connection.query(`SELECT * FROM employee WHERE employee.EmployeeID=?`, [EmployeeID]);
