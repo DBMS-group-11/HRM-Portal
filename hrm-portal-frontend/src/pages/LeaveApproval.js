@@ -49,39 +49,29 @@ const LeaveApproval = () => {
 
     },[]);
 
-    const handleApprove = () => {
-        axios.patch('http://localhost:3000/api/users/approveLeaves',{
+    const sendApproveData = (url) => {
+        axios.patch(url,{
             "LeaveID": location.state.LeaveID,
             "EmployeeID": location.state.EmployeeID,
             "ApprovedByID":cookies['x-uData'].EmployeeID,
             "ApprovedDateTime":dayjs().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(res => {
-            console.log('Approved');
-            console.log(res.data);
+            console.log(res.data.message);
             navigate('/dashboard/manage-leaves');
         })
         .catch(err => {
             console.log(err);
         });
+    }
+
+    const handleApprove = () => {
+        sendApproveData('http://localhost:3000/api/users/approveLeaves');
         
     }
 
     const handleDeny = () => {
-        axios.patch('http://localhost:3000/api/users/denyLeaves',{
-            "LeaveID": location.state.LeaveID,
-            "EmployeeID": location.state.EmployeeID,
-            "ApprovedByID":cookies['x-uData'].EmployeeID,
-            "ApprovedDateTime":dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        })
-        .then(res => {
-            console.log('Denied');
-            console.log(res.data);
-            navigate('/dashboard/manage-leaves');
-        })
-        .catch(err => {
-            console.log(err);
-        });
+        sendApproveData('http://localhost:3000/api/users/denyLeaves');
         
     }
 

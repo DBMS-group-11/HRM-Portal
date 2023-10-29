@@ -1,5 +1,5 @@
 import SendIcon from '@mui/icons-material/Send';
-import { Container, TextField, Typography,Button } from "@mui/material";
+import { Container, TextField, Typography,Button, Snackbar } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -22,6 +22,16 @@ const RequestALeave = () => {
     const [noOfDays, setNoOfDays] = useState('');
     const [ isLoading, setIsLoading] = useState(false);
     const [ cookies ] = useCookies(['x-uData']);
+    const [snackBarOpen, setSnackBarOpen] = useState(false);
+
+
+    const handleSnackBarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSnackBarOpen(false);
+    };
 
     const leaveTypes = [
         // leave types : 'Annual','Casual','Maternity','No-Pay'
@@ -60,7 +70,18 @@ const RequestALeave = () => {
         })        
         .finally(() => {
             setIsLoading(false);
+            setSnackBarOpen(true);
+            handleCancel(e);
         })
+    }
+
+    const handleCancel = (e) => {
+        e.preventDefault();
+        setReason('');
+        setLeaveType('Casual');
+        setFromDate('');
+        setToDate('');
+        setNoOfDays('');
     }
 
     return ( 
@@ -101,19 +122,20 @@ const RequestALeave = () => {
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
-                        id="filled-basic"
+                        id="leave-reason"
                         label="Reason"
                         variant="standard"
                         fullWidth
                         required
                         multiline
                         rows={2}
+                        value={reason}
                         onChange={(e) => setReason(e.target.value)}
                     />
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
-                        id="filled-basic"
+                        id="leave-type"
                         label="Leave Type"
                         variant="standard"
                         select
@@ -175,6 +197,7 @@ const RequestALeave = () => {
                     <Button
                         variant="outlined"
                         fullWidth
+                        onClick={handleCancel}
                     >
                         Cancel
                     </Button>
@@ -192,6 +215,17 @@ const RequestALeave = () => {
                 </Grid>
             </Grid>
             </LocalizationProvider>
+            <Snackbar
+                    open={snackBarOpen}
+                    autoHideDuration={6000}
+                    onClose={handleSnackBarClose}
+                    message="Request Sent!"
+                    action={
+                        <Button color="inherit" onClick={handleSnackBarClose}>
+                            OK
+                        </Button>
+                    }
+                />
         </Container>
      );
 }

@@ -32,7 +32,7 @@ const MyAccount = () => {
     ///////////////////////////////////////////
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('submit');
+        console.log('====submit====');
         console.log(myData);
         setData(myData)
         setIsReadOnly(true);
@@ -73,12 +73,12 @@ const MyAccount = () => {
                             "dob": dayjs(res.data.PersonalInfo?.personalInfo?.DateOfBirth).format("YYYY/MM/DD") || "N/A",
                             "maritalStatus": res.data.PersonalInfo?.personalInfo?.MaritalStatus || "N/A",
                             "gender": res.data.PersonalInfo?.personalInfo?.Gender || "N/A",
-                            "dependentName": res.data.DependentInfo?.[0]?.DependentName || "N/A",
-                            "dependentAge": res.data.DependentInfo?.[0]?.DependentAge || "N/A"
+                            "dependentName": res.data.DependentInfo?.[0]?.DependentName || null,
+                            "dependentAge": res.data.DependentInfo?.[0]?.DependentAge || null
                         },
                         "departmentInfo": {
                             "jobTitle": res.data.JobTitleInfo?.[0]?.JobTitleName || "N/A",
-                            "department": res.data.DepartmentInfo?.DepartmentName || "N/A",
+                            "department": res.data.DepartmentInfo[0]?.DepartmentName || "N/A",
                             "status": res.data.EmployeeStatusInfo?.[0]?.EmploymentStatusName || "N/A",
                             "payGrade": res.data.PayGradesInfo?.[0]?.PayGradeName || "N/A",
                             "supervisor": res.data.SupervisorsInfo?.SupervisorName || "N/A"
