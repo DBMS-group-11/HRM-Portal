@@ -24,7 +24,8 @@ const{
     approveLeaves,
     denyLeaves,
 
-    supervisees
+    supervisees,
+    editSupervisees
 }=require("./user.controller");
 
 const router=require("express").Router();
@@ -66,6 +67,7 @@ router.get("/getNotApprovedLeaves",getNotApprovedLeaves);//get Leaves not approv
 router.patch("/approveLeaves",approveLeaves); //approve leaves 
 router.patch("/denyLeaves",denyLeaves); //deny leaves
 
-router.post("/supervisees",supervisees); //get all supervisees
+router.post("/supervisees",supervisees); //get my supervisees
+router.put("/editSupervisees",editSupervisees); //edit my supervisees
 
 module.exports=router;

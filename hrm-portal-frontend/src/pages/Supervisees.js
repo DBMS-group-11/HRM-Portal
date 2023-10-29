@@ -29,7 +29,7 @@ const Supervisees = () => {
 
   const [rows, setRows] = useState([]);
   const [cookies] = useCookies(['x-ual', 'x-uData']);
-  console.log(cookies['x-uData'].EmployeeID)
+  // console.log(cookies['x-uData'].EmployeeID)
 
   useEffect(() => {
     document.title = 'My Supervisees | HRM-Portal';
