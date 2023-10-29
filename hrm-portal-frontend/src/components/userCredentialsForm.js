@@ -1,4 +1,4 @@
-import { Button, Container, TextField, Typography } from "@mui/material";
+import { Button, Container, Snackbar, TextField, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import axios from "axios";
 import { useState } from "react";
@@ -28,6 +28,7 @@ const UserCredentialsForm = () => {
             // console.log(res.data);
             if(res.data.success === 1) {
                 console.log('success');
+                alert("Password changed!");
                 setChangePassword(false);
                 setUserEmail('');
                 setUserPassword('');

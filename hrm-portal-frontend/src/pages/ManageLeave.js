@@ -1,4 +1,4 @@
-import { Container, Typography } from "@mui/material"
+import { Container, Grid, Skeleton, Typography } from "@mui/material"
 import { DataGrid } from '@mui/x-data-grid';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -28,9 +28,11 @@ const ManageLeave = () => {
 
   const [rows, setRows] = useState([]);
   const [manageLeavesData, setManageLeavesData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     document.title = 'Manage Leave | HRM-Portal';
+    setIsLoading(true);
 
     axios.get('http://localhost:3000/api/users/getNotApprovedLeaves')
     .then(res => {
@@ -55,6 +57,9 @@ const ManageLeave = () => {
     })
     .catch(err => {
       console.log(err);
+    })
+    .finally(() => {
+      setIsLoading(false);
     });
 
   },[]);
@@ -70,24 +75,55 @@ const ManageLeave = () => {
 
   return ( 
       <Container>
+          { isLoading && (
+              <>
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                <br />
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                        <Skeleton variant="circular" width={250} height={250} sx={{m:'auto'}}/>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Skeleton variant="rectangular" width={'100%'} height={250} />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Skeleton variant="rectangular" width={'100%'} height={160} />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Skeleton variant="rectangular" width={'100%'} height={160} />
+                    </Grid>
+                    <Grid item xs={8}>
+                        <Skeleton variant="rectangular" width={'100%'} height={160} />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Skeleton variant="rectangular" width={'100%'} height={160} />
+                    </Grid>
+                </Grid>
+            </>
+          )}
           <br />
           <Typography variant="h6">
               Manage Leaves
           </Typography>
           <br />
           <div style={{ height: '80%', width: '100%' }}>
-          <DataGrid
-              rows={rows}
-              columns={columns}
-              initialState={{
-              pagination: {
-                  paginationModel: { page: 0, pageSize: 10 },
-              },
-              }}
-              pageSizeOptions={[10, 15]}
-              onRowClick={(row) => handleRowClick(row)}
-              
-          />
+          {rows.length > 0 ? (
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                initialState={{
+                pagination: {
+                    paginationModel: { page: 0, pageSize: 10 },
+                },
+                }}
+                pageSizeOptions={[10, 15]}
+                onRowClick={(row) => handleRowClick(row)}
+            />
+          ):(
+            <Typography variant="body">
+              No Unapproved Leaves!!
+            </Typography>
+          )}
           </div>
       </Container>
     );

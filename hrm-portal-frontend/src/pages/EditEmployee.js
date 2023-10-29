@@ -32,24 +32,24 @@ const EditEmployee = () => {
         myData.emergencyInfo = e;
     };
 
-    ///////////////////////////////////////////
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('submit');
+        console.log('====submit====');
         console.log(myData);
-        // axios.post("http://localhost:3000/api/users/reg",myData)
-        // .then(res=>{
-        //     console.log(res.data.success);
-        //     if(res.data.success===1){
-        //         navigate('/dashboard/home');
-        //     }
-        // }).catch(err => {
-        //     console.log("Axios post error");
-        // }).finally(() => {
-        //     console.log("final");
-        // });
+        setData(myData)
+        setIsReadOnly(true);
+        axios.put("http://localhost:3000/api/users/editSupervisees",myData)
+        .then(res=>{
+            console.log(res.data.success);
+            if(res.data.success===1){
+                console.log("updated");
+            }
+        }).catch(err => {
+            console.log("Axios post error");
+        }).finally(() => {
+            console.log("final");
+        });
     };
-    /////////////////////////////////
 
     useEffect(() => {
         document.title = "Edit Employee | HRM-Portal";
@@ -68,7 +68,7 @@ const EditEmployee = () => {
                         "country": res.data.PersonalInfo?.personalInfo?.Country || "N/A",
                         "username": res.data.PersonalInfo?.personalInfo?.Username || "N/A",
                         "email": res.data.PersonalInfo?.personalInfo?.Email || "N/A",
-                        "userAccountType": 'N/A', // handle this, account lv can get from login
+                        "userAccountType":res.data.UserAccountLv?.[0]?.UserAccountLevelName || "N/A",
                         "dob": dayjs(res.data.PersonalInfo?.personalInfo?.DateOfBirth).format("YYYY/MM/DD") || "N/A",
                         "maritalStatus": res.data.PersonalInfo?.personalInfo?.MaritalStatus || "N/A",
                         "gender": res.data.PersonalInfo?.personalInfo?.Gender || "N/A",

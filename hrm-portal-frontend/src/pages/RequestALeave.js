@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import jwt from 'jwt-decode';
 
 const RequestALeave = () => {
 
@@ -53,10 +54,12 @@ const RequestALeave = () => {
         }
     ];
 
+    const uData = jwt(cookies['x-uData']);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const EmployeeID = cookies['x-uData'].EmployeeID;
+        const EmployeeID = uData.EmployeeID;
         const LeaveLogDateTime = dayjs().format("YYYY/MM/DD hh:mm")
         const leaveData = { LeaveLogDateTime, EmployeeID, reason, leaveType, fromDate, toDate, noOfDays};
 
@@ -98,11 +101,11 @@ const RequestALeave = () => {
                     <Typography variant="caption">Total Leaves</Typography>
                 </Grid>
                 <Grid item xs={4} textAlign={'center'}>
-                    <Typography variant="h4">4</Typography>
+                    <Typography variant="h4">{uData.TotalLeavesTaken}</Typography>
                     <Typography variant="caption">Leaves Taken</Typography>
                 </Grid>
                 <Grid item xs={4} textAlign={'center'}>
-                    <Typography variant="h4">46</Typography>
+                    <Typography variant="h4">{50 - uData.TotalLeavesTaken}</Typography>
                     <Typography variant="caption">Leaves Left</Typography>
                 </Grid>
             </Grid>

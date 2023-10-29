@@ -8,6 +8,7 @@ import { CloseOutlined, EditOutlined } from "@mui/icons-material";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import dayjs from "dayjs";
+import jwt from "jwt-decode";
 
 const MyAccount = () => {
 
@@ -16,9 +17,11 @@ const MyAccount = () => {
     const [myData, setMyData] = useState({});
     const [cookies] = useCookies(['x-ual', 'x-uData']);
 
+    const [uData, setUData] = useState(jwt(cookies['x-uData']));
+
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
-        myData.personalInfo = { ...e, employeeID: cookies['x-uData'].EmployeeID ,UserID:cookies['x-uData'].UserID};
+        myData.personalInfo = { ...e, employeeID: uData.EmployeeID ,UserID:uData.UserID};
     };
 
     const getDepartmentInfo = (e) => {
@@ -29,7 +32,6 @@ const MyAccount = () => {
         myData.emergencyInfo = e;
     };
 
-    ///////////////////////////////////////////
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('====submit====');
@@ -54,7 +56,7 @@ const MyAccount = () => {
         
         // console.log("---------------")
         // console.log(cookies['x-uData'])
-        const data = { EmployeeID: cookies['x-uData']?.EmployeeID ,UserID: cookies['x-uData']?.UserID}; 
+        const data = { EmployeeID: uData?.EmployeeID ,UserID: uData?.UserID}; 
         console.log(data);
     
         axios.post('http://localhost:3000/api/users/myAccount', data)
@@ -69,7 +71,6 @@ const MyAccount = () => {
                             "country": res.data.PersonalInfo?.personalInfo?.Country || "N/A",
                             "username": res.data.PersonalInfo?.personalInfo?.Username || "N/A",
                             "email": res.data.PersonalInfo?.personalInfo?.Email || "N/A",
-                            // "userAccountType": 'Level'+cookies['x-ual'], // handle this, account lv can get from login
                             "userAccountType":res.data.UserAccountLv?.[0]?.UserAccountLevelName || "N/A",
                             "dob": dayjs(res.data.PersonalInfo?.personalInfo?.DateOfBirth).format("YYYY/MM/DD") || "N/A",
                             "maritalStatus": res.data.PersonalInfo?.personalInfo?.MaritalStatus || "N/A",
@@ -79,7 +80,7 @@ const MyAccount = () => {
                         },
                         "departmentInfo": {
                             "jobTitle": res.data.JobTitleInfo?.[0]?.JobTitleName || "N/A",
-                            "department": res.data.DepartmentInfo[0]?.DepartmentName || "N/A",
+                            "department": res.data.DepartmentInfo?.[0]?.DepartmentName || "N/A",
                             "status": res.data.EmployeeStatusInfo?.[0]?.EmploymentStatusName || "N/A",
                             "payGrade": res.data.PayGradesInfo?.[0]?.PayGradeName || "N/A",
                             "supervisor": res.data.SupervisorsInfo?.SupervisorName || "N/A"

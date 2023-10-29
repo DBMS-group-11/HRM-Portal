@@ -1,4 +1,4 @@
-drop database hrm_portal; 
+drop database if exists hrm_portal; 
 
 create database if not exists hrm_portal;
 use hrm_portal;

@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-
+import jwt from "jwt-decode";
 
 const LeaveApproval = () => {
 
@@ -24,6 +24,8 @@ const LeaveApproval = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
+
+    const uData = jwt(cookies['x-uData']);
 
     useEffect(() => {
         console.log(location.state);
@@ -53,7 +55,7 @@ const LeaveApproval = () => {
         axios.patch(url,{
             "LeaveID": location.state.LeaveID,
             "EmployeeID": location.state.EmployeeID,
-            "ApprovedByID":cookies['x-uData'].EmployeeID,
+            "ApprovedByID":uData.EmployeeID,
             "ApprovedDateTime":dayjs().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(res => {

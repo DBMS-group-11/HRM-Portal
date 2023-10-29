@@ -20,6 +20,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { Outlet, useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import { useState, useEffect } from "react";
+import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
 
 
 const drawerWidth = 320;
@@ -53,24 +54,26 @@ const drawerLinks = [
         visibilityLevel: 2
     },
     {
-        label: 'Add Employee',
-        icon: <PersonAddIcon />,
-        path: '/dashboard/add-employee',
-        active: false,
-        visibilityLevel: 2
-    }, {
-        label: 'My Account',
-        icon: <AccountCircleIcon />,
-        path: '/dashboard/myAccount',
-        active: false,
-        visibilityLevel: 4
+        label:'Add Employee',
+        icon:<PersonAddIcon />,
+        path:'/dashboard/add-employee',
+        active:false,
+        visibilityLevel:2
+    },
+    {
+        label:'Reports',
+        icon:<SummarizeOutlinedIcon />,
+        path:'/dashboard/reports',
+        active:false,
+        visibilityLevel:4
+    },
+    {
+        label:'My Account',
+        icon:<AccountCircleIcon />,
+        path:'/dashboard/myAccount',
+        active:false,
+        visibilityLevel:4
     }
-    // {
-    //     label:'Log out',
-    //     icon:<LogoutIcon />,
-    //     path:'/login',
-    //     active:false
-    // }
 ];
 
 
@@ -140,11 +143,11 @@ function Dashboard(props) {
                                 link.active = false;
                             });
                             drawerLinks[0].active = true;
-                            navigate('/login');
                             removeCookie('userLoggedIn', { path: '/' });
                             removeCookie('x-ual', { path: '/' });
-                            removeCookie('u-token', { path: '/' });
                             removeCookie('x-uData', { path: '/' });
+                            removeCookie('u-token', { path: '/' });
+                            navigate('/login');
                         }}
                     >
                         <ListItemIcon sx={{ ml: 3 }}><LogoutIcon /></ListItemIcon>

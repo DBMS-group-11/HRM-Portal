@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import { useCookies } from 'react-cookie';
 import Supervisees from './pages/Supervisees';
 import EditEmployee from './pages/EditEmployee';
+import Reports from './pages/Reports';
 
 const theme = createTheme({
   typography:{
@@ -56,6 +57,7 @@ function App() {
               <Route path='/dashboard/supervisees/edit-employee' element={<EditEmployee/>}/>
               <Route path='/dashboard/request-a-leave' element={<RequestALeave/>}/>
               <Route path='/dashboard/add-employee' element={<AddEmployee/>}/>
+              <Route path='/dashboard/reports' element={<Reports/>}/>
           </Route>
           )}
           <Route path='/*' element={<Page404 />}/>

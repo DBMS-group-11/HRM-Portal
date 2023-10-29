@@ -4,7 +4,10 @@ import { useState } from "react";
 import axios from 'axios'
 import { useCookies } from 'react-cookie';
 
-const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
+const sign = require('jwt-encode');
+const secret = 'secret';
+
+const LoginForm = ({setLoggedIn, snackBarOpen}) => {
 
     const [cookie, setCookie] = useCookies(['userLoggedIn', 'u-token', 'x-ual', 'x-uData']);
 
@@ -35,13 +38,16 @@ const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
 
                     const userData = {
                         EmployeeID:res.data.values.EmployeeID,
-                        UserID:res.data.values.UserID
+                        UserID:res.data.values.UserID,
+                        TotalLeavesTaken: null
                     };
+
+                    const jwt = sign(userData, secret);
 
                     setCookie('u-token', res.data.token, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                     setCookie('x-ual', res.data.values.UserAccountLevelID, { path: '/' , expires: new Date(Date.now() + 900000)}); // ual - user acount level : cookie expires in 15 mins
                     setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
-                    setCookie('x-uData', userData, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
+                    setCookie('x-uData', jwt, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                 }
                 else if(res.data.success==0){
                     setErrorCredentials(true);
@@ -59,14 +65,6 @@ const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
             setErrUserName(true);
             setIsLoading(false);
         }
-
-        // REMOVE THIS LINE LATER=================================================
-        // WORKAROUND TO BYPASS LOGIN
-        if(email === '11' && password === '11'){
-            navigate('/dashboard/home');
-            setLoggedIn(true);
-        }
-        // REMOVE UPTO HERE=======================================================
     }
 
     return ( 
