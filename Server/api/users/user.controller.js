@@ -23,6 +23,7 @@ const {
     reqLeave,
     getEmployeeIDByUserID,
 
+    getUserAccountLevelByUserID,
     getPersonalInfo,
     getDependentInfo,
     getJobTitleInfo,
@@ -335,11 +336,13 @@ module.exports = {
         console.log(">myAccount");
         // console.log(req.body);
         const data = req.body;
+        console.log(data)
         let connection;
         try {
             connection = await pool.getConnection();
 
             const [
+                UserAccountLv,
                 PersonalInfo,
                 DependentInfo,
 
@@ -352,6 +355,8 @@ module.exports = {
                 EmergencyInfo
 
             ] = await Promise.all([
+                getUserAccountLevelByUserID(connection,data),
+
                 getPersonalInfo(connection, data),
                 getDependentInfo(connection, data),
 
@@ -367,6 +372,7 @@ module.exports = {
             return res.json({
                 success: 1,
                 message: "My account accessed successfully",
+                UserAccountLv,
                 PersonalInfo,
                 DependentInfo,
                 JobTitleInfo,

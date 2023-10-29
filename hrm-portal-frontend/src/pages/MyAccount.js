@@ -54,7 +54,7 @@ const MyAccount = () => {
         
         // console.log("---------------")
         // console.log(cookies['x-uData'])
-        const data = { EmployeeID: cookies['x-uData']?.EmployeeID }; 
+        const data = { EmployeeID: cookies['x-uData']?.EmployeeID ,UserID: cookies['x-uData']?.UserID}; 
         console.log(data);
     
         axios.post('http://localhost:3000/api/users/myAccount', data)
@@ -69,7 +69,8 @@ const MyAccount = () => {
                             "country": res.data.PersonalInfo?.personalInfo?.Country || "N/A",
                             "username": res.data.PersonalInfo?.personalInfo?.Username || "N/A",
                             "email": res.data.PersonalInfo?.personalInfo?.Email || "N/A",
-                            "userAccountType": 'Level'+cookies['x-ual'], // handle this, account lv can get from login
+                            // "userAccountType": 'Level'+cookies['x-ual'], // handle this, account lv can get from login
+                            "userAccountType":res.data.UserAccountLv?.[0]?.UserAccountLevelName || "N/A",
                             "dob": dayjs(res.data.PersonalInfo?.personalInfo?.DateOfBirth).format("YYYY/MM/DD") || "N/A",
                             "maritalStatus": res.data.PersonalInfo?.personalInfo?.MaritalStatus || "N/A",
                             "gender": res.data.PersonalInfo?.personalInfo?.Gender || "N/A",

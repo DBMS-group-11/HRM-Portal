@@ -114,7 +114,8 @@ module.exports = {
         // console.log(data)
         // const connection = await pool.getConnection(); //we use single connection because multiple quires available
         // await connection.beginTransaction();
-
+        
+        console.log(data)
         try {
             // Insert emergency contact
             const [insertResults] = await connection.query(
@@ -125,7 +126,7 @@ module.exports = {
                     data.telNo1,
                     data.name2,
                     data.telNo2,
-                    data.Address
+                    data.emergencyAddress
                 ]
             );
             if (insertResults.affectedRows == 0) {
@@ -385,6 +386,19 @@ module.exports = {
             throw error; // You may choose to handle or rethrow the error as needed
         }
     },
+    getUserAccountLevelByUserID :async(connection, data) =>{
+        try {
+            const query = `
+                SELECT * FROM useraccount
+                JOIN useraccountlevel ON useraccount.UserAccountLevelID = useraccountlevel.UserAccountLevelID
+                WHERE useraccount.userID = ?`;
+            const result = await connection.query(query, [data.UserID]);
+            return result[0];
+        } catch (error) {
+            console.error("Error while getting user account level:", error);
+            throw new Error("Couldn't get user account level");
+        }
+    },
     getPersonalInfo: async (connection, data) => {
         console.log("___getPersonalInfo: Fetching personal info for EmployeeID:", data.EmployeeID);
         const sqlQuery = `
@@ -624,7 +638,7 @@ module.exports = {
             const result = await connection.execute(
                 `UPDATE \`leave\`
                 SET Approved=-1, ApprovedByID=?, ApprovedDateTime=?
-                WHERE EmployeeID=? AND LeaveID=?`, 
+                WHERE EmployeeID=? AND LeaveID=?`,
                 [data.ApprovedByID, data.ApprovedDateTime, data.EmployeeID, data.LeaveID]
             );
             return result;
@@ -632,13 +646,13 @@ module.exports = {
             console.error("Error in updateLeaveForDenyReq:", error.message);
             throw new Error(`An error occurred in updateLeaveForDenyReq: ${error.message}`);
         }
-    },    
-    getSupervisees: async (connection,EmployeeID) => {
+    },
+    getSupervisees: async (connection, EmployeeID) => {
         console.log("___getSupervisees");
         try {
             // `SELECT * FROM employee WHERE EmployeeID in(SELECT SupervisorID FROM employee WHERE EmployeeID=? AND SupervisorID IS NOT NULL)`,[EmployeeID]
             const [results] = await connection.query(
-                `SELECT * FROM employee WHERE SupervisorID=?`,[EmployeeID]
+                `SELECT * FROM employee WHERE SupervisorID=?`, [EmployeeID]
             );
             if (results.length == 0) {
                 return null;
@@ -816,7 +830,7 @@ module.exports = {
             ]);
             const match = result[0].info.match(/Rows matched: (\d+)/);
             const rowsMatched = match ? parseInt(match[1], 10) : 0;
-            if(rowsMatched==0){
+            if (rowsMatched == 0) {
                 result = await connection.query(queryForAddDependent, [
                     data.EmployeeID,
                     data.DependentName,

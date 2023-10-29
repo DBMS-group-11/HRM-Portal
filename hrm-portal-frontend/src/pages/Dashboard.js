@@ -25,45 +25,45 @@ import { useState, useEffect } from "react";
 const drawerWidth = 320;
 const drawerLinks = [
     {
-        label:'Home',
-        icon:<HomeIcon />,
-        path:'/dashboard/home',
-        active:true,
-        visibilityLevel:4
+        label: 'Home',
+        icon: <HomeIcon />,
+        path: '/dashboard/home',
+        active: true,
+        visibilityLevel: 4
     },
     {
-        label:'Request A Leave',
-        icon:<AddCircleOutlineIcon />,
-        path:'/dashboard/request-a-leave',
-        active:false,
-        visibilityLevel:4
+        label: 'Request A Leave',
+        icon: <AddCircleOutlineIcon />,
+        path: '/dashboard/request-a-leave',
+        active: false,
+        visibilityLevel: 4
     },
     {
-        label:'Manage Leaves',
-        icon:<AssignmentTurnedInIcon />,
-        path:'/dashboard/manage-leaves',
-        active:false,
-        visibilityLevel:3
+        label: 'Manage Leaves',
+        icon: <AssignmentTurnedInIcon />,
+        path: '/dashboard/manage-leaves',
+        active: false,
+        visibilityLevel: 3
     },
     {
-        label:'Supervisees',
-        icon:<Groups2Icon />,
-        path:'/dashboard/supervisees',
-        active:false,
-        visibilityLevel:2
+        label: 'Supervisees',
+        icon: <Groups2Icon />,
+        path: '/dashboard/supervisees',
+        active: false,
+        visibilityLevel: 2
     },
     {
-        label:'Add Employee',
-        icon:<PersonAddIcon />,
-        path:'/dashboard/add-employee',
-        active:false,
-        visibilityLevel:2
-    },{
-        label:'My Account',
-        icon:<AccountCircleIcon />,
-        path:'/dashboard/myAccount',
-        active:false,
-        visibilityLevel:4
+        label: 'Add Employee',
+        icon: <PersonAddIcon />,
+        path: '/dashboard/add-employee',
+        active: false,
+        visibilityLevel: 2
+    }, {
+        label: 'My Account',
+        icon: <AccountCircleIcon />,
+        path: '/dashboard/myAccount',
+        active: false,
+        visibilityLevel: 4
     }
     // {
     //     label:'Log out',
@@ -75,144 +75,144 @@ const drawerLinks = [
 
 
 function Dashboard(props) {
-    
-  const { window, children } = props;
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [userlevelID, setUserlevelID] = useState(0);
 
-  const navigate = useNavigate();
+    const { window, children } = props;
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [userlevelID, setUserlevelID] = useState(0);
 
-  const [cookies, setCookie, removeCookie] = useCookies(['userLoggedIn', 'x-ual']);
-  
+    const navigate = useNavigate();
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+    const [cookies, setCookie, removeCookie] = useCookies(['userLoggedIn', 'x-ual']);
 
-  useEffect(()=>{
-    setUserlevelID(cookies['x-ual']);
-  }, []);
 
-  const drawer = (
-    <Box sx={{height:'100%',backgroundColor:'#e5f5ff', borderTopRightRadius:'16px', borderBottomRightRadius:'16px'}}>
-      <Toolbar>
-        <Box
-            margin={'auto'}
-            display={'flex'}
-            alignItems={'center'}
-            justifyContent={'center'}
-        >
-            <Avatar src="/hrm-portal-logo.png" sx={{mr:1}}/>
-            <Typography variant="h6" height={'fit-content'}>
-                <b>HRM-Portal</b>
-            </Typography>
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
+
+    useEffect(() => {
+        setUserlevelID(cookies['x-ual']);
+    }, []);
+
+    const drawer = (
+        <Box sx={{ height: '100%', backgroundColor: '#e5f5ff', borderTopRightRadius: '16px', borderBottomRightRadius: '16px' }}>
+            <Toolbar>
+                <Box
+                    margin={'auto'}
+                    display={'flex'}
+                    alignItems={'center'}
+                    justifyContent={'center'}
+                >
+                    <Avatar src="/hrm-portal-logo.png" sx={{ mr: 1 }} />
+                    <Typography variant="h6" height={'fit-content'}>
+                        <b>HRM-Portal</b>
+                    </Typography>
+                </Box>
+            </Toolbar>
+            {/* <Divider /> */}
+            <List>
+                {drawerLinks.map((drawerLink) => {
+                    if (userlevelID <= drawerLink.visibilityLevel) {
+                        return (
+                            <ListItem key={drawerLink.label}>
+                                <ListItemButton
+                                    selected={drawerLink.active}
+                                    onClick={() => {
+                                        drawerLink.active = true;
+                                        drawerLinks.forEach((link) => {
+                                            if (link.label !== drawerLink.label) {
+                                                link.active = false;
+                                            }
+                                        });
+                                        navigate(drawerLink.path);
+                                    }}
+                                >
+                                    <ListItemIcon sx={{ ml: 3 }}>{drawerLink.icon}</ListItemIcon>
+                                    <ListItemText>{drawerLink.label}</ListItemText>
+                                </ListItemButton>
+                            </ListItem>
+                        )
+                    }
+                })}
+                <ListItem>
+                    <ListItemButton
+                        onClick={() => {
+                            drawerLinks.forEach((link) => {
+                                link.active = false;
+                            });
+                            drawerLinks[0].active = true;
+                            navigate('/login');
+                            removeCookie('userLoggedIn', { path: '/' });
+                            removeCookie('x-ual', { path: '/' });
+                            removeCookie('u-token', { path: '/' });
+                            removeCookie('x-uData', { path: '/' });
+                        }}
+                    >
+                        <ListItemIcon sx={{ ml: 3 }}><LogoutIcon /></ListItemIcon>
+                        <ListItemText>Log out</ListItemText>
+                    </ListItemButton>
+                </ListItem>
+            </List>
         </Box>
-      </Toolbar>
-      {/* <Divider /> */}
-      <List>
-        {drawerLinks.map((drawerLink) => {
-            if(userlevelID <= drawerLink.visibilityLevel){
-                return(
-                    <ListItem key={drawerLink.label}>
-                        <ListItemButton
-                            selected={drawerLink.active}
-                            onClick={() => {
-                                drawerLink.active = true;
-                                drawerLinks.forEach((link) => {
-                                    if(link.label !== drawerLink.label){
-                                        link.active = false;
-                                    }
-                                });
-                                navigate(drawerLink.path);
-                            }}
-                        >
-                            <ListItemIcon sx={{ml:3}}>{drawerLink.icon}</ListItemIcon>
-                            <ListItemText>{drawerLink.label}</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                )
-            }
-        })}
-            <ListItem>
-                <ListItemButton
-                    onClick={() => {
-                        drawerLinks.forEach((link) => {
-                            link.active = false;
-                        });
-                        drawerLinks[0].active = true;
-                        navigate('/login');
-                        removeCookie('userLoggedIn', { path: '/' });
-                        removeCookie('x-ual', { path: '/' });
-                        removeCookie('u-token', { path: '/' });
-                        removeCookie('x-uData', { path: '/' });
+    );
+
+    const container = window !== undefined ? () => window().document.body : undefined;
+
+
+    return (
+        <Box sx={{ display: 'flex' }}>
+            <CssBaseline />
+
+            {/* App Drawer */}
+            <Box
+                component="nav"
+                sx={{
+                    width: { sm: drawerWidth },
+                    flexShrink: { sm: 0 },
+
+                }}
+                aria-label="viewport-display"
+            >
+                <Drawer
+                    container={container}
+                    variant="temporary"
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
+
+                    ModalProps={{
+                        keepMounted: true, // Better open performance on mobile.
+                    }}
+                    sx={{
+                        display: { xs: 'block', sm: 'none' },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, border: 0 }
                     }}
                 >
-                    <ListItemIcon sx={{ml:3}}><LogoutIcon /></ListItemIcon>
-                    <ListItemText>Log out</ListItemText>
-                </ListItemButton>
-            </ListItem>
-      </List>
-    </Box>
-  );
+                    {drawer}
+                </Drawer>
+                <Drawer
+                    variant="permanent"
 
-  const container = window !== undefined ? () => window().document.body : undefined;
-  
+                    sx={{
+                        display: { xs: 'none', sm: 'block' },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, border: 0 },
+                    }}
+                    open
+                >
+                    {drawer}
+                </Drawer>
+            </Box>
 
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-
-        {/* App Drawer */}
-        <Box
-        component="nav"
-        sx={{
-            width: { sm: drawerWidth },
-            flexShrink: { sm: 0 },
-
-        }}
-        aria-label="viewport-display"
-        >
-            <Drawer
-                container={container}
-                variant="temporary"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                
-                ModalProps={{
-                keepMounted: true, // Better open performance on mobile.
-                }}
-                sx={{
-                display: { xs: 'block', sm: 'none' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, border:0 }
-                }}
+            {/* Display */}
+            <Box
+                component="main"
+                sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
             >
-                {drawer}
-            </Drawer>
-            <Drawer
-                variant="permanent"
-                
-                sx={{
-                display: { xs: 'none', sm: 'block' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth , border:0},
-                }}
-                open
-            >
-                {drawer}
-            </Drawer>
+                {/* <Toolbar /> */}
+                {/* <Route path={`${match.path}/myAccount`} element={<MyAccount/>}/> */}
+                {/* {children} */}
+                <Outlet />
+            </Box>
         </Box>
-        
-        {/* Display */}
-        <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-        >
-            {/* <Toolbar /> */}
-            {/* <Route path={`${match.path}/myAccount`} element={<MyAccount/>}/> */}
-            {/* {children} */}
-            <Outlet />
-        </Box>
-    </Box>
-  );
+    );
 }
 
 export default Dashboard;
