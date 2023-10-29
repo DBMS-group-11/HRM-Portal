@@ -387,9 +387,16 @@ module.exports = {
         }
     },
     getUserAccountLevelByUserID :async(connection, data) =>{
+        console.log("___getUserAccountLevelByUserID")
         try {
             const query = `
-                SELECT * FROM useraccount
+                SELECT 
+                useraccountlevel. UserAccountLevelID,
+                useraccountlevel.UserAccountLevelName,
+                useraccountlevel.OwnProfileDetailsAccess,
+                useraccountlevel.EveryProfileDetailsAccess,
+                useraccountlevel.LeaveApproveAccess
+                FROM useraccount
                 JOIN useraccountlevel ON useraccount.UserAccountLevelID = useraccountlevel.UserAccountLevelID
                 WHERE useraccount.userID = ?`;
             const result = await connection.query(query, [data.UserID]);

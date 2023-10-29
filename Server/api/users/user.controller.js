@@ -368,7 +368,6 @@ module.exports = {
 
                 getEmergencyInfo(connection, data)
             ]);
-
             return res.json({
                 success: 1,
                 message: "My account accessed successfully",
@@ -770,7 +769,7 @@ module.exports = {
     editSupervisees: async (req, res) => {
         console.log("> editSupervisees");
         const body = req.body;
-        // console.log(body)
+        console.log(body)
         let connection;
         try {
             //Get a connection from the pool

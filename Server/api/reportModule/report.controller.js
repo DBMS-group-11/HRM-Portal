@@ -28,17 +28,15 @@ module.exports={
                 return res.json({ success: 1, data: result});
             } 
             else {
-                // Handle other report numbers if needed
                 return res.json({ success: 0, message: "Invalid report number" });
             }
         } catch (error) {
             console.error("Error in the reports route:", error);
-            // Send an error response
             return res.status(500).json({ success: 0, error: "Internal server error" });
         } finally {
             console.log("<")
             if (connection) {
-                connection.release(); // Release the database connection
+                connection.release(); 
             }
         }
     }
