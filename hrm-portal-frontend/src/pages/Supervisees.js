@@ -2,6 +2,7 @@ import { Container, Typography } from "@mui/material"
 import { DataGrid } from '@mui/x-data-grid';
 import { useNavigate } from "react-router-dom";
 import { useState,useEffect } from "react";
+import { useCookies } from "react-cookie";
 import axios from "axios";
 
 const columns = [
@@ -27,11 +28,13 @@ const columns = [
 const Supervisees = () => {
 
   const [rows, setRows] = useState([]);
+  const [cookies] = useCookies(['x-ual', 'x-uData']);
+  console.log(cookies['x-uData'].EmployeeID)
 
   useEffect(() => {
     document.title = 'My Supervisees | HRM-Portal';
 
-    axios.get('http://localhost:3000/api/users/supervisees')
+    axios.post('http://localhost:3000/api/users/supervisees',{EmployeeID:cookies['x-uData'].EmployeeID})
     .then(res => {
       // console.log(res.data.supervisees);
       

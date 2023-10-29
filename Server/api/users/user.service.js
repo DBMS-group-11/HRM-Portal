@@ -633,11 +633,12 @@ module.exports = {
             throw new Error(`An error occurred in updateLeaveForDenyReq: ${error.message}`);
         }
     },    
-    getSupervisees: async (connection) => {
+    getSupervisees: async (connection,EmployeeID) => {
         console.log("___getSupervisees");
         try {
+            // `SELECT * FROM employee WHERE EmployeeID in(SELECT SupervisorID FROM employee WHERE EmployeeID=? AND SupervisorID IS NOT NULL)`,[EmployeeID]
             const [results] = await connection.query(
-                `SELECT * FROM employee WHERE EmployeeID in(SELECT SupervisorID FROM employee WHERE SupervisorID IS NOT NULL)`
+                `SELECT * FROM employee WHERE SupervisorID=?`,[EmployeeID]
             );
             if (results.length == 0) {
                 return null;

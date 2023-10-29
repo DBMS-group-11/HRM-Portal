@@ -66,6 +66,6 @@ router.get("/getNotApprovedLeaves",getNotApprovedLeaves);//get Leaves not approv
 router.patch("/approveLeaves",approveLeaves); //approve leaves 
 router.patch("/denyLeaves",denyLeaves); //deny leaves
 
-router.get("/supervisees",supervisees); //get all supervisees
+router.post("/supervisees",supervisees); //get all supervisees
 
 module.exports=router;

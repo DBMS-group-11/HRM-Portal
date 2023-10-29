@@ -739,9 +739,10 @@ module.exports = {
     supervisees: async (req, res) => {
         console.log("> supervisees")
         let connection;
+        // console.log(req.body.EmployeeID)
         try {
             connection = await pool.getConnection();
-            const result = await getSupervisees(connection);
+            const result = await getSupervisees(connection,req.body.EmployeeID);
             return res.status(200).json({
                 success: 1,
                 supervisees: result
