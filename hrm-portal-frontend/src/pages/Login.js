@@ -15,11 +15,11 @@ const Login = ({setLoggedIn}) => {
       };
 
     const handleSnackBarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-        return;
-    }
+        if (reason === 'clickaway') {
+            return;
+        }
 
-    setSnackBarOpen(false);
+        setSnackBarOpen(false);
     };
     
     useEffect(() => {

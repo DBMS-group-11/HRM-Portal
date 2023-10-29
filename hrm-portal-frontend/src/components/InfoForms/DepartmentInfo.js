@@ -60,10 +60,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
         }).finally(()=>{
             // console.log("final");
         });
-
-    }, []);
-    
-    useEffect(() => {        
+        
         if(isReadOnly){
             setJobTitle(data && data.departmentInfo.jobTitle || '');
             setDepartment(data && data.departmentInfo.department || '');

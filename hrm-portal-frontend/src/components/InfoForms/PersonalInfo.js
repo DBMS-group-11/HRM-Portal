@@ -1,6 +1,10 @@
 import { Container, TextField, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from "react";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 const PersonalInfo = ({data, isReadOnly, getData}) => {
     
@@ -45,7 +49,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
             setUsername(data && data.personalInfo.username || '');
             setEmail(data && data.personalInfo.email || '');
             setUserAccountType(data && data.personalInfo.userAccountType || '');
-            setDob(data && data.personalInfo.dob || '');
+            setDob(data && data.personalInfo.dob || dayjs());
             setMaritalStatus(data && data.personalInfo.maritalStatus || '');
             setGender(data && data.personalInfo.gender || '');
             setDependentName(data && data.personalInfo.dependentName || '');
@@ -198,19 +202,13 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                 </TextField>
             </Grid>
             <Grid item xs={4}>
-                <TextField 
-                    id="dob"
-                    label="Date of Birth"
-                    variant="standard"
-                    fullWidth
-                    required
-                    helperText="DD/MM/YYYY"
-                    InputProps={{
-                        readOnly: isReadOnly,
-                    }}
-                    value={dob}
-                    {...(isReadOnly ? {} : {onChange: (e) => setDob(e.target.value)})}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                        label="Date of Birth"
+                        {...(dob != '' && {value: dayjs(dob)})}
+                        {...(isReadOnly ? {} : {onChange: (newValue) => setDob(dayjs(newValue).format("YYYY/MM/DD"))})}
+                    />
+                </LocalizationProvider>
             </Grid>
             <Grid item xs={4}>
                 <TextField 

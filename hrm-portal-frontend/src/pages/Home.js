@@ -23,10 +23,10 @@ const Home = () => {
         document.title = 'Home | HRM-Portal';
         //fetch data
         const leavesData = {
-            Annual: 10,
-            Casual: 15,
-            Maternity: 8,
-            NoPay: 3
+            Annual: 0,
+            Casual: 0,
+            Maternity: 0,
+            NoPay: 0
         }; 
         setNoOfLeaves(leavesData);
         
@@ -58,13 +58,38 @@ const Home = () => {
                 branch: 'Colombo Branch',
                 country: 'Sri Lanka'
             });
-            // console.log(res.data.EmployeeStatusInfo[0].EmploymentStatusName);
+
+            const leavesData = res.data.TotApprovedLeaveCountByType;
+
+            leavesData.forEach(l => {
+                if(l.LeaveType === 'Annual'){
+                    setNoOfLeaves(prevState => ({
+                        ...prevState,
+                        Annual: l.CountApprovedByType
+                    }));
+                }else if(l.LeaveType === 'Casual'){
+                    setNoOfLeaves(prevState => ({
+                        ...prevState,
+                        Casual: l.CountApprovedByType
+                    }));
+                }else if(l.LeaveType === 'Maternity'){
+                    setNoOfLeaves(prevState => ({
+                        ...prevState,
+                        Maternity: l.CountApprovedByType
+                    }));
+                }else if(l.LeaveType === 'No-Pay'){
+                    setNoOfLeaves(prevState => ({
+                        ...prevState,
+                        NoPay: l.CountApprovedByType
+                    }));
+                }   
+                setTotalLeavesTaken(noOfLeaves.Annual + noOfLeaves.Casual + noOfLeaves.Maternity + noOfLeaves.NoPay);             
+            });
+
         })
         .catch(err => {
             console.log(err);
         });
-
-        setTotalLeavesTaken(leavesData.Annual + leavesData.Casual + leavesData.Maternity + leavesData.NoPay);
         },[]);
 
     return ( 
