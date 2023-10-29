@@ -32,24 +32,24 @@ const EditEmployee = () => {
         myData.emergencyInfo = e;
     };
 
-    ///////////////////////////////////////////
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('submit');
+        console.log('====submit====');
         console.log(myData);
-        // axios.post("http://localhost:3000/api/users/reg",myData)
-        // .then(res=>{
-        //     console.log(res.data.success);
-        //     if(res.data.success===1){
-        //         navigate('/dashboard/home');
-        //     }
-        // }).catch(err => {
-        //     console.log("Axios post error");
-        // }).finally(() => {
-        //     console.log("final");
-        // });
+        setData(myData)
+        setIsReadOnly(true);
+        axios.put("http://localhost:3000/api/users/editSupervisees",myData)
+        .then(res=>{
+            console.log(res.data.success);
+            if(res.data.success===1){
+                console.log("updated");
+            }
+        }).catch(err => {
+            console.log("Axios post error");
+        }).finally(() => {
+            console.log("final");
+        });
     };
-    /////////////////////////////////
 
     useEffect(() => {
         document.title = "Edit Employee | HRM-Portal";

@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, CardContent, CardMedia, Container, Grid, Toolbar } from "@mui/material";
+import { Avatar, Box, Card, CardContent, CardMedia, Container, Grid, Skeleton, Toolbar } from "@mui/material";
 import { Typography } from "@mui/material";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useState, useEffect } from "react";
@@ -8,7 +8,8 @@ import axios from "axios";
 
 const Home = () => {
 
-    const [cookies] = useCookies(['u-token', 'x-uData']);
+    const [cookies, updateCookies] = useCookies(['u-token', 'x-uData']);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [noOfLeaves, setNoOfLeaves] = useState({
         Annual: 0,
@@ -21,6 +22,7 @@ const Home = () => {
 
     useEffect(() => {
         document.title = 'Home | HRM-Portal';
+        setIsLoading(true);
         //fetch data
         const leavesData = {
             Annual: 0,
@@ -59,6 +61,8 @@ const Home = () => {
                 country: 'Sri Lanka'
             });
 
+            setTotalLeavesTaken(res.data.TotApprovedLeaveCount[0].totApprovedLeaveCount);
+
             const leavesData = res.data.TotApprovedLeaveCountByType;
 
             leavesData.forEach(l => {
@@ -82,18 +86,51 @@ const Home = () => {
                         ...prevState,
                         NoPay: l.CountApprovedByType
                     }));
-                }   
-                setTotalLeavesTaken(noOfLeaves.Annual + noOfLeaves.Casual + noOfLeaves.Maternity + noOfLeaves.NoPay);             
+                }
             });
-
+            let uData = cookies['x-uData'];
+            uData = {...uData, TotalLeavesTaken: res.data.TotApprovedLeaveCount[0].totApprovedLeaveCount};
+            updateCookies('x-uData', uData);
         })
         .catch(err => {
             console.log(err);
+        })
+        .finally(() => {
+            setIsLoading(false);
         });
-        },[]);
+
+    },[]);
 
     return ( 
         <Container>
+
+            { isLoading && (
+                <>
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                <br />
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                        <Skeleton variant="circular" width={250} height={250} sx={{m:'auto'}}/>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Skeleton variant="rectangular" width={'100%'} height={250} />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Skeleton variant="rectangular" width={'100%'} height={160} />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Skeleton variant="rectangular" width={'100%'} height={160} />
+                    </Grid>
+                    <Grid item xs={8}>
+                        <Skeleton variant="rectangular" width={'100%'} height={160} />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Skeleton variant="rectangular" width={'100%'} height={160} />
+                    </Grid>
+                </Grid>
+            </>
+            )}
+
             <Toolbar>
                 <Box sx={{ flexGrow: 1 }}>
                     <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>

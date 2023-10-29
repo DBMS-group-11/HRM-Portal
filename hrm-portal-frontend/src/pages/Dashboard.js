@@ -20,6 +20,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { Outlet, useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import { useState, useEffect } from "react";
+import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
 
 
 const drawerWidth = 320;
@@ -58,19 +59,21 @@ const drawerLinks = [
         path:'/dashboard/add-employee',
         active:false,
         visibilityLevel:2
-    },{
+    },
+    {
+        label:'Reports',
+        icon:<SummarizeOutlinedIcon />,
+        path:'/dashboard/reports',
+        active:false,
+        visibilityLevel:4
+    },
+    {
         label:'My Account',
         icon:<AccountCircleIcon />,
         path:'/dashboard/myAccount',
         active:false,
         visibilityLevel:4
     }
-    // {
-    //     label:'Log out',
-    //     icon:<LogoutIcon />,
-    //     path:'/login',
-    //     active:false
-    // }
 ];
 
 

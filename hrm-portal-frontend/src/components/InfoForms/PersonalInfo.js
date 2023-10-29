@@ -33,7 +33,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
     const [country, setCountry] = useState('');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
-    const [userAccountType, setUserAccountType] = useState('Leval1');
+    const [userAccountType, setUserAccountType] = useState('Level1');
     const [dob, setDob] = useState('');
     const [maritalStatus, setMaritalStatus] = useState('Married');
     const [gender, setGender] = useState('Male');

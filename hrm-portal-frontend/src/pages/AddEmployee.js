@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Snackbar } from "@mui/material";
 import PersonalInfo from "../components/InfoForms/PersonalInfo";
 import DepartmentInfo from "../components/InfoForms/DepartmentInfo";
 import EmergencyInfo from "../components/InfoForms/EmergencyInfo";
@@ -16,7 +16,19 @@ const AddEmployee = ({children}) => {
 
     const [customAttributes, setCustomAttributes] = useState([]);
     const [myData, setMyData] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
     const navigate=useNavigate();
+    const [snackBarOpen, setSnackBarOpen] = useState(false);
+
+    const handleSnackBarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnackBarOpen(false);
+        navigate('dashboard/home')
+    };
+
+
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
     };
@@ -31,19 +43,21 @@ const AddEmployee = ({children}) => {
     ///////////////////////////////////////////
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('submit');
-        console.log(myData);
+        setIsLoading(true);
+        // console.log('submit');
+        // console.log(myData);
         axios.post("http://localhost:3000/api/users/reg",myData)
         .then(res=>{
             console.log(res.data.success);
             if(res.data.success===1){
-                navigate('/dashboard/home');
+                // navigate('/dashboard/home');
+                setSnackBarOpen(true);
             }
         }).catch(err => {
             console.log(err);
             console.log("Axios post error");
         }).finally(() => {
-            console.log("final");
+            setIsLoading(false);
         });
     };
     /////////////////////////////////
@@ -88,9 +102,21 @@ const AddEmployee = ({children}) => {
                     color="primary"
                     sx={{width:'48%', float:'right'}}
                     onClick={handleSubmit}
+                    disabled={isLoading}
                 >
                     Submit
                 </Button>
+                <Snackbar
+                    open={snackBarOpen}
+                    autoHideDuration={6000}
+                    onClose={handleSnackBarClose}
+                    message="Employee Added! Default password: 0000"
+                    action={
+                        <Button color="inherit" onClick={handleSnackBarClose}>
+                            OK
+                        </Button>
+                    }
+                />
             </Box>
     );
 }

@@ -31,11 +31,11 @@ const Login = ({setLoggedIn}) => {
             {cookieBoxOpen && (
                 <Snackbar
                     open={cookieBoxOpen}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                     onClose={(e,r)=>{
-                        if(r==='clickaway'){
-                            return;
-                        }
+                        // if(r==='clickaway'){
+                        //     return;
+                        // }
                         setCookieBoxOpen(false)
                     }}
                     message="This website uses cookies to enhance the user experience."

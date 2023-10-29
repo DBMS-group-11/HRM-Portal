@@ -4,7 +4,7 @@ import { useState } from "react";
 import axios from 'axios'
 import { useCookies } from 'react-cookie';
 
-const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
+const LoginForm = ({setLoggedIn, snackBarOpen}) => {
 
     const [cookie, setCookie] = useCookies(['userLoggedIn', 'u-token', 'x-ual', 'x-uData']);
 
@@ -35,7 +35,8 @@ const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
 
                     const userData = {
                         EmployeeID:res.data.values.EmployeeID,
-                        UserID:res.data.values.UserID
+                        UserID:res.data.values.UserID,
+                        TotalLeavesTaken: null
                     };
 
                     setCookie('u-token', res.data.token, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
@@ -59,14 +60,6 @@ const LoginForm = ({setLoggedIn, snackBarOpen, snackBarClose}) => {
             setErrUserName(true);
             setIsLoading(false);
         }
-
-        // REMOVE THIS LINE LATER=================================================
-        // WORKAROUND TO BYPASS LOGIN
-        if(email === '11' && password === '11'){
-            navigate('/dashboard/home');
-            setLoggedIn(true);
-        }
-        // REMOVE UPTO HERE=======================================================
     }
 
     return ( 

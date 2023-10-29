@@ -29,7 +29,6 @@ const MyAccount = () => {
         myData.emergencyInfo = e;
     };
 
-    ///////////////////////////////////////////
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('====submit====');

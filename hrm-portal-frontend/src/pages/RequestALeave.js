@@ -98,11 +98,11 @@ const RequestALeave = () => {
                     <Typography variant="caption">Total Leaves</Typography>
                 </Grid>
                 <Grid item xs={4} textAlign={'center'}>
-                    <Typography variant="h4">4</Typography>
+                    <Typography variant="h4">{cookies['x-uData'].TotalLeavesTaken}</Typography>
                     <Typography variant="caption">Leaves Taken</Typography>
                 </Grid>
                 <Grid item xs={4} textAlign={'center'}>
-                    <Typography variant="h4">46</Typography>
+                    <Typography variant="h4">{50 - cookies['x-uData'].TotalLeavesTaken}</Typography>
                     <Typography variant="caption">Leaves Left</Typography>
                 </Grid>
             </Grid>
