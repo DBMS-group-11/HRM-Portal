@@ -386,6 +386,54 @@ module.exports = {
             throw error; // You may choose to handle or rethrow the error as needed
         }
     },
+    getUserIDByEmployeeID: async (connection,EmployeeID) => {
+        console.log("___getUserIDByEmployeeID");
+        // console.log(EmployeeID);
+
+        try {
+            const [results] = await connection.query(`
+                SELECT UserID
+                FROM useraccount
+                WHERE EmployeeID = ?`,
+                [EmployeeID]
+            );
+            // console.log(results[0].UserID)
+
+            if (results.length === 0) {
+                // No results found for the given UserID
+                return null;
+            }
+            return results[0].UserID;
+        } catch (error) {
+            // Handle any database query errors here
+            console.error("Error in getUserIDByEmployeeID:", error);
+            throw error; // You may choose to handle or rethrow the error as needed
+        }
+    },
+    getUserIDAndUserAccountLvIDByEmployeeID: async (connection,EmployeeID) => {
+        console.log("___getUserIDAndUserAccountLvIDByEmployeeID");
+        // console.log(EmployeeID);
+
+        try {
+            const [results] = await connection.query(`
+                SELECT UserID,UserAccountLevelID
+                FROM useraccount
+                WHERE EmployeeID = ?`,
+                [EmployeeID]
+            );
+            console.log(results)
+
+            if (results.length === 0) {
+                // No results found for the given UserID
+                return null;
+            }
+            return results;
+        } catch (error) {
+            // Handle any database query errors here
+            console.error("Error in getUserIDAndUserAccountLvIDByEmployeeID:", error);
+            throw error; // You may choose to handle or rethrow the error as needed
+        }
+    },
     getUserAccountLevelByUserID :async(connection, data) =>{
         console.log("___getUserAccountLevelByUserID")
         try {
@@ -657,7 +705,6 @@ module.exports = {
     getSupervisees: async (connection, EmployeeID) => {
         console.log("___getSupervisees");
         try {
-            // `SELECT * FROM employee WHERE EmployeeID in(SELECT SupervisorID FROM employee WHERE EmployeeID=? AND SupervisorID IS NOT NULL)`,[EmployeeID]
             const [results] = await connection.query(
                 `SELECT * FROM employee WHERE SupervisorID=?`, [EmployeeID]
             );

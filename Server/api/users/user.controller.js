@@ -22,6 +22,8 @@ const {
     getLastEmployeeID,
     reqLeave,
     getEmployeeIDByUserID,
+    getUserIDByEmployeeID,
+    getUserIDAndUserAccountLvIDByEmployeeID,
 
     getUserAccountLevelByUserID,
     getPersonalInfo,
@@ -309,18 +311,16 @@ module.exports = {
         }
     },
     addCustomAttribute: async (req, res) => {
-        const { column_name, column_type } = req.body;
-
         // Basic validation (consider using a library for more robust validation).
-        if (!column_name || !column_type) {
-            return res.status(400).json({ error: 'Both column_name and column_type are required.' });
+        if (!req.body.EmployeeID || !req.body.AttributeName || !req.body.Value) {
+            return res.status(400).json({ error: 'Required data NOT FOUND!.' });
         }
 
         let connection;
         try {
             connection = await pool.getConnection();
 
-            const [result] = await addNewColumnForEmployee(connection, { column_name, column_type });
+            const [result] = await addNewColumnCustomAtrributeInfo(connection, data.body);
 
             return res.status(200).json({ message: 'Column added successfully!', result });
         } catch (error) {
@@ -751,6 +751,8 @@ module.exports = {
         try {
             connection = await pool.getConnection();
             const result = await getSupervisees(connection,req.body.EmployeeID);
+            console.log(result)
+            // const UerID=await get
             return res.status(200).json({
                 success: 1,
                 supervisees: result
@@ -777,6 +779,8 @@ module.exports = {
 
             //Start transaction
             await connection.beginTransaction();
+            const UserIDAndUserAccountLvID =await getUserIDAndUserAccountLvIDByEmployeeID(connection,body.personalInfo.employeeID);
+
             const employeeDetails = await getEmployeeDetails(connection,body.personalInfo.employeeID);
 
             //update the emegency information
@@ -800,13 +804,12 @@ module.exports = {
                 "SupervisorID": body.departmentInfo.supervisor, 
             }
             userData={
-                "UserID": body.personalInfo.UserID,
+                "UserID": UserIDAndUserAccountLvID[0].UserID,//body.personalInfo.UserID,
                 "EmployeeID":body.personalInfo.employeeID, 
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
                 // "PasswordHash": "0000", //default password
-                "UserAccountLevelName": body.personalInfo.userAccountType,
-                
+                "UserAccountLevelID":UserIDAndUserAccountLvID[0].UserAccountLevelID
             }
             dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
@@ -815,9 +818,7 @@ module.exports = {
             }
             
             const employeeResult = await updateEmployee(connection, employeeData);//update employee
-
-            const UserAccountLevelID=await getUserAccountLevelIDByUserAccountLevelName(connection,userData.UserAccountLevelName);
-            userData.UserAccountLevelID=UserAccountLevelID;
+            
             const userResult = await updateUser(connection, userData);//update user
             
             const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
