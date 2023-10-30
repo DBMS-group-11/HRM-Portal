@@ -2,7 +2,10 @@ const pool= require("../../db/database");
 
 const {
     getEmployeeByDepartment,
-    getEmployeeReportGrpByJobDepPay
+    getEmployeeByJobtitle,
+    getEmployeeByPaygrade,
+    getEmployeeReportGrpByJobDepPay,
+    getTotalLeavesInGivenPeriodByDepartment
 }=require('./report.servise');
 
 module.exports={
@@ -20,13 +23,21 @@ module.exports={
     
             if (reportNO == 1) {
                 const result = await getEmployeeByDepartment(connection);
-        
+                
                 return res.json({ success: 1, data: result });
-            }else if(reportNO==3){
-                const result = await getEmployeeReportGrpByJobDepPay(connection);
+            }else if (reportNO == 2) {
+                const result = await getTotalLeavesInGivenPeriodByDepartment(connection,req.body);
 
-                return res.json({ success: 1, data: result});
-            } 
+                return res.json({success: 1,data: result})
+            }else if(reportNO==3){
+                const result1 = await getEmployeeByDepartment(connection);
+                const result2 = await getEmployeeByJobtitle(connection);
+                const result3 = await getEmployeeByPaygrade(connection);
+
+                return res.json({ success: 1, data1: result1, data2: result2, data3: result3});
+            }else if (reportNO==4){
+                // const result1 = await getEmployeeByDepartment(connection);
+            }
             else {
                 return res.json({ success: 0, message: "Invalid report number" });
             }
