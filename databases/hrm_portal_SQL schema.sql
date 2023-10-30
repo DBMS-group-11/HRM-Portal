@@ -91,6 +91,13 @@ CREATE TABLE if not exists `DependentInfo` (
   PRIMARY KEY (`DependentInfoID`),
   FOREIGN KEY (`EmployeeID`) REFERENCES `Employee`(`EmployeeID`)
 );
+CREATE TABLE if not exists `CustomAttributesInfo` (
+	`CustomAttributesInfoID` INT AUTO_INCREMENT,
+    `EmployeeID` VARCHAR(10),
+    PRIMARY KEY(`CustomAttributesInfoID`),
+    FOREIGN KEY(`EmployeeID`) REFERENCES `Employee`(`EmployeeID`)
+);
+
 -- ------------------------------------------------------------------------------
 CREATE TABLE if not exists `UserAccountLevel` (
   `UserAccountLevelID` NUMERIC(10,0),
@@ -322,7 +329,13 @@ VALUES
   (002, 'Kamal Kumarasinghe', 0715248369 , 'Sriyavi Perera', 0745281361 , '46, Katubedda, Moratuwa'),
   (003, 'Emily Fernando', 0771284635, 'John Rodrigo', 01145823448 , '11/D, St. Mary Road,Kalutara'),
   (004, 'Piyawathi Fonseka',0784465531,'Kusum Renuka', 0112263495, '29/A,Fernando Lane,Kalubowila'),
-  (005, 'Sara Ann',0112556482,'Kalum Jayatilake', 0773325042, '11,Wewala, Ja ela' );
+  (005, 'Sara Ann',0112556482,'Kalum Jayatilake', 0773325042, '11,Wewala, Ja ela' ),
+  (006, 'Rohan Silva', '0776987451', 'Manel Silva', '0712356987', '56, Lake View, Colombo'),
+  (007, 'Priyantha Bandara', '0715648235', 'Chamari Bandara', '0774521369', '35, Hill Road, Kandy'),
+  (008, 'Lahiru Perera', '0778956234', 'Amaya Perera', '0713269852', '17, Palm Grove, Galle'),
+  (009, 'Nadeesha Fernando', '0712345678', 'Sanjeewa Fernando', '0778765432', '45, Beach Lane, Negombo'),
+  (010, 'Thilini Jayawardena', '0719856234', 'Mahesh Jayawardena', '0773265987', '27, Paradise Drive, Colombo');
+
   
   -- Sample data for Department table
 INSERT INTO Department (DepartmentID, DepartmentName)
@@ -336,31 +349,98 @@ VALUES
  -- Sample data for Employee table
 INSERT INTO employee(EmployeeID, EmployeeName, DateOfBirth, Gender, MaritalStatus, Address, Country, DepartmentID, JobTitleID, PayGradeID, EmploymentStatusID, SupervisorID, EmergencyContactID)
 VALUES
-  ('EM-0001' , "Sirimal Perera", '1975-04-24', "Male", 'Married',  "95, 1st Lane, Egodawatta", "Sri Lanka", 2, 1, 1, 5, NULL, 1),
-  ('EM-0002' , "Shriyani Wijesooriya", '1992-06-09', "Female", 'Unmarried', "23, 2nd Lane, Kadawatha", "Sri Lanka", 1, 3, 2, 5, "EM-0001", 2),
-  ('EM-0003' , "Shantha Silva", '1978-06-09', "Male", 'Unmarried', "4, 2nd Lane, Kadawatha", "Sri Lanka", 4, 3, 2, 4, "EM-0001", 2),
-  ('EM-0004' , "Nimali Fernando", '1989-07-21', "Female", 'Married', "26, 3rd Lane, Kottawa", "Sri Lanka", 4, 2, 2, 3, "EM-0002", 2);
+  ('EM-0001', 'Sirimal Perera', '1975-04-24', 'Male', 'Married', '95, 1st Lane, Egodawatta', 'Sri Lanka', 2, 1, 1, 5, NULL, 1),
+  ('EM-0002', 'Shriyani Wijesooriya', '1992-06-09', 'Female', 'Unmarried', '23, 2nd Lane, Kadawatha', 'Sri Lanka', 1, 3, 2, 5, 'EM-0001', 2),
+  ('EM-0003', 'Shantha Silva', '1978-06-09', 'Male', 'Unmarried', '4, 2nd Lane, Kadawatha', 'Sri Lanka', 4, 3, 2, 4, 'EM-0001', 3),
+  ('EM-0004', 'Nimali Fernando', '1989-07-21', 'Female', 'Married', '26, 3rd Lane, Kottawa', 'Sri Lanka', 4, 2, 2, 3, 'EM-0002', 5),
+  ('EM-0005', 'Kamal Perera', '1982-03-15', 'Male', 'Married', '42, 4th Lane, Kandy', 'Sri Lanka', 3, 2, 2, 4, 'EM-0001', 9),
+  ('EM-0006', 'Mala Gunasekara', '1990-11-30', 'Female', 'Married', '14, 5th Lane, Colombo', 'Sri Lanka', 1, 4, 3, 5, 'EM-0003', 10),
+  ('EM-0007', 'Saman Jayasuriya', '1985-08-18', 'Male', 'Married', '34, 6th Lane, Galle', 'Sri Lanka', 5, 4, 2, 5, 'EM-0001', 4),
+  ('EM-0008', 'Lakshika Perera', '1994-04-05', 'Female', 'Unmarried', '17, 7th Lane, Matara', 'Sri Lanka', 2, 1, 1, 4, 'EM-0001', 6),
+  ('EM-0009', 'Nihal Ranasinghe', '1980-12-12', 'Male', 'Married', '56, 8th Lane, Kegalle', 'Sri Lanka', 1, 3, 3, 5, 'EM-0005', 7),
+  ('EM-0010', 'Priyanka Fernando', '1988-09-28', 'Female', 'Married', '12, 9th Lane, Badulla', 'Sri Lanka', 4, 2, 2, 4, 'EM-0006', 8);
+
+-- Sample data for UserAccount table (10 records)
   
  -- Sample data for dependentInfo table
 INSERT INTO dependentinfo(DependentInfoID, EmployeeID, DependentName, DependentAge)
 VALUES
   (1 , "EM-0001", 'Pasindu Perera', 15),
   (2, "EM-0002", 'Tharushi Perera', 12),
-  (3, "EM-0003", 'Sachini Silva', 16);
+  (3, "EM-0003", 'Sachini Silva', 16),
+  (4, "EM-0004", 'Kavindu Fernando', 26),
+  (5, "EM-0005", 'Chathuri Perera', 29),
+  (6, "EM-0006", 'Yasitha Gunasekara', 23),
+  (7, "EM-0007", 'Saman Jr. Jayasuriya', 35),
+  (8, "EM-0008", 'Lakshika Jr. Perera', 27),
+  (9, "EM-0009", 'Nihal Ranasinghe', 20),
+  (10, "EM-0010", 'Priyanka Fernando', 24);
 
 -- Sample data for userAccount table
 INSERT INTO userAccount(userID, username, EmployeeID, Email, PasswordHash, userAccountLevelID)
 VALUES
-	(1, "admin123", "EM-0001", "admin@gmail.com", "admin", 1),
-    (2, "wjiesooriya92", "EM-0002", "wijesooriya92@gmail.com", "password", 3),
-    (3, "shantha78", "EM-0003", "shantha78@gmail.com", "password", 4),
-    (4, "nimali89", "EM-0004", "nimali89@gmail.com", "password", 4);
+	(1, 'admin123', 'EM-0001', 'admin@gmail.com', 'admin', 1),
+	(2, 'wjiesooriya92', 'EM-0002', 'wijesooriya92@gmail.com', 'password', 3),
+	(3, 'shantha78', 'EM-0003', 'shantha78@gmail.com', 'password', 4),
+	(4, 'nimali89', 'EM-0004', 'nimali89@gmail.com', 'password', 4),
+	(5, 'kamal82', 'EM-0005', 'kamal82@gmail.com', 'password', 2),
+	(6, 'mala90', 'EM-0006', 'mala90@gmail.com', 'password', 3),
+	(7, 'saman85', 'EM-0007', 'saman85@gmail.com', 'password', 4),
+	(8, 'lakshika94', 'EM-0008', 'lakshika94@gmail.com', 'password', 2),
+	(9, 'nihal80', 'EM-0009', 'nihal80@gmail.com', 'password', 3),
+	(10, 'priyanka88', 'EM-0010', 'priyanka88@gmail.com', 'password', 4);
     
 -- Sample data for leave table
 INSERT INTO `leave`(LeaveLogDateTime,EmployeeID,Approved,Reason,LeaveType,FirstAbsentDate,LastAbsentDate,LeaveDayCount,ApprovedDateTime,ApprovedByID)
 VALUES
 	('2023-10-16 10:25:31', "EM-0003", 1, "Personal leave", "Casual", '2023-10-18', '2023-10-20', 3, '2023-10-17 04:00:31', "EM-0002"),
     ('2023-10-16 09:47:19', "EM-0004", 1, "Sick leave", "Annual", '2023-10-17', '2023-10-17', 1, '2023-10-16 04:03:56', "EM-0002"),
-    ('2023-10-17 12:41:43', "EM-0003", 0, "Personal reasons", "Annual", '2023-10-20', '2023-10-21', 2, '2023-10-18 10:12:42', "EM-0001");
-    
+    ('2023-10-17 12:41:43', "EM-0003", -1, "Personal reasons", "Annual", '2023-10-20', '2023-10-21', 2, '2023-10-18 10:12:42', "EM-0001"),
+	('2023-10-19 14:25:10', 'EM-0005', -1, 'Family emergency', 'Casual', '2023-10-20', '2023-10-21', 2, '2023-10-19 15:45:12', 'EM-0002'),
+	('2023-10-22 08:12:37', 'EM-0006', 1, 'Vacation', 'Annual', '2023-10-23', '2023-10-27', 5, '2023-10-22 10:30:58', 'EM-0003'),
+	('2023-10-15 09:30:15', 'EM-0007', 1, 'Medical leave', 'Annual', '2023-10-16', '2023-10-17', 2, '2023-10-16 14:20:30', 'EM-0004'),
+	('2023-10-25 16:05:20', 'EM-0008', 0, 'Personal reasons', 'Casual', '2023-10-26', '2023-10-27', 2, NULL, NULL),
+	('2023-10-18 11:20:55', 'EM-0009', 1, 'Vacation', 'Annual', '2023-10-19', '2023-10-22', 4, '2023-10-18 13:45:08', 'EM-0005'),
+    ('2023-12-05 09:30:15', 'EM-0001', 1, 'Vacation', 'Annual', '2023-12-06', '2023-12-09', 4, '2023-12-05 11:45:30', 'EM-0003'),
+	('2023-12-06 16:20:20', 'EM-0002', 0, 'Personal reasons', 'Casual', '2023-12-07', '2023-12-07', 1, NULL, NULL),
+	('2023-12-07 09:30:15', 'EM-0003', 0, 'Personal leave', 'Casual', '2023-12-08', '2023-12-08', 1, NULL, NULL),
+	('2023-12-08 16:20:20', 'EM-0004', 1, 'Medical leave', 'Annual', '2023-12-09', '2023-12-10', 2, '2023-12-08 18:45:35', 'EM-0005'),
+	('2023-12-09 09:30:15', 'EM-0005', 1, 'Vacation', 'Annual', '2023-12-10', '2023-12-13', 4, '2023-12-09 11:45:30', 'EM-0003'),
+	('2023-12-10 16:20:20', 'EM-0006', 0, 'Personal reasons', 'Casual', '2023-12-11', '2023-12-11', 1, NULL, NULL),
+	('2023-12-11 09:30:15', 'EM-0007', 1, 'Family emergency', 'Casual', '2023-12-12', '2023-12-13', 2, '2023-12-11 11:45:30', 'EM-0008'),
+	('2023-12-12 16:20:20', 'EM-0008', 1, 'Vacation', 'Annual', '2023-12-13', '2023-12-16', 4, '2023-12-12 18:45:35', 'EM-0005'),
+	('2023-12-13 09:30:15', 'EM-0009', 0, 'Personal leave', 'Casual', '2023-12-14', '2023-12-14', 1, NULL, NULL),
+	('2023-12-14 16:20:20', 'EM-0010', 1, 'Medical leave', 'No-Pay', '2023-12-15', '2023-12-16', 2, '2023-12-14 18:45:35', 'EM-0009'),
+	('2023-12-15 09:30:15', 'EM-0001', 1, 'Vacation', 'Annual', '2023-12-16', '2023-12-19', 4, '2023-12-15 11:45:30', 'EM-0010'),
+	('2023-12-16 16:20:20', 'EM-0002', 0, 'Personal reasons', 'Casual', '2023-12-17', '2023-12-17', 1, NULL, NULL),
+	('2023-12-17 09:30:15', 'EM-0003', 1, 'Personal leave', 'Casual', '2023-12-18', '2023-12-18', 1, '2023-12-17 11:45:30', 'EM-0001'),
+	('2023-12-18 16:20:20', 'EM-0004', 1, 'Medical leave', 'No-Pay', '2023-12-19', '2023-12-20', 2, '2023-12-18 18:45:35', 'EM-0002'),
+	('2023-12-19 09:30:15', 'EM-0005', 1, 'Vacation', 'Annual', '2023-12-20', '2023-12-23', 4, '2023-12-19 11:45:30', 'EM-0004'),
+	('2023-12-20 16:20:20', 'EM-0006', 0, 'Personal reasons', 'Casual', '2023-12-21', '2023-12-21', 1, NULL, NULL),
+	('2023-12-21 09:30:15', 'EM-0007', 1, 'Family emergency', 'Casual', '2023-12-22', '2023-12-23', 2, '2023-12-21 11:45:30', 'EM-0008'),
+	('2023-12-22 16:20:20', 'EM-0008', 1, 'Vacation', 'Annual', '2023-12-23', '2023-12-26', 4, '2023-12-22 18:45:35', 'EM-0007'),
+	('2023-12-23 09:30:15', 'EM-0009', 0, 'Personal leave', 'Casual', '2023-12-24', '2023-12-24', 1, NULL, NULL),
+	('2023-12-24 16:20:20', 'EM-0010', 1, 'Medical leave', 'No-Pay', '2023-12-25', '2023-12-26', 2, '2023-12-24 18:45:35', 'EM-0009'),
+	('2023-12-25 09:30:15', 'EM-0001', 1, 'Vacation', 'Annual', '2023-12-26', '2023-12-29', 4, '2023-12-25 11:45:30', 'EM-0010'),
+	('2023-12-26 16:20:20', 'EM-0002', 0, 'Personal reasons', 'Casual', '2023-12-27', '2023-12-27', 1, NULL, NULL),
+	('2023-12-27 09:30:15', 'EM-0003', 1, 'Personal leave', 'Casual', '2023-12-28', '2023-12-28', 1, '2023-12-27 11:45:30', 'EM-0001'),
+	('2023-12-28 16:20:20', 'EM-0004', 1, 'Medical leave', 'Maternity', '2023-12-29', '2023-12-30', 2, '2023-12-28 18:45:35', 'EM-0002'),
+	('2023-12-29 09:30:15', 'EM-0005', 1, 'Vacation', 'Annual', '2023-12-30', '2023-12-31', 3, '2023-12-29 11:45:30', 'EM-0004'),
+	('2023-12-30 16:20:20', 'EM-0006', 0, 'Personal reasons', 'Casual', '2023-12-31', '2023-12-31', 1, NULL, NULL),
+	('2023-12-31 09:30:15', 'EM-0007', 1, 'Family emergency', 'Casual', '2024-01-01', '2024-01-02', 2, '2023-12-31 11:45:30', 'EM-0008'),
+	('2024-01-01 16:20:20', 'EM-0008', 1, 'Vacation', 'Annual', '2024-01-02', '2024-01-05', 4, '2024-01-01 18:45:35', 'EM-0007'),
+	('2024-01-02 09:30:15', 'EM-0009', 0, 'Personal leave', 'Casual', '2024-01-03', '2024-01-03', 1, NULL, NULL),
+	('2024-01-03 16:20:20', 'EM-0010', 1, 'Medical leave', 'Maternity', '2024-01-04', '2024-01-05', 2, '2024-01-03 18:45:35', 'EM-0009'),
+	('2024-01-04 09:30:15', 'EM-0001', 1, 'Vacation', 'Annual', '2024-01-05', '2024-01-08', 4, '2024-01-04 11:45:30', 'EM-0010'),
+	('2024-01-05 16:20:20', 'EM-0002', 0, 'Personal reasons', 'Casual', '2024-01-06', '2024-01-06', 1, NULL, NULL),
+	('2024-01-06 09:30:15', 'EM-0003', 1, 'Personal leave', 'Casual', '2024-01-07', '2024-01-07', 1, '2024-01-06 11:45:30', 'EM-0001'),
+	('2024-01-07 16:20:20', 'EM-0004', 1, 'Medical leave', 'No-Pay', '2024-01-08', '2024-01-09', 2, '2024-01-07 18:45:35', 'EM-0002'),
+	('2024-01-08 09:30:15', 'EM-0005', 1, 'Vacation', 'Annual', '2024-01-09', '2024-01-12', 4, '2024-01-08 11:45:30', 'EM-0004'),
+	('2024-01-09 16:20:20', 'EM-0006', 0, 'Personal reasons', 'Casual', '2024-01-10', '2024-01-10', 1, NULL, NULL),
+	('2024-01-10 09:30:15', 'EM-0007', 1, 'Family emergency', 'Casual', '2024-01-11', '2024-01-12', 2, '2024-01-10 11:45:30', 'EM-0008'),
+	('2024-01-11 16:20:20', 'EM-0008', 1, 'Vacation', 'Annual', '2024-01-12', '2024-01-15', 4, '2024-01-11 18:45:35', 'EM-0007'),
+	('2024-01-12 09:30:15', 'EM-0009', 0, 'Personal leave', 'Casual', '2024-01-13', '2024-01-13', 1, NULL, NULL),
+	('2024-01-13 16:20:20', 'EM-0010', 1, 'Medical leave', 'No-Pay', '2024-01-14', '2024-01-15', 2, '2024-01-13 18:45:35', 'EM-0009'),
+	('2024-01-14 09:30:15', 'EM-0001', 1, 'Vacation', 'Annual', '2024-01-15', '2024-01-18', 4, '2024-01-14 11:45:30', 'EM-0010'),
+	('2024-01-15 16:20:20', 'EM-0002', 0, 'Personal reasons', 'Casual', '2024-01-16', '2024-01-16', 1, NULL, NULL);
 -- DELETE FROM Employee WHERE EmployeeID = 'EM-0001';leave

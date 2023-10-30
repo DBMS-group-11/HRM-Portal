@@ -1,5 +1,6 @@
 DROP VIEW EmployeeByDepartment ;
 DROP VIEW EmployeeByJobtitle ;
+DROP VIEW EmployeeByPaygrade ;
 -- DROP VIEW EmployeeReportGrpByJobDepPay;
 
 CREATE VIEW EmployeeByDepartment AS
