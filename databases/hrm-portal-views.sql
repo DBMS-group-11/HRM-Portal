@@ -1,5 +1,5 @@
-DROP VIEW EmployeeByDepartment ;
-DROP VIEW EmployeeReports;
+DROP VIEW if exists EmployeeByDepartment ;
+DROP VIEW if exists EmployeeReports;
 
 CREATE VIEW EmployeeByDepartment AS
 SELECT d.DepartmentName,COUNT(*) AS EmployeeCount

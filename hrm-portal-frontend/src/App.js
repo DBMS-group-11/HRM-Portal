@@ -23,7 +23,7 @@ const theme = createTheme({
 })
 function App() {
 
-  const [cookies, updateCookies] = useCookies(['userLoggedIn']);
+  const [cookies] = useCookies(['userLoggedIn']);
   const [userlevelID, setUserlevelID] = useState(0);
 
   // ------

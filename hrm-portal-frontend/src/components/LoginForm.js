@@ -44,9 +44,9 @@ const LoginForm = ({setLoggedIn, snackBarOpen}) => {
 
                     const jwt = sign(userData, secret);
 
+                    setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                     setCookie('u-token', res.data.token, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                     setCookie('x-ual', res.data.values.UserAccountLevelID, { path: '/' , expires: new Date(Date.now() + 900000)}); // ual - user acount level : cookie expires in 15 mins
-                    setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                     setCookie('x-uData', jwt, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                 }
                 else if(res.data.success==0){
