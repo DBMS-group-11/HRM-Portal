@@ -43,6 +43,22 @@ module.exports = {
             console.error("Error while retrieving employees by department:", error);
             throw new Error("Couldn't fetch employee data by department");
         }
-    }
-    
+    },
+    getTotalLeavesInGivenPeriodByDepartment : async (connection, data) => {
+        console.log("___getTotalLeavesInGivenPeriodByDepartment");
+        try {
+            const query = `
+                SELECT DepartmentName, COUNT(*) AS LeaveCount
+                FROM hrm_portal.leave
+                JOIN employee ON employee.EmployeeID=leave.EmployeeID
+                JOIN department ON employee.DepartmentID=department.DepartmentID
+                WHERE Approved = 1 AND FirstAbsentDate BETWEEN ? AND ?
+                GROUP BY DepartmentName`;
+            const [result] = await connection.query(query, [data.From, data.To]);
+            return result;
+        } catch (error) {
+            console.error("An error occurred while getting total leaves by department:", error);
+            throw new Error("Coundn't fetch total leaves by department"); 
+        }
+    }    
 }
