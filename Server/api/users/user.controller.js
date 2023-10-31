@@ -15,7 +15,7 @@ const {
     getEmployeeStatus,
     getPayGrades,
     getCustomAttributes,
-    
+
     addDependent,
 
     addNewColumnForEmployee,
@@ -238,6 +238,10 @@ module.exports = {
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
             }
+            customAttributes={
+                "EmployeeID": data.EmployeeID,
+                "CustomAttributesInfo":body.CustomAttributes
+            }
             // //Hash password
             // const salt = genSaltSync(10);
             // body.PasswordHash = hashSync(body.PasswordHash, salt);
@@ -249,6 +253,8 @@ module.exports = {
             //Add dependent
             const dependentResult = await addDependent(connection, dependentInfo);
 
+            const customAttributeResult= await addNewCustomAttributeForEmployee(connection,customAttributes);
+
             //Commit transaction
             await connection.commit();
 
@@ -258,7 +264,8 @@ module.exports = {
                 data: {
                     user: userResult,
                     employee: employeeResult,
-                    dependentResult: dependentResult
+                    dependentResult: dependentResult,
+                    customAttributeResult:customAttributeResult,
                 },
                 message: "Registration successful",
             })
