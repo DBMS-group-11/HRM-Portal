@@ -2,6 +2,7 @@ import { Box, Button, IconButton } from "@mui/material";
 import PersonalInfo from "../components/InfoForms/PersonalInfo";
 import DepartmentInfo from "../components/InfoForms/DepartmentInfo";
 import EmergencyInfo from "../components/InfoForms/EmergencyInfo";
+import CustomAttribute from "../components/InfoForms/CustomAttribute";
 import { useEffect, useState } from "react";
 import UserCredentialsForm from "../components/userCredentialsForm";
 import { CloseOutlined, EditOutlined } from "@mui/icons-material";
@@ -15,6 +16,8 @@ const MyAccount = () => {
     const [data, setData] = useState(null);
     const [isReadOnly, setIsReadOnly] = useState(true);
     const [myData, setMyData] = useState({});
+    const [customAttributes, setCustomAttributes] = useState([]);
+
     const [cookies] = useCookies(['x-ual', 'x-uData']);
 
     const [uData, setUData] = useState(jwt(cookies['x-uData']));
@@ -35,9 +38,13 @@ const MyAccount = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('====submit====');
-        console.log(myData);
+        
         setData(myData)
         setIsReadOnly(true);
+        myData.CustomAttributesInfo = customAttributes;
+
+        console.log(myData);
+
         axios.put("http://localhost:3000/api/users/editMyAccount",myData)
         .then(res=>{
             console.log(res.data.success);
@@ -91,7 +98,8 @@ const MyAccount = () => {
                             "name2": res.data.EmergencyInfo?.[0]?.SecondaryName || "N/A",
                             "telNo2": res.data.EmergencyInfo?.[0]?.SecondaryPhoneNumber || "N/A",
                             "emergencyAddress": res.data.EmergencyInfo?.[0]?.Address || "N/A"
-                        }
+                        },
+                        "CustomAttributes": customAttributes
                     });
                 }
             });
@@ -119,6 +127,26 @@ const MyAccount = () => {
             <PersonalInfo data={data} isReadOnly={isReadOnly} getData={getPersonalInfo} />
             <DepartmentInfo data={data} isReadOnly={isReadOnly} getData={getDepartmentInfo} />
             <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo} />
+            
+            {/* custom attributes */}
+            {customAttributes.map((customAttribute, index) => (
+                <CustomAttribute key={index} getData={(e) => {
+                    // myData[`customAttribute${index}`] = e;
+                    // myData.noOfCustomAttributes = index+1;
+                    customAttributes[index] = e;
+                }}/>
+            ))}
+            <Button
+                variant="outlined"
+                color="primary"
+                sx={{width:'100%'}}
+                onClick={() => {
+                    setCustomAttributes([...customAttributes, {}]);
+                }}
+            >
+                Add Custom Attribute
+            </Button>
+
             <UserCredentialsForm />
         </Box>
     );

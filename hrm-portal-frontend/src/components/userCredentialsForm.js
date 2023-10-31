@@ -45,7 +45,7 @@ const UserCredentialsForm = () => {
     
     return (
 
-        <Container sx={{marginY:6}}>
+        <Container sx={{marginY:2}}>
             {!changePassword && <Button variant="outlined" color="primary" onClick={() => setChangePassword(!changePassword)}>Edit Login Credentials</Button>}
             {changePassword &&
                 <>

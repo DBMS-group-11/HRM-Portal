@@ -46,12 +46,31 @@ const AddEmployee = ({children}) => {
         setIsLoading(true);
         // console.log('submit');
         // console.log(myData);
-        axios.post("http://localhost:3000/api/users/reg",myData)
+        // console.log(customAttributes);
+
+        // axios.post("http://localhost:3000/api/users/reg",myData)
+        // .then(res=>{
+        //     console.log(res.data.success);
+        //     if(res.data.success===1){
+        //         // navigate('/dashboard/home');
+        //         setSnackBarOpen(true);
+        //     }
+        // }).catch(err => {
+        //     console.log(err);
+        //     console.log("Axios post error");
+        // }).finally(() => {
+        //     setIsLoading(false);
+        // });
+
+        // custom attributes
+        axios.post('http://localhost:3000/api/users/addCustomAttribute',{
+            "CustomAttributes": customAttributes
+        })
         .then(res=>{
             console.log(res.data.success);
             if(res.data.success===1){
-                // navigate('/dashboard/home');
-                setSnackBarOpen(true);
+                console.log("Custom attributes added");
+                // setSnackBarOpen(true);
             }
         }).catch(err => {
             console.log(err);
@@ -72,10 +91,13 @@ const AddEmployee = ({children}) => {
                 <PersonalInfo getData={getPersonalInfo}/>
                 <DepartmentInfo getData={getDepartmentInfo}/>
                 <EmergencyInfo getData={getEmergencyInfo}/>
+                
+                {/* custom attributes */}
                 {customAttributes.map((customAttribute, index) => (
                     <CustomAttribute key={index} getData={(e) => {
-                        myData[`customAttribute${index}`] = e;
-                        myData.noOfCustomAttributes = index+1;
+                        // myData[`customAttribute${index}`] = e;
+                        // myData.noOfCustomAttributes = index+1;
+                        customAttributes[index] = e;
                     }}/>
                 ))}
                 <Button
@@ -86,7 +108,9 @@ const AddEmployee = ({children}) => {
                         setCustomAttributes([...customAttributes, {}]);
                     }}
                 
-                >Add Custom Attribute</Button>
+                >
+                    Add Custom Attribute
+                </Button>
 
                 <br/><br />
                 <Button

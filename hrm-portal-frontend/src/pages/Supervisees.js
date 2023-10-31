@@ -75,7 +75,7 @@ const Supervisees = () => {
 
   return ( 
       <Container>
-        {isLoading && (
+          {isLoading && (
             <>
               <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
               <br />
@@ -101,31 +101,35 @@ const Supervisees = () => {
               </Grid>
             </>
           )}
-          <br />
-          <Typography variant="h6">
-              Supervisees
-          </Typography>
-          <br />
-          <div style={{ height: '80%', width: '100%' }}>
-          { rows.length > 0 ? (
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                initialState={{
-                pagination: {
-                    paginationModel: { page: 0, pageSize: 10 },
-                },
-                }}
-                pageSizeOptions={[10, 15]}
-                onRowClick={(row) => handleRowClick(row)}
-                
-            />
-          ):(
-            <Typography variant="body">
-              You don't have any supervisees!
-            </Typography>
+          {!isLoading && (
+            <>
+              <br />
+              <Typography variant="h6">
+                  Supervisees
+              </Typography>
+              <br />
+              <div style={{ height: '80%', width: '100%' }}>
+                { rows.length > 0 ? (
+                  <DataGrid
+                      rows={rows}
+                      columns={columns}
+                      initialState={{
+                      pagination: {
+                          paginationModel: { page: 0, pageSize: 10 },
+                      },
+                      }}
+                      pageSizeOptions={[10, 15]}
+                      onRowClick={(row) => handleRowClick(row)}
+                      
+                  />
+                ):(
+                  <Typography variant="body">
+                    You don't have any supervisees!
+                  </Typography>
+                )}
+              </div>
+            </>
           )}
-          </div>
       </Container>
     );
 }

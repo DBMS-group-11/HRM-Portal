@@ -13,7 +13,7 @@ const CustomAttribute = ({data, isReadOnly, getData}) => {
             setAttributeValue(data && data.attributeValue || '');
         }
         else{
-            let formData = {attributeName, attributeValue};
+            let formData = {AttributeName: attributeName, AttributeValue: attributeValue};
             getData(formData);
         }
     } , [isReadOnly, data, attributeName, attributeValue]);

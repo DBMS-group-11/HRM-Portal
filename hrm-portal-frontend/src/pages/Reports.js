@@ -81,6 +81,18 @@ const Reports = () => {
         })
     };
 
+    const handleReport4 = () => {
+        console.log('Report 4');
+        // axios.post('http://localhost:3000/api/users/reports',{
+        //     "reportNO":4
+        // })
+        // .then((response) => {
+        //     console.log(response.data.data1);
+        //     setReport4Data(response.data);
+        //     console.log(report4Data);
+        // })
+    };
+
     useEffect(() => {
         handleReport1();
         // handleReport2();
@@ -89,12 +101,12 @@ const Reports = () => {
     return ( 
         <Container>
 
-            {/* <ButtonGroup variant="text">
+            <ButtonGroup variant="text">
                 <Button onClick={handleReport1}>Report 1</Button>
                 <Button onClick={handleReport2}>Report 2</Button>
                 <Button onClick={handleReport3}>Report 3</Button>
-                <Button onClick={()=>{handleReport(4)}}>Report 4</Button>
-            </ButtonGroup> */}
+                <Button onClick={handleReport4}>Report 4</Button>
+            </ButtonGroup>
 
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

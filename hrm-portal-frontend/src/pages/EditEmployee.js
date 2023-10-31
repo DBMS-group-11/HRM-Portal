@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useCookies } from "react-cookie";
+import CustomAttribute from "../components/InfoForms/CustomAttribute";
 
 const EditEmployee = () => {
 
@@ -16,6 +17,8 @@ const EditEmployee = () => {
     const [isReadOnly, setIsReadOnly] = useState(true);
     const [myData, setMyData] = useState({});
     const location = useLocation();
+    const [customAttributes, setCustomAttributes] = useState([]);
+
     const [cookies] = useCookies(['x-ual', 'x-uData']);
 
     const navigate = useNavigate();
@@ -90,6 +93,7 @@ const EditEmployee = () => {
                         "emergencyAddress": res.data.EmergencyInfo?.[0]?.Address || "N/A"
                     }
                 });
+                setCustomAttributes(res.data.CustomAttributesInfo);
             }
         })
         .catch(err => {
@@ -119,6 +123,25 @@ const EditEmployee = () => {
                 <PersonalInfo data={data} isReadOnly={isReadOnly} getData={getPersonalInfo}/>
                 <DepartmentInfo data={data} isReadOnly={isReadOnly} getData={getDepartmentInfo}/>
                 <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo}/>
+
+                {/* custom attributes */}
+                {customAttributes != null && customAttributes.map((customAttribute, index) => (
+                    <CustomAttribute key={index} getData={(e) => {
+                        // myData[`customAttribute${index}`] = e;
+                        // myData.noOfCustomAttributes = index+1;
+                        customAttributes[index] = e;
+                    }}/>
+                ))}
+                {/* <Button
+                    variant="outlined"
+                    color="primary"
+                    sx={{width:'100%'}}
+                    onClick={() => {
+                        setCustomAttributes([...customAttributes, {}]);
+                    }}
+                >
+                    Add Custom Attribute
+                </Button> */}
             </Box>
      );
 }
