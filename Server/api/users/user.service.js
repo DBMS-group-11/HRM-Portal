@@ -2,7 +2,7 @@ const pool = require("../../db/database");
 
 async function findIDs(data) {
     console.log("___findIDs");
-    console.log(data)
+    // console.log(data)
     const connection = await pool.getConnection();
     let newData = {};
     const queries = {
@@ -12,7 +12,7 @@ async function findIDs(data) {
         'PayGradeID': 'SELECT PayGradeID FROM paygrade WHERE PayGradeName = ?',
         'EmploymentStatusID': 'SELECT EmploymentStatusID FROM employmentstatus WHERE EmploymentStatusName =?',
         // 'EmergencyContactID': 'SELECT EmergencyContactID FROM emergencycontact WHERE EmergencyContactName =?',
-        'SupervisorID': 'SELECT employeeID as SupervisorID FROM employee WHERE EmployeeName =?',
+        'SupervisorID': 'SELECT EmployeeID as SupervisorID FROM employee WHERE EmployeeName =?',
     };
     try {
         await connection.beginTransaction();
@@ -32,6 +32,7 @@ async function findIDs(data) {
     } finally {
         connection.release();
     }
+    // console.log(newData);
     return newData;
 }
 module.exports = {
@@ -67,16 +68,17 @@ module.exports = {
     },
     addEmployee: async (connection, data) => { //done
         console.log("___addEmployee")
-        console.log(data)
+        // console.log(data)
         try {
             const newData = await findIDs(data);
+            // console.log(newData)
 
             data['Country'] = newData['CountryID']
             data['JobTitleID'] = newData['JobTitleID']
             data['DepartmentID'] = newData['DepartmentID']
             data['PayGradeID'] = newData['PayGradeID']
             data['EmploymentStatusID'] = newData['EmploymentStatusID']
-            data['SupervisorID'] = newData['employeeID']
+            data['SupervisorID'] = newData['SupervisorID']
             // console.log(data)
 
             const [results] = await connection.query(
