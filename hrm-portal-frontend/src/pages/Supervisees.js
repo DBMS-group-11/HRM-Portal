@@ -49,8 +49,8 @@ const Supervisees = () => {
           emp_id: res.data.supervisees[i].EmployeeID,
           name: res.data.supervisees[i].EmployeeName,
           gender: res.data.supervisees[i].Gender,
-          'job-title': res.data.supervisees[i].JobTitleID,
-          department: res.data.supervisees[i].DepartmentID
+          'job-title': res.data.supervisees[i].JobTitleName,
+          department: res.data.supervisees[i].DepartmentName
         });
       }
       // console.log(data);
