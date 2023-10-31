@@ -192,8 +192,28 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Duplicate email detected!';
     END IF;
 END;
+
+//
+DELIMITER //
+
+CREATE TRIGGER `before_employee_custom_attributes_insert_check`
+BEFORE INSERT ON `EmployeeCustomAttributes`
+FOR EACH ROW
+BEGIN
+    -- Check if the employee and custom attribute already exists
+    IF EXISTS (
+        SELECT 1 
+        FROM `EmployeeCustomAttributes` 
+        WHERE `EmployeeID` = NEW.`EmployeeID` 
+        AND `AttributeName` = NEW.`AttributeName`
+    ) THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Duplicate employee custom attribute detected!';
+    END IF;
+END;
 //
 DELIMITER ;
+
 
 -- Create AuditLog table for tracking deleted employees
 CREATE TABLE if not exists `AuditLog` (

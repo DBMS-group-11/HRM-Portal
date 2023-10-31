@@ -328,6 +328,7 @@ module.exports = {
             console.error('Error while adding custom attribute:', error.message);
             return res.status(500).json({ error: `Failed to add custom attribute. Details: ${error.message}` });
         } finally {
+            console.log("<")
             if (connection) {
                 connection.release();
             }
