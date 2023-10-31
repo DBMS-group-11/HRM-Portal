@@ -44,33 +44,16 @@ const AddEmployee = ({children}) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        // console.log('submit');
-        // console.log(myData);
-        // console.log(customAttributes);
+        console.log('submit');
+        console.log(myData);
+        console.log(customAttributes);
 
-        // axios.post("http://localhost:3000/api/users/reg",myData)
-        // .then(res=>{
-        //     console.log(res.data.success);
-        //     if(res.data.success===1){
-        //         // navigate('/dashboard/home');
-        //         setSnackBarOpen(true);
-        //     }
-        // }).catch(err => {
-        //     console.log(err);
-        //     console.log("Axios post error");
-        // }).finally(() => {
-        //     setIsLoading(false);
-        // });
-
-        // custom attributes
-        axios.post('http://localhost:3000/api/users/addCustomAttribute',{
-            "CustomAttributes": customAttributes
-        })
+        axios.post("http://localhost:3000/api/users/reg",myData)
         .then(res=>{
             console.log(res.data.success);
             if(res.data.success===1){
-                console.log("Custom attributes added");
-                // setSnackBarOpen(true);
+                // navigate('/dashboard/home');
+                setSnackBarOpen(true);
             }
         }).catch(err => {
             console.log(err);
@@ -78,6 +61,23 @@ const AddEmployee = ({children}) => {
         }).finally(() => {
             setIsLoading(false);
         });
+
+        // custom attributes
+        // axios.post('http://localhost:3000/api/users/addCustomAttribute',{
+        //     "CustomAttributes": customAttributes
+        // })
+        // .then(res=>{
+        //     console.log(res.data.success);
+        //     if(res.data.success===1){
+        //         console.log("Custom attributes added");
+        //         // setSnackBarOpen(true);
+        //     }
+        // }).catch(err => {
+        //     console.log(err);
+        //     console.log("Axios post error");
+        // }).finally(() => {
+        //     setIsLoading(false);
+        // });
     };
     /////////////////////////////////
 

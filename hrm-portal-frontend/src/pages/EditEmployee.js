@@ -37,10 +37,13 @@ const EditEmployee = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('====submit====');
-        console.log(myData);
-        setData(myData)
         setIsReadOnly(true);
+        console.log('====submit====');
+
+        myData.CustomAttributesInfo = customAttributes;
+        setData(myData)
+        console.log(myData);
+
         axios.put("http://localhost:3000/api/users/editSupervisees",myData)
         .then(res=>{
             console.log(res.data.success);
@@ -63,36 +66,37 @@ const EditEmployee = () => {
         .then(res => {
             console.log(res);
             if (res.status === 200 && res.data.success) {
+                console.log(res.data);
                 setData({
-                    "personalInfo": {
-                        "name": res.data.PersonalInfo?.personalInfo?.EmployeeName || "N/A",
-                        "employeeID": res.data.PersonalInfo?.personalInfo?.EmployeeID || "N/A",
-                        "address": res.data.PersonalInfo?.personalInfo?.Address || "N/A",
-                        "country": res.data.PersonalInfo?.personalInfo?.Country || "N/A",
-                        "username": res.data.PersonalInfo?.personalInfo?.Username || "N/A",
-                        "email": res.data.PersonalInfo?.personalInfo?.Email || "N/A",
-                        "userAccountType":res.data.UserAccountLv?.[0]?.UserAccountLevelName || "N/A",
-                        "dob": dayjs(res.data.PersonalInfo?.personalInfo?.DateOfBirth).format("YYYY/MM/DD") || "N/A",
-                        "maritalStatus": res.data.PersonalInfo?.personalInfo?.MaritalStatus || "N/A",
-                        "gender": res.data.PersonalInfo?.personalInfo?.Gender || "N/A",
-                        "dependentName": res.data.DependentInfo?.[0]?.DependentName || "N/A",
-                        "dependentAge": res.data.DependentInfo?.[0]?.DependentAge || "N/A"
-                    },
-                    "departmentInfo": {
-                        "jobTitle": res.data.JobTitleInfo?.[0]?.JobTitleName || "N/A",
-                        "department": res.data.DepartmentInfo?.DepartmentName || "N/A",
-                        "status": res.data.EmployeeStatusInfo?.[0]?.EmploymentStatusName || "N/A",
-                        "payGrade": res.data.PayGradesInfo?.[0]?.PayGradeName || "N/A",
-                        "supervisor": res.data.SupervisorsInfo?.SupervisorName || "N/A"
-                    },
-                    "emergencyInfo": {
-                        "name1": res.data.EmergencyInfo?.[0]?.PrimaryName || "N/A",
-                        "telNo1": res.data.EmergencyInfo?.[0]?.PrimaryPhoneNumber || "N/A",
-                        "name2": res.data.EmergencyInfo?.[0]?.SecondaryName || "N/A",
-                        "telNo2": res.data.EmergencyInfo?.[0]?.SecondaryPhoneNumber || "N/A",
-                        "emergencyAddress": res.data.EmergencyInfo?.[0]?.Address || "N/A"
-                    }
-                });
+                        "personalInfo": {
+                            "name": res.data.PersonalInfo?.personalInfo?.EmployeeName || "N/A",
+                            "employeeID": res.data.PersonalInfo?.personalInfo?.EmployeeID || "N/A",
+                            "address": res.data.PersonalInfo?.personalInfo?.Address || "N/A",
+                            "country": res.data.PersonalInfo?.personalInfo?.Country || "N/A",
+                            "username": res.data.PersonalInfo?.personalInfo?.Username || "N/A",
+                            "email": res.data.PersonalInfo?.personalInfo?.Email || "N/A",
+                            "userAccountType":res.data.UserAccountLv?.[0]?.UserAccountLevelName || "N/A",
+                            "dob": dayjs(res.data.PersonalInfo?.personalInfo?.DateOfBirth).format("YYYY/MM/DD") || "N/A",
+                            "maritalStatus": res.data.PersonalInfo?.personalInfo?.MaritalStatus || "N/A",
+                            "gender": res.data.PersonalInfo?.personalInfo?.Gender || "N/A",
+                            "dependentName": res.data.DependentInfo?.[0]?.DependentName || null,
+                            "dependentAge": res.data.DependentInfo?.[0]?.DependentAge || null
+                        },
+                        "departmentInfo": {
+                            "jobTitle": res.data.JobTitleInfo?.[0]?.JobTitleName || "N/A",
+                            "department": res.data.DepartmentInfo?.[0]?.DepartmentName || "N/A",
+                            "status": res.data.EmployeeStatusInfo?.[0]?.EmploymentStatusName || "N/A",
+                            "payGrade": res.data.PayGradesInfo?.[0]?.PayGradeName || "N/A",
+                            "supervisor": res.data.SupervisorsInfo?.SupervisorName || "N/A"
+                        },
+                        "emergencyInfo": {
+                            "name1": res.data.EmergencyInfo?.[0]?.PrimaryName || "N/A",
+                            "telNo1": res.data.EmergencyInfo?.[0]?.PrimaryPhoneNumber || "N/A",
+                            "name2": res.data.EmergencyInfo?.[0]?.SecondaryName || "N/A",
+                            "telNo2": res.data.EmergencyInfo?.[0]?.SecondaryPhoneNumber || "N/A",
+                            "emergencyAddress": res.data.EmergencyInfo?.[0]?.Address || "N/A"
+                        }
+                    });
                 setCustomAttributes(res.data.CustomAttributesInfo);
             }
         })
@@ -132,16 +136,20 @@ const EditEmployee = () => {
                         customAttributes[index] = e;
                     }}/>
                 ))}
-                {/* <Button
+                <Button
                     variant="outlined"
                     color="primary"
                     sx={{width:'100%'}}
                     onClick={() => {
-                        setCustomAttributes([...customAttributes, {}]);
+                        if(customAttributes == null){
+                            setCustomAttributes([{}]);
+                        }else{
+                            setCustomAttributes([...customAttributes, {}]);
+                        }
                     }}
                 >
                     Add Custom Attribute
-                </Button> */}
+                </Button>
             </Box>
      );
 }

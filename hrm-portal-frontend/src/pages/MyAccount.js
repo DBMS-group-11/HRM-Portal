@@ -16,7 +16,8 @@ const MyAccount = () => {
     const [data, setData] = useState(null);
     const [isReadOnly, setIsReadOnly] = useState(true);
     const [myData, setMyData] = useState({});
-    const [customAttributes, setCustomAttributes] = useState([]);
+    const [oldCustomAttributes, setOldCustomAttributes] = useState([]);
+    const [newCustomAttributes, setNewCustomAttributes] = useState([]);
 
     const [cookies] = useCookies(['x-ual', 'x-uData']);
 
@@ -41,7 +42,8 @@ const MyAccount = () => {
         
         setData(myData)
         setIsReadOnly(true);
-        myData.CustomAttributesInfo = customAttributes;
+        myData.CustomAttributesInfo = oldCustomAttributes;
+        myData.newlyAddedCustomAttributesInfo = newCustomAttributes;
 
         console.log(myData);
 
@@ -98,9 +100,9 @@ const MyAccount = () => {
                             "name2": res.data.EmergencyInfo?.[0]?.SecondaryName || "N/A",
                             "telNo2": res.data.EmergencyInfo?.[0]?.SecondaryPhoneNumber || "N/A",
                             "emergencyAddress": res.data.EmergencyInfo?.[0]?.Address || "N/A"
-                        },
-                        "CustomAttributes": customAttributes
+                        }
                     });
+                    setOldCustomAttributes(res.data.CustomAttributesInfo);
                 }
             });
     }, []);
@@ -129,11 +131,19 @@ const MyAccount = () => {
             <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo} />
             
             {/* custom attributes */}
-            {customAttributes.map((customAttribute, index) => (
+            {oldCustomAttributes != null && oldCustomAttributes.map((customAttribute, index) => (
                 <CustomAttribute key={index} getData={(e) => {
                     // myData[`customAttribute${index}`] = e;
                     // myData.noOfCustomAttributes = index+1;
-                    customAttributes[index] = e;
+                    oldCustomAttributes[index] = e;
+                }}/>
+            ))}
+            {/* custom attributes */}
+            {newCustomAttributes.map((customAttribute, index) => (
+                <CustomAttribute key={index} getData={(e) => {
+                    // myData[`customAttribute${index}`] = e;
+                    // myData.noOfCustomAttributes = index+1;
+                    newCustomAttributes[index] = e;
                 }}/>
             ))}
             <Button
@@ -141,10 +151,10 @@ const MyAccount = () => {
                 color="primary"
                 sx={{width:'100%'}}
                 onClick={() => {
-                    setCustomAttributes([...customAttributes, {}]);
+                    setNewCustomAttributes([...newCustomAttributes, {}]);
                 }}
             >
-                Add Custom Attribute
+                Add New Custom Attribute
             </Button>
 
             <UserCredentialsForm />
