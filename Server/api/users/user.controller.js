@@ -45,6 +45,7 @@ const {
     getUserAccountLevelIDByUserAccountLevelName,
     updateUser,
     updateDependent,
+    updateMyCustomAttributes,
 
     getTotTakenLeaveCount,
     getTotApprovedLeaveCount,
@@ -446,8 +447,11 @@ module.exports = {
                 "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
+            }  
+            customAttributes={
+                "EmployeeID": employeeData.EmployeeID,
+                "CustomAttributesInfo":body.CustomAttributesInfo
             }
-            
             const employeeResult = await updateEmployee(connection, employeeData);//update employee
 
             const UserAccountLevelID=await getUserAccountLevelIDByUserAccountLevelName(connection,userData.UserAccountLevelName);
@@ -455,6 +459,10 @@ module.exports = {
             const userResult = await updateUser(connection, userData);//update user
             
             const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
+
+            const customAttributesResult=await updateMyCustomAttributes(connection,customAttributes);//update my custom attributes
+
+            // console.log(customAttributes)
 
             //Commit transaction
             await connection.commit();
@@ -466,7 +474,8 @@ module.exports = {
                     user: userResult,
                     employee: employeeResult,
                     dependentResult: dependentResult,
-                    emergencyResult: emergencyResult
+                    emergencyResult: emergencyResult,
+                    customAttributesResult: customAttributesResult
                 },
                 message: "Edit employee successful",
             })

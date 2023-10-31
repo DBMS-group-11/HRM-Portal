@@ -650,7 +650,7 @@ module.exports = {
             throw new Error(`An error occurred while fetching emergency info: ${error.message}`);
         }
     },
-    getCustomAttributesInfo: async(connection,data) => {
+    getCustomAttributesInfo: async (connection, data) => {
         console.log("___getCustomAttributesInfo")
         const sqlQuery = `
             SELECT
@@ -659,14 +659,14 @@ module.exports = {
                 employeecustomattributes
             WHERE
                 employeecustomattributes.EmployeeID =?`
-        try{
-            const [results] = await connection.query(sqlQuery,[data.EmployeeID]);
-            if(results.length==0){
+        try {
+            const [results] = await connection.query(sqlQuery, [data.EmployeeID]);
+            if (results.length == 0) {
                 return null;
             }
             return results;
-        }catch(error){
-            console.log("Failed to fetch employeecustomattributes info:",error);
+        } catch (error) {
+            console.log("Failed to fetch employeecustomattributes info:", error);
             throw new Error(`An error occurred while fetching employeecustomattributes info: ${error.message}`);
         }
     },
@@ -922,20 +922,46 @@ module.exports = {
             throw new Error(`An error occurred in updateDependent: ${error.message}`);
         }
     },
+    updateMyCustomAttributes: async (connection, data) => {
+        console.log("___updateMyCustomAttributes")
+        // console.log(data)
+        const { EmployeeID, CustomAttributesInfo } = data;
+    
+        const results = [];
+        for (const { AttributeName, AttributeValue } of CustomAttributesInfo) {
+            // The query should be an UPDATE statement, not an INSERT statement.
+            const query = `
+                UPDATE EmployeeCustomAttributes
+                SET AttributeValue = ?
+                WHERE EmployeeID = ? AND AttributeName = ?;
+            `;
+            try {
+                // Pass the parameters in the correct order as expected by the WHERE clause of the UPDATE statement
+                const result = await connection.query(query, [AttributeValue, EmployeeID, AttributeName]);
+                // console.log("Attribute updated successfully:", result);
+                results.push({ AttributeName, success: true, result });
+            } catch (error) {
+                console.error("Error updating custom attribute:", error.message);
+                // It's generally not a good idea to push error messages into the same array as your results,
+                // Instead, you might want to have a more structured error handling strategy.
+                results.push({ AttributeName, success: false, errorMessage: error.message });
+            }
+        }
+        return results;
+    },    
     addNewCustomAttributeForEmployee: async (connection, data) => {
         console.log("___addNewCustomAttributeForEmployee");
         console.log(data);
-    
+
         const { EmployeeID, CustomAttributes } = data;
-    
+
         const results = [];
-    
+
         for (const { AttributeName, AttributeValue } of CustomAttributes) {
             const query = `
-                INSERT INTO EmployeeCustomAttributes (EmployeeID, AttributeName, AttributeValue)
-                VALUES (?, ?, ?);
+            INSERT INTO EmployeeCustomAttributes (EmployeeID, AttributeName, AttributeValue)
+            VALUES (?, ?, ?);
             `;
-    
             try {
                 const result = await connection.query(query, [EmployeeID, AttributeName, AttributeValue]);
                 console.log("Attribute added successfully:", result);
@@ -951,61 +977,8 @@ module.exports = {
                 // For now, let's log and continue
             }
         }
-    
+
         // Return all results, including any errors that were caught.
         return results;
     }
-    
-    // addNewColumnCustomAttributeInfo: async (connection, data) => {
-    //     console.log("___addNewColumnCustomAttributeInfo");
-    //     console.log(data);
-
-    //     // Destructuring the data for readability.
-    //     const { EmployeeID, AttributeName, Value } = data;
-
-    //     try {
-    //         // Check if the column already exists in the table
-    //         const checkColumnQuery = `
-    //             SELECT COLUMN_NAME
-    //             FROM INFORMATION_SCHEMA.COLUMNS
-    //             WHERE TABLE_NAME = 'CustomAttributesInfo' AND COLUMN_NAME = ?;
-    //         `;
-    //         const [checkResult] = await connection.query(checkColumnQuery, [AttributeName]);
-
-    //         console.log(checkResult)
-
-    //         if (checkResult.length > 0) { 
-    //             // The column already exists
-    //             // For example, you can update the existing column.
-    //             const checkWhetherEmployeeAlreadyExists = await connection.query(`SELECT * from CustomAttributesInfo WHERE EmployeeID =?`,[EmployeeID]);
-    //             console.log(checkWhetherEmployeeAlreadyExists[0])
-    //             if(checkWhetherEmployeeAlreadyExists[0].length>0){
-    //                 console.log("Employee "+EmployeeID+" already exists")
-    //                 const updateQuery = `UPDATE customattributesinfo SET ? = ? WHERE EmployeeID = ?`;
-    //                 const [updateResult] = await connection.query(updateQuery, [AttributeName,Value, EmployeeID]);
-    //             }else{
-    //                 console.log("Employee "+EmployeeID+" already not exists")
-    //                 const 
-
-    //             }
-
-
-    //             return { updatedRow: updateResult };
-    //         }
-
-    //         // If the column does not exist, proceed to add it
-    //         const AttributeType = "VARCHAR(100)";
-    //         const query = `ALTER TABLE customattributesinfo ADD COLUMN ?? ${AttributeType}`;
-    //         const [result] = await connection.query(query, [AttributeName]);
-
-    //         // After adding the column, you may want to update the corresponding row with the value.
-    //         const updateQuery = `UPDATE customattributesinfo SET ?? = ? WHERE EmployeeID = ?`;
-    //         const [updateResult] = await connection.query(updateQuery, [AttributeName, Value, EmployeeID]);
-
-    //         return { addedColumn: result, updatedRow: updateResult };
-    //     } catch (error) {
-    //         console.error("Error adding new column to customattributesinfo:", error.message);
-    //         throw new Error(`Failed to add the '${AttributeName}' column with type '${AttributeType}' to the 'customattributesinfo' table. Details: ${error.message}`);
-    //     }
-    // }
-}    
+}
