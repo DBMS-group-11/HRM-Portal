@@ -952,7 +952,7 @@ module.exports = {
     },
     updateMyCustomAttributes: async (connection, data) => {
         console.log("___updateMyCustomAttributes")
-        console.log(data)
+        // console.log(data)
         const { EmployeeID, CustomAttributesInfo } = data;
 
         const results = [];
