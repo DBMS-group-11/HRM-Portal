@@ -1,4 +1,6 @@
 const pool = require('../../db/database');
+const bcrypt = require('bcrypt');
+
 const {
     create,
     getUserByUserID,
@@ -128,7 +130,10 @@ module.exports = {
         const data = req.body;
         // console.log(data)
         try {
-            const { email, password } = req.body;
+            const { email, password1 } = req.body;
+
+            const salt = await bcrypt.genSalt(10);
+            const password = await bcrypt.hash(password1, salt); // ensure you get the password from the correct part of the body
 
             // console.log(email)
             // console.log(password)
@@ -208,13 +213,17 @@ module.exports = {
             var EmployeeID = parts[0] + '-' + integerPart;
 
             // console.log(EmployeeID);
+            const salt = await bcrypt.genSalt(10);
+            const PasswordHash = await bcrypt.hash("9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0", salt); // ensure you get the password from the correct part of the body
 
             // Prepare data for registration
             data = {
                 "UserID": UserID,
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
-                "PasswordHash": "0000", //default password
+                // "PasswordHash": "0000", //default password
+                // "PasswordHash": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0", //default password
+                "PasswordHash": PasswordHash, //default password
                 "UserAccountLevelID": body.personalInfo.userAccountType,
 
                 "EmployeeID": EmployeeID,
@@ -238,13 +247,19 @@ module.exports = {
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
             }
-            customAttributes={
+            customAttributes = {
                 "EmployeeID": data.EmployeeID,
-                "CustomAttributesInfo":body.CustomAttributes
+                "CustomAttributesInfo": body.CustomAttributes
             }
-            // //Hash password
+            //Hash password
             // const salt = genSaltSync(10);
             // body.PasswordHash = hashSync(body.PasswordHash, salt);
+            // console.log(body.PasswordHash)
+
+            // const salt = await bcrypt.genSalt(10);
+            // const passwordHash = await bcrypt.hash("9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0", salt); // ensure you get the password from the correct part of the body
+            // console.log(passwordHash)
+            // data.PasswordHash = passwordHash;
 
             //Add employee
             const employeeResult = await addEmployee(connection, data);
@@ -253,7 +268,7 @@ module.exports = {
             //Add dependent
             const dependentResult = await addDependent(connection, dependentInfo);
 
-            const customAttributeResult= await addNewCustomAttributeForEmployee(connection,customAttributes);
+            const customAttributeResult = await addNewCustomAttributeForEmployee(connection, customAttributes);
 
             //Commit transaction
             await connection.commit();
@@ -265,7 +280,7 @@ module.exports = {
                     user: userResult,
                     employee: employeeResult,
                     dependentResult: dependentResult,
-                    customAttributeResult:customAttributeResult,
+                    customAttributeResult: customAttributeResult,
                 },
                 message: "Registration successful",
             })
@@ -327,7 +342,7 @@ module.exports = {
     },
     addCustomAttribute: async (req, res) => {
         console.log("> addCustomAttribute")
-        
+
         if (!req.body.EmployeeID || !req.body.CustomAttributes) {
             return res.status(400).json({ error: 'Required data NOT FOUND!.' });
         }
@@ -372,7 +387,7 @@ module.exports = {
                 CustomAttributesInfo,
 
             ] = await Promise.all([
-                getUserAccountLevelByUserID(connection,data),
+                getUserAccountLevelByUserID(connection, data),
 
                 getPersonalInfo(connection, data),
                 getDependentInfo(connection, data),
@@ -384,7 +399,7 @@ module.exports = {
                 getPayGradesInfo(connection, data),
 
                 getEmergencyInfo(connection, data),
-                getCustomAttributesInfo(connection,data)
+                getCustomAttributesInfo(connection, data)
             ]);
             return res.json({
                 success: 1,
@@ -424,61 +439,61 @@ module.exports = {
 
             //Start transaction
             await connection.beginTransaction();
-            const employeeDetails = await getEmployeeDetails(connection,body.personalInfo.employeeID);
+            const employeeDetails = await getEmployeeDetails(connection, body.personalInfo.employeeID);
 
             //update the emegency information
             body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
             const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
-        
+
             // Prepare data for update employee information
             employeeData = {
-                "EmployeeID":body.personalInfo.employeeID, 
-                "EmployeeName": body.personalInfo.name, 
-                "DateOfBirth": body.personalInfo.dob, 
-                "Gender": body.personalInfo.gender, 
-                "MaritalStatus": body.personalInfo.maritalStatus, 
+                "EmployeeID": body.personalInfo.employeeID,
+                "EmployeeName": body.personalInfo.name,
+                "DateOfBirth": body.personalInfo.dob,
+                "Gender": body.personalInfo.gender,
+                "MaritalStatus": body.personalInfo.maritalStatus,
 
-                "Address": body.personalInfo.address, 
-                "Country": body.personalInfo.country, 
-                "DepartmentID": body.departmentInfo.department, 
-                "JobTitleID": body.departmentInfo.jobTitle, 
+                "Address": body.personalInfo.address,
+                "Country": body.personalInfo.country,
+                "DepartmentID": body.departmentInfo.department,
+                "JobTitleID": body.departmentInfo.jobTitle,
                 "PayGradeID": body.departmentInfo.payGrade,
-                "EmploymentStatusID": body.departmentInfo.status, 
-                "SupervisorID": body.departmentInfo.supervisor, 
+                "EmploymentStatusID": body.departmentInfo.status,
+                "SupervisorID": body.departmentInfo.supervisor,
             }
-            userData={
+            userData = {
                 "UserID": body.personalInfo.UserID,
-                "EmployeeID":body.personalInfo.employeeID, 
+                "EmployeeID": body.personalInfo.employeeID,
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
                 // "PasswordHash": "0000", //default password
                 "UserAccountLevelName": body.personalInfo.userAccountType,
-                
+
             }
             dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
-            }  
-            customAttributes={
-                "EmployeeID": employeeData.EmployeeID,
-                "CustomAttributesInfo":body.CustomAttributesInfo
             }
-            newlyAddedCustomAttributesInfo={
+            customAttributes = {
                 "EmployeeID": employeeData.EmployeeID,
-                "CustomAttributesInfo":body.newlyAddedCustomAttributesInfo
+                "CustomAttributesInfo": body.CustomAttributesInfo
+            }
+            newlyAddedCustomAttributesInfo = {
+                "EmployeeID": employeeData.EmployeeID,
+                "CustomAttributesInfo": body.newlyAddedCustomAttributesInfo
             }
 
             const employeeResult = await updateEmployee(connection, employeeData);//update employee
 
-            const UserAccountLevelID=await getUserAccountLevelIDByUserAccountLevelName(connection,userData.UserAccountLevelName);
-            userData.UserAccountLevelID=UserAccountLevelID;
+            const UserAccountLevelID = await getUserAccountLevelIDByUserAccountLevelName(connection, userData.UserAccountLevelName);
+            userData.UserAccountLevelID = UserAccountLevelID;
             const userResult = await updateUser(connection, userData);//update user
-            
+
             const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
 
-            const customAttributesResult=await updateMyCustomAttributes(connection,customAttributes);//update my custom attributes
-            const newlyAddedcustomAttributesResult=await addNewCustomAttributeForEmployee(connection,newlyAddedCustomAttributesInfo);//add new custom attributes
+            const customAttributesResult = await updateMyCustomAttributes(connection, customAttributes);//update my custom attributes
+            const newlyAddedcustomAttributesResult = await addNewCustomAttributeForEmployee(connection, newlyAddedCustomAttributesInfo);//add new custom attributes
 
             // console.log(customAttributes)
 
@@ -494,7 +509,7 @@ module.exports = {
                     dependentResult: dependentResult,
                     emergencyResult: emergencyResult,
                     customAttributesResult: customAttributesResult,
-                    newlyAddedcustomAttributesResult:newlyAddedcustomAttributesResult
+                    newlyAddedcustomAttributesResult: newlyAddedcustomAttributesResult
                 },
                 message: "Edit employee successful",
             })
@@ -668,17 +683,17 @@ module.exports = {
     },
     getNotApprovedLeaves: async (req, res) => {
         console.log("> Entering getNotApprovedLeaves");
-    
+
         let connection;
         try {
             connection = await pool.getConnection();
-    
+
             // Assuming the actual database function is called fetchNotApprovedLeaves
             const result = await fetchNotApprovedLeaves(connection);
 
             for (let leave of result) {
                 let data = { "EmployeeID": leave.EmployeeID };
-    
+
                 const [
                     PersonalInfo,
                     JobTitleInfo,
@@ -692,44 +707,44 @@ module.exports = {
                     getPayGradesInfo(connection, data),
                     getTotApprovedLeaveCount(connection, data)
                 ]);
-    
+
                 // console.log(PersonalInfo);
                 // console.log(JobTitleInfo);
                 // console.log(DepartmentInfo);
                 // console.log(PayGradesInfo);
                 // console.log(TotApprovedLeaveCount)
-    
+
                 leave.EmployeeName = PersonalInfo.personalInfo["EmployeeName"];
                 leave.JobTitleName = JobTitleInfo[0]["JobTitleName"];
                 leave.DepartmentName = DepartmentInfo[0]["DepartmentName"];
                 leave.PayGradeName = PayGradesInfo[0]["PayGradeName"];
-                leave.TotApprovedLeaveCount=TotApprovedLeaveCount[0]["totApprovedLeaveCount"]
+                leave.TotApprovedLeaveCount = TotApprovedLeaveCount[0]["totApprovedLeaveCount"]
             }
-    
+
             // console.log(result);  // This will display the updated leaveData with the new status attribute for each leave
-    
+
             console.log("< Exiting getNotApprovedLeaves with success");
-    
+
             return res.status(200).json({
                 success: 1,
                 result: result
             });
-    
+
         } catch (err) {
             console.error("< Exiting getNotApprovedLeaves with error:", err.message);
-    
+
             return res.status(500).json({  // Use 500 or an appropriate error code
                 success: 0,
                 message: err.message
             });
-    
+
         } finally {
             // Ensure that the connection is always released
             if (connection) {
                 connection.release();
             }
         }
-    },    
+    },
     approveLeaves: async (req, res) => {
         console.log("> ApproveLeaves")
         let connection;
@@ -756,7 +771,7 @@ module.exports = {
         try {
             connection = await pool.getConnection();
             const result = await updateLeaveForDenyReq(connection, req.body);
-            
+
             // Send a success response to the client
             res.status(200).json({
                 success: 1,
@@ -777,14 +792,14 @@ module.exports = {
                 connection.release();
             }
         }
-    },    
+    },
     supervisees: async (req, res) => {
         console.log("> supervisees")
         let connection;
         // console.log(req.body.EmployeeID)
         try {
             connection = await pool.getConnection();
-            const result = await getSupervisees(connection,req.body.EmployeeID);
+            const result = await getSupervisees(connection, req.body.EmployeeID);
             console.log(result)
             // const UerID=await get
             return res.status(200).json({
@@ -813,63 +828,63 @@ module.exports = {
 
             //Start transaction
             await connection.beginTransaction();
-            const UserIDAndUserAccountLvID =await getUserIDAndUserAccountLvIDByEmployeeID(connection,body.personalInfo.employeeID);
+            const UserIDAndUserAccountLvID = await getUserIDAndUserAccountLvIDByEmployeeID(connection, body.personalInfo.employeeID);
 
-            const employeeDetails = await getEmployeeDetails(connection,body.personalInfo.employeeID);
+            const employeeDetails = await getEmployeeDetails(connection, body.personalInfo.employeeID);
 
             //update the emegency information
             body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
             const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
-        
+
             // Prepare data for update employee information
             employeeData = {
-                "EmployeeID":body.personalInfo.employeeID, 
-                "EmployeeName": body.personalInfo.name, 
-                "DateOfBirth": body.personalInfo.dob, 
-                "Gender": body.personalInfo.gender, 
-                "MaritalStatus": body.personalInfo.maritalStatus, 
+                "EmployeeID": body.personalInfo.employeeID,
+                "EmployeeName": body.personalInfo.name,
+                "DateOfBirth": body.personalInfo.dob,
+                "Gender": body.personalInfo.gender,
+                "MaritalStatus": body.personalInfo.maritalStatus,
 
-                "Address": body.personalInfo.address, 
-                "Country": body.personalInfo.country, 
-                "DepartmentID": body.departmentInfo.department, 
-                "JobTitleID": body.departmentInfo.jobTitle, 
+                "Address": body.personalInfo.address,
+                "Country": body.personalInfo.country,
+                "DepartmentID": body.departmentInfo.department,
+                "JobTitleID": body.departmentInfo.jobTitle,
                 "PayGradeID": body.departmentInfo.payGrade,
-                "EmploymentStatusID": body.departmentInfo.status, 
-                "SupervisorID": body.departmentInfo.supervisor, 
+                "EmploymentStatusID": body.departmentInfo.status,
+                "SupervisorID": body.departmentInfo.supervisor,
             }
-            userData={
+            userData = {
                 "UserID": UserIDAndUserAccountLvID[0].UserID,//body.personalInfo.UserID,
-                "EmployeeID":body.personalInfo.employeeID, 
+                "EmployeeID": body.personalInfo.employeeID,
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
                 // "PasswordHash": "0000", //default password
                 // "UserAccountLevelID":UserIDAndUserAccountLvID[0].UserAccountLevelID
-                "UserAccountLevelID":body.personalInfo.UserAccountLevelID
+                "UserAccountLevelID": body.personalInfo.UserAccountLevelID
             }
             dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
             }
-            customAttributes={
+            customAttributes = {
                 "EmployeeID": employeeData.EmployeeID,
-                "CustomAttributesInfo":body.CustomAttributesInfo
+                "CustomAttributesInfo": body.CustomAttributesInfo
             }
-            newlyAddedCustomAttributesInfo={
+            newlyAddedCustomAttributesInfo = {
                 "EmployeeID": employeeData.EmployeeID,
-                "CustomAttributesInfo":body.newlyAddedCustomAttributesInfo
+                "CustomAttributesInfo": body.newlyAddedCustomAttributesInfo
 
             }
-            
+
             const employeeResult = await updateEmployee(connection, employeeData);//update employee
 
             const userResult = await updateUser(connection, userData);//update user
-            
+
             const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
 
-            const customAttributesResult=await updateMyCustomAttributes(connection,customAttributes);//update my custom attributes
+            const customAttributesResult = await updateMyCustomAttributes(connection, customAttributes);//update my custom attributes
 
-            const newlyAddedcustomAttributesResult=await addNewCustomAttributeForEmployee(connection,newlyAddedCustomAttributesInfo);//add new custom attributes
+            const newlyAddedcustomAttributesResult = await addNewCustomAttributeForEmployee(connection, newlyAddedCustomAttributesInfo);//add new custom attributes
 
             //Commit transaction
             await connection.commit();
@@ -883,7 +898,7 @@ module.exports = {
                     dependentResult: dependentResult,
                     emergencyResult: emergencyResult,
                     customAttributesResult: customAttributesResult,
-                    newlyAddedcustomAttributesResult:newlyAddedcustomAttributesResult
+                    newlyAddedcustomAttributesResult: newlyAddedcustomAttributesResult
                 },
                 message: "Edit employee successful",
             })
