@@ -843,7 +843,8 @@ module.exports = {
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
                 // "PasswordHash": "0000", //default password
-                "UserAccountLevelID":UserIDAndUserAccountLvID[0].UserAccountLevelID
+                // "UserAccountLevelID":UserIDAndUserAccountLvID[0].UserAccountLevelID
+                "UserAccountLevelID":body.personalInfo.UserAccountLevelID
             }
             dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
