@@ -26,6 +26,7 @@ const EditEmployee = () => {
 
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
+        myData.personalInfo = { ...e, employeeID: location.state.EmployeeID, UserID: location.state.UserID };
     };
 
     const getDepartmentInfo = (e) => {
@@ -39,35 +40,40 @@ const EditEmployee = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsReadOnly(true);
-        console.log('====submit====');
+        // console.log('====submit====');
 
-        myData.CustomAttributesInfo = oldCustomAttributes;
         setData(myData)
-        console.log(myData);
+        oldCustomAttributes != null ? myData.CustomAttributesInfo = oldCustomAttributes : myData.CustomAttributesInfo = [];
+        myData.newlyAddedCustomAttributesInfo = newCustomAttributes;
+        
+        // console.log(myData);
 
         axios.put("http://localhost:3000/api/users/editSupervisees",myData)
         .then(res=>{
-            console.log(res.data.success);
+            // console.log(res.data.success);
             if(res.data.success===1){
                 console.log("updated");
             }
         }).catch(err => {
             console.log("Axios post error");
+            alert("Error Occured, Please try again!");
         }).finally(() => {
-            console.log("final");
+            // console.log("final");
+            alert("Updated Successfully");
+            navigate('/dashboard/supervisees');
         });
     };
 
     useEffect(() => {
         document.title = "Edit Employee | HRM-Portal";
         
-        const data = { EmployeeID: location.state.EmployeeID }; 
+        const data = { EmployeeID: location.state.EmployeeID, UserID: location.state.UserID }; 
     
         axios.post('http://localhost:3000/api/users/myAccount', data)
         .then(res => {
-            console.log(res);
+            // console.log(res);
             if (res.status === 200 && res.data.success) {
-                console.log(res.data);
+                // console.log(res.data);
                 setData({
                         "personalInfo": {
                             "name": res.data.PersonalInfo?.personalInfo?.EmployeeName || "N/A",
@@ -98,14 +104,12 @@ const EditEmployee = () => {
                             "emergencyAddress": res.data.EmergencyInfo?.[0]?.Address || "N/A"
                         }
                     });
-                setOldCustomAttributes(res.data.CustomAttributesInfo);
+                    setOldCustomAttributes(res.data.CustomAttributesInfo);
             }
         })
         .catch(err => {
             console.log(err);
         });
-        
-        console.log(data);
 
     }, []);
     return ( 

@@ -96,13 +96,8 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                         variant="standard"
                         fullWidth
                         required
-                        InputProps={{
-                            readOnly: isReadOnly,
-                        }}
+                        disabled
                         value={employeeId}
-                        {...(isReadOnly ? {} : {onChange: (e) => {
-                            setEmployeeId(e.target.value);
-                        }})}
                     />
                 </Grid>
                 </>
