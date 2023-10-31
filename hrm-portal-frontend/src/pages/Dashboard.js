@@ -21,6 +21,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import { useState, useEffect } from "react";
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
+import KeyIcon from '@mui/icons-material/Key';
 
 
 const drawerWidth = 320;
@@ -76,7 +77,7 @@ const drawerLinks = [
     },
     {
         label:'Edit Credentials',
-        icon:<AccountCircleIcon />,
+        icon:<KeyIcon />,
         path:'/dashboard/edit-credentials',
         active:false,
         visibilityLevel:4
@@ -89,6 +90,7 @@ function Dashboard(props) {
     const { window, children } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
     const [userlevelID, setUserlevelID] = useState(0);
+    
 
     const navigate = useNavigate();
 

@@ -1,4 +1,4 @@
-import { Container, TextField, Typography,Button } from "@mui/material";
+import { Container, TextField, Typography,Button, Snackbar } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from 'react';
 import { CheckCircleOutline, DoNotDisturb } from '@mui/icons-material';
@@ -11,14 +11,6 @@ import jwt from "jwt-decode";
 
 const LeaveApproval = () => {
 
-    // const [name, setName] = useState('');
-    // const [jobTitle, setJobTitle] = useState('');
-    // const [department, setDepartment] = useState('');
-    // const [reason, setReason] = useState('');
-    // const [leaveType, setLeaveType] = useState('');
-    // const [fromDate, setFromDate] = useState('');
-    // const [toDate, setToDate] = useState('');
-    // const [noOfDays, setNoOfDays] = useState('');
     const [leaveData, setLeaveData] = useState({});
     const [cookies] = useCookies(['x-uData']);
 
@@ -51,7 +43,7 @@ const LeaveApproval = () => {
 
     },[]);
 
-    const sendApproveData = (url) => {
+    const sendApproveData = (url, type) => {
         axios.patch(url,{
             "LeaveID": location.state.LeaveID,
             "EmployeeID": location.state.EmployeeID,
@@ -59,8 +51,9 @@ const LeaveApproval = () => {
             "ApprovedDateTime":dayjs().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(res => {
-            console.log(res.data.message);
-            navigate('/dashboard/manage-leaves');
+            // console.log(res);
+            const snackMsg = "Leave " + type + "ed successfully";
+            navigate('/dashboard/manage-leaves', {state: {snackMsg: snackMsg}});
         })
         .catch(err => {
             console.log(err);
@@ -68,12 +61,12 @@ const LeaveApproval = () => {
     }
 
     const handleApprove = () => {
-        sendApproveData('http://localhost:3000/api/users/approveLeaves');
+        sendApproveData('http://localhost:3000/api/users/approveLeaves', 'approv');
         
     }
 
     const handleDeny = () => {
-        sendApproveData('http://localhost:3000/api/users/denyLeaves');
+        sendApproveData('http://localhost:3000/api/users/denyLeaves', 'deny');
         
     }
 
