@@ -888,7 +888,7 @@ module.exports = {
     },
     updateUser: async (connection, data) => { //done
         console.log("___updateUser");
-        // console.log(data);
+        console.log(data);
 
         if (!data || !data.Username || !data.Email || !data.UserAccountLevelID || !data.UserID || !data.EmployeeID) {
             console.error("Required fields are missing in updateUser");

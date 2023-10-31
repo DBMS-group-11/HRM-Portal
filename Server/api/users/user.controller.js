@@ -796,7 +796,7 @@ module.exports = {
         try {
             connection = await pool.getConnection();
             const result = await getSupervisees(connection, req.body.EmployeeID);
-            console.log(result)
+            // console.log(result)
             // const UerID=await get
             return res.status(200).json({
                 success: 1,
@@ -854,8 +854,8 @@ module.exports = {
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
                 // "PasswordHash": "0000", //default password
-                // "UserAccountLevelID":UserIDAndUserAccountLvID[0].UserAccountLevelID
-                "UserAccountLevelID": body.personalInfo.UserAccountLevelID
+                "UserAccountLevelID":UserIDAndUserAccountLvID[0].UserAccountLevelID
+                // "UserAccountLevelID": body.personalInfo.UserAccountLevelID
             }
             dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
