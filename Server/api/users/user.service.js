@@ -725,21 +725,40 @@ module.exports = {
     getSupervisees: async (connection, EmployeeID) => {
         console.log("___getSupervisees");
         try {
-            const [results] = await connection.query(
-                `SELECT * FROM employee 
-                join department on employee.DepartmentID = department.DepartmentID
-                join jobtitle on jobtitle.JobTitleID = employee.JobTitleID
-                WHERE employee.SupervisorID=?`, [EmployeeID]
+            const [supervisees] = await connection.query(
+                `SELECT *
+                FROM employee 
+                JOIN department ON employee.DepartmentID = department.DepartmentID
+                JOIN jobtitle ON jobtitle.JobTitleID = employee.JobTitleID
+                WHERE employee.SupervisorID = ?`, [EmployeeID]
             );
-            if (results.length == 0) {
+    
+            // Early exit if there are no supervisees
+            if (supervisees.length === 0) {
                 return null;
             }
-            return results;
+    
+            // Create an array of promises for the custom attributes queries
+            const customAttributesPromises = supervisees.map(supervisee =>
+                connection.query(
+                    `SELECT AttributeName, AttributeValue
+                    FROM employeecustomattributes
+                    WHERE EmployeeID = ?`, [supervisee.EmployeeID]
+                ).then(([customAttributes]) => {
+                    // Assign the custom attributes directly to the supervisee object
+                    supervisee.CustomAttributes = customAttributes;
+                })
+            );
+    
+            // Wait for all the custom attributes promises to resolve
+            await Promise.all(customAttributesPromises);
+    
+            return supervisees;
         } catch (error) {
-            console.log("Error getting supervisees", error.message)
+            console.error("Error getting supervisees:", error.message);
             throw new Error(`An error occurred while getting supervisees: ${error.message}`);
         }
-    },
+    },    
     editUserCredentials: async (connection, data) => { //done
         console.log("___editUserCredentials");
         // console.log(data)
