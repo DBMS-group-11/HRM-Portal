@@ -416,7 +416,7 @@ module.exports = {
     editMyAccount: async (req, res) => {
         console.log("> editMyAccount");
         const body = req.body;
-        // console.log(body)
+        console.log(body)
         let connection;
         try {
             //Get a connection from the pool
@@ -464,6 +464,11 @@ module.exports = {
                 "EmployeeID": employeeData.EmployeeID,
                 "CustomAttributesInfo":body.CustomAttributesInfo
             }
+            newlyAddedCustomAttributesInfo={
+                "EmployeeID": employeeData.EmployeeID,
+                "CustomAttributesInfo":body.newlyAddedCustomAttributesInfo
+            }
+
             const employeeResult = await updateEmployee(connection, employeeData);//update employee
 
             const UserAccountLevelID=await getUserAccountLevelIDByUserAccountLevelName(connection,userData.UserAccountLevelName);
@@ -473,6 +478,7 @@ module.exports = {
             const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
 
             const customAttributesResult=await updateMyCustomAttributes(connection,customAttributes);//update my custom attributes
+            const newlyAddedcustomAttributesResult=await addNewCustomAttributeForEmployee(connection,newlyAddedCustomAttributesInfo);//add new custom attributes
 
             // console.log(customAttributes)
 
@@ -487,7 +493,8 @@ module.exports = {
                     employee: employeeResult,
                     dependentResult: dependentResult,
                     emergencyResult: emergencyResult,
-                    customAttributesResult: customAttributesResult
+                    customAttributesResult: customAttributesResult,
+                    newlyAddedcustomAttributesResult:newlyAddedcustomAttributesResult
                 },
                 message: "Edit employee successful",
             })
