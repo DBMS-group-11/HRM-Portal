@@ -5,7 +5,8 @@ import axios from 'axios'
 import { useCookies } from 'react-cookie';
 
 const sign = require('jwt-encode');
-const secret = 'secret';
+const secret = 'secret-hrm';
+
 
 const LoginForm = ({setLoggedIn, snackBarOpen}) => {
 
@@ -27,8 +28,16 @@ const LoginForm = ({setLoggedIn, snackBarOpen}) => {
         e.preventDefault();
         setIsLoading(true);
         if(onValidUsername(email)){
-            // console.log(username, password)
-            const values={ email , password };
+
+            // hashing password
+            var hash = require('hash.js')
+            const passwordHash = hash.sha256().update(password).digest('hex');
+            
+            // console.log(passwordHash);
+
+            const values={ email , passwordHash };
+
+
             axios.post('http://localhost:3000/api/users/login',values)
             .then(res=>{
                 console.log(res.data);
