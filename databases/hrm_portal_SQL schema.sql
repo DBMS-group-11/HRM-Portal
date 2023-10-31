@@ -91,13 +91,20 @@ CREATE TABLE if not exists `DependentInfo` (
   PRIMARY KEY (`DependentInfoID`),
   FOREIGN KEY (`EmployeeID`) REFERENCES `Employee`(`EmployeeID`)
 );
-CREATE TABLE if not exists `CustomAttributesInfo` (
-	`CustomAttributesInfoID` INT AUTO_INCREMENT,
-    `EmployeeID` VARCHAR(10),
-    PRIMARY KEY(`CustomAttributesInfoID`),
-    FOREIGN KEY(`EmployeeID`) REFERENCES `Employee`(`EmployeeID`)
+-- CREATE TABLE if not exists `CustomAttributesInfo` (
+-- 	`CustomAttributesInfoID` INT AUTO_INCREMENT,
+--     `EmployeeID` VARCHAR(10),
+--     PRIMARY KEY(`CustomAttributesInfoID`),
+--     FOREIGN KEY(`EmployeeID`) REFERENCES `Employee`(`EmployeeID`)
+-- );
+CREATE TABLE IF NOT EXISTS `EmployeeCustomAttributes` (
+  `CustomAttributeID` INT AUTO_INCREMENT,
+  `EmployeeID` VARCHAR(10),
+  `AttributeName` VARCHAR(50),
+  `AttributeValue` TEXT,
+  PRIMARY KEY (`CustomAttributeID`),
+  FOREIGN KEY (`EmployeeID`) REFERENCES `Employee`(`EmployeeID`)
 );
-
 -- ------------------------------------------------------------------------------
 CREATE TABLE if not exists `UserAccountLevel` (
   `UserAccountLevelID` NUMERIC(10,0),
@@ -361,6 +368,19 @@ VALUES
   ('EM-0010', 'Priyanka Fernando', '1988-09-28', 'Female', 'Married', '12, 9th Lane, Badulla', 'Sri Lanka', 4, 2, 2, 4, 'EM-0006', 8);
 
 -- Sample data for UserAccount table (10 records)
+
+-- INSERT INTO customattributesinfo(EmployeeID) 
+-- VALUES
+-- 	("EM-0001"),
+--     ("EM-0002"),
+--     ("EM-0003"),
+--     ("EM-0004"),
+--     ("EM-0005"),
+--     ("EM-0006"),
+--     ("EM-0007"),
+--     ("EM-0008"),
+--     ("EM-0009"),
+--     ("EM-0010");
   
  -- Sample data for dependentInfo table
 INSERT INTO dependentinfo(DependentInfoID, EmployeeID, DependentName, DependentAge)

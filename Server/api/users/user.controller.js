@@ -17,6 +17,7 @@ const {
     addDependent,
 
     addNewColumnForEmployee,
+    addNewCustomAttributeForEmployee,
 
     getLastUserID,
     getLastEmployeeID,
@@ -311,21 +312,21 @@ module.exports = {
         }
     },
     addCustomAttribute: async (req, res) => {
-        // Basic validation (consider using a library for more robust validation).
-        if (!req.body.EmployeeID || !req.body.AttributeName || !req.body.Value) {
+        console.log("> addCustomAttribute")
+        
+        if (!req.body.EmployeeID || !req.body.AttributeName || !req.body.AttributeValue) {
             return res.status(400).json({ error: 'Required data NOT FOUND!.' });
         }
-
         let connection;
         try {
             connection = await pool.getConnection();
 
-            const [result] = await addNewColumnCustomAtrributeInfo(connection, data.body);
+            const [result] = await addNewCustomAttributeForEmployee(connection, req.body);
 
-            return res.status(200).json({ message: 'Column added successfully!', result });
+            return res.status(200).json({ message: 'CustomAttributes added successfully!', result });
         } catch (error) {
             console.error('Error while adding custom attribute:', error.message);
-            return res.status(500).json({ error: `Failed to add the column. Details: ${error.message}` });
+            return res.status(500).json({ error: `Failed to add custom attribute. Details: ${error.message}` });
         } finally {
             if (connection) {
                 connection.release();
@@ -818,7 +819,7 @@ module.exports = {
             }
             
             const employeeResult = await updateEmployee(connection, employeeData);//update employee
-            
+
             const userResult = await updateUser(connection, userData);//update user
             
             const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
