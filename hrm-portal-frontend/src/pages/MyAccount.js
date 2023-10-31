@@ -42,7 +42,7 @@ const MyAccount = () => {
         
         setData(myData)
         setIsReadOnly(true);
-        myData.CustomAttributesInfo = oldCustomAttributes;
+        oldCustomAttributes != null ? myData.CustomAttributesInfo = oldCustomAttributes : myData.CustomAttributesInfo = [];
         myData.newlyAddedCustomAttributesInfo = newCustomAttributes;
 
         console.log(myData);
@@ -132,11 +132,15 @@ const MyAccount = () => {
             
             {/* custom attributes */}
             {oldCustomAttributes != null && oldCustomAttributes.map((customAttribute, index) => (
-                <CustomAttribute key={index} getData={(e) => {
-                    // myData[`customAttribute${index}`] = e;
-                    // myData.noOfCustomAttributes = index+1;
-                    oldCustomAttributes[index] = e;
-                }}/>
+                <CustomAttribute
+                    key={index}
+                    getData={(e) => {
+                        // myData[`customAttribute${index}`] = e;
+                        // myData.noOfCustomAttributes = index+1;
+                        oldCustomAttributes[index] = e;
+                    }}
+                    data={customAttribute}
+                />
             ))}
             {/* custom attributes */}
             {newCustomAttributes.map((customAttribute, index) => (
