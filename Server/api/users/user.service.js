@@ -735,10 +735,13 @@ module.exports = {
         console.log("___getSupervisees");
         try {
             const [supervisees] = await connection.query(
-                `SELECT *
+                `SELECT employee.EmployeeID,EmployeeName,DateOfBirth,Gender,MaritalStatus,employee.Address,Country,DepartmentName,JobTitleName,PayGradeID,EmploymentStatusID,SupervisorID,UserID,Username,Email,useraccount.UserAccountLevelID,UserAccountLevelName,PrimaryName,PrimaryPhoneNumber,SecondaryName,SecondaryPhoneNumber,emergencycontact.Address as EmergencyAddress
                 FROM employee 
                 JOIN department ON employee.DepartmentID = department.DepartmentID
                 JOIN jobtitle ON jobtitle.JobTitleID = employee.JobTitleID
+                JOIN useraccount ON useraccount.EmployeeID = employee.EmployeeID
+                JOIN useraccountlevel ON useraccount.userAccountLevelID = userAccountLevel.userAccountLevelID
+                JOIN emergencycontact ON emergencycontact.EmergencyContactID=employee.EmergencyContactID
                 WHERE employee.SupervisorID = ?`, [EmployeeID]
             );
 
