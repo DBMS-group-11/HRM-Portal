@@ -134,6 +134,7 @@ const MyAccount = () => {
             {oldCustomAttributes != null && oldCustomAttributes.map((customAttribute, index) => (
                 <CustomAttribute
                     key={index}
+                    isReadOnly={isReadOnly}
                     getData={(e) => {
                         // myData[`customAttribute${index}`] = e;
                         // myData.noOfCustomAttributes = index+1;
@@ -154,6 +155,7 @@ const MyAccount = () => {
                 variant="outlined"
                 color="primary"
                 sx={{width:'100%'}}
+                disabled={isReadOnly}
                 onClick={() => {
                     setNewCustomAttributes([...newCustomAttributes, {}]);
                 }}
