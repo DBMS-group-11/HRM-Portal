@@ -4,8 +4,8 @@ const {
     getEmployeeByDepartment,
     getEmployeeByJobtitle,
     getEmployeeByPaygrade,
-    getEmployeeReportGrpByJobDepPay,
-    getTotalLeavesInGivenPeriodByDepartment
+    getTotalLeavesInGivenPeriodByDepartment,
+    getEmployeeDetails
 }=require('./report.servise');
 
 module.exports={
@@ -38,7 +38,8 @@ module.exports={
             }else if (reportNO==4){
                 // const result1 = await getEmployeeByDepartment(connection);
             }else if (reportNO==5){
-                
+                const result = await getEmployeeDetails(connection);
+                return res.json({ success: 1, data: result });
             }
             else {
                 return res.json({ success: 0, message: "Invalid report number" });
