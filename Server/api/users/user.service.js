@@ -239,7 +239,7 @@ module.exports = {
     getCustomAttributes: async () => {
         console.log("___getCustomAttributes")
         try{
-            const [results] = await pool.query('SELECT AttributeName FROM employeecustomattributes');
+            const [results] = await pool.query('SELECT DISTINCT AttributeName  FROM employeecustomattributes');
             return results;
         }catch(error){
             throw new Error(`An error occurred while fetching custom attributes: ${error.message}`);
