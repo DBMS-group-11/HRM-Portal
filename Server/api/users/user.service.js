@@ -1,4 +1,5 @@
 const pool = require("../../db/database");
+const bcrypt = require('bcrypt');
 
 async function findIDs(data) {
     console.log("___findIDs");
@@ -771,23 +772,44 @@ module.exports = {
             throw new Error(`An error occurred while getting supervisees: ${error.message}`);
         }
     },
-    editUserCredentials: async (connection, data) => { //done
+    editUserCredentials: async (connection, data) => {
         console.log("___editUserCredentials");
-        // console.log(data)
         try {
-            const [results] = await connection.query(
-                `UPDATE useraccount SET PasswordHash =? WHERE Email =? AND PasswordHash=? `,
-                [data.newPassword, data.email, data.oldPassword]
+            // Fetch existing hashed password for the provided email
+            const [existingUser] = await connection.query(
+                `SELECT PasswordHash FROM useraccount WHERE Email = ?`,
+                [data.email]
             );
-            if (results.length == 0) {
-                return null;
+    
+            if (existingUser.length == 0) {
+                throw new Error('User not found');
             }
+    
+            // Compare provided old password with the stored hash
+            const isPasswordMatch = await bcrypt.compare(data.oldPassword, existingUser[0].PasswordHash);
+    
+            if (!isPasswordMatch) {
+                throw new Error('Old password does not match');
+            }
+    
+            // Hash the new password
+            const salt = await bcrypt.genSalt(10);
+            const hashedNewPassword = await bcrypt.hash(data.newPassword, salt);
+    
+            // Update the password in the database
+            const [results] = await connection.query(
+                `UPDATE useraccount SET PasswordHash = ? WHERE Email = ?`,
+                [hashedNewPassword, data.email]
+            );
+    
+            console.log(results);
             return results;
+    
         } catch (error) {
-            console.log("Error editing user credentials", error.message)
+            console.error("Error editing user credentials:", error.message);
             throw new Error(`An error occurred while editing user credentials: ${error.message}`);
         }
-    },
+    },    
     getEmployeeDetails: async (connection, EmployeeID) => { //done
         console.log("___getEmployeeDetails");
         console.log(EmployeeID)

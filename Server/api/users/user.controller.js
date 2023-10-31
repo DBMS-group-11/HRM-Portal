@@ -210,7 +210,7 @@ module.exports = {
 
             // console.log(EmployeeID);
             const salt = await bcrypt.genSalt(10);
-            const PasswordHash = await bcrypt.hash("9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0", salt); // ensure you get the password from the correct part of the body
+            const PasswordHash = await bcrypt.hash("9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0", salt);
 
             // Prepare data for registration
             data = {
