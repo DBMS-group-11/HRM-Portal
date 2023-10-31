@@ -40,7 +40,7 @@ const Supervisees = () => {
 
     axios.post('http://localhost:3000/api/users/supervisees',{EmployeeID:uData.EmployeeID})
     .then(res => {
-      // console.log(res.data.supervisees);
+      console.log(res.data.supervisees);
       
       let data = [];
       for (let i = 0; i < res.data.supervisees.length; i++) {
