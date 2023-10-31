@@ -1010,5 +1010,5 @@ module.exports = {
 
         // Return all results, including any errors that were caught.
         return results;
-    }
+    },
 }

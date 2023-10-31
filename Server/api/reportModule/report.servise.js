@@ -51,14 +51,20 @@ module.exports = {
             throw new Error("Coundn't fetch total leaves by department"); 
         }
     },
-    getEmployeeReportGrpByJobDepPay: async(connection)=> {
+    getEmployeeDetails: async (connection, data) => {
+        console.log("___getEmployeeDetails");
         try {
-            const query = `SELECT * FROM EmployeeReportGrpByJobDepPay`;
-            const result = await connection.query(query);
-            return result[0];
+            // Construct the SQL query string
+            const queryString = `SELECT * FROM employeedetailsview`;
+    
+            // Run the SQL query using the connection object
+            const [rows, fields] = await connection.query(queryString);
+    
+            // Return the result
+            return rows;
         } catch (error) {
-            console.error("Error while retrieving employees by department:", error);
-            throw new Error("Couldn't fetch employee data by department");
+            console.error('Error occurred while fetching employee details:', error);
+            throw error; // Rethrow the error so it can be handled by the caller
         }
-    },
+    }    
 }
