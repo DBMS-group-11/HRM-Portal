@@ -5,6 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import axios from "axios";
 
 const PersonalInfo = ({data, isReadOnly, getData}) => {
     
@@ -30,7 +31,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
     const [name, setName] = useState('');
     const [employeeId, setEmployeeId] = useState('');
     const [address, setAddress] = useState('');
-    const [country, setCountry] = useState('');
+    const [country, setCountry] = useState('Sri Lanka');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [userAccountType, setUserAccountType] = useState('Level1');
@@ -40,7 +41,9 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
     const [dependentName, setDependentName] = useState('');
     const [dependentAge, setDependentAge] = useState('');
 
+
     useEffect(() => {
+
         if(isReadOnly){
             setName(data && data.personalInfo.name || '');
             setEmployeeId(data && data.personalInfo.employeeID || '');
@@ -93,13 +96,8 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                         variant="standard"
                         fullWidth
                         required
-                        InputProps={{
-                            readOnly: isReadOnly,
-                        }}
+                        disabled
                         value={employeeId}
-                        {...(isReadOnly ? {} : {onChange: (e) => {
-                            setEmployeeId(e.target.value);
-                        }})}
                     />
                 </Grid>
                 </>

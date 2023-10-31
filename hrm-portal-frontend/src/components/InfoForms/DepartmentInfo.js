@@ -49,6 +49,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
                 // loading pay grade types to the select box
                 setPayGradeTypes(payGradeTypes => [...payGradeTypes, {value: res.data.PayGrades[i].PayGradeName, label: res.data.PayGrades[i].PayGradeName}]);
             }
+            setPayGrade(res.data.PayGrades[0].PayGradeName);
 
             for(let i=0; i<res.data.jobTitles.length; i++){
                 // loading job title types to the select box

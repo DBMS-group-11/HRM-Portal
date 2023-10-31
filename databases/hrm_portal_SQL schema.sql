@@ -385,7 +385,18 @@ VALUES
   ('EM-0007', 'Saman Jayasuriya', '1985-08-18', 'Male', 'Married', '34, 6th Lane, Galle', 'Sri Lanka', 5, 4, 2, 5, 'EM-0001', 4),
   ('EM-0008', 'Lakshika Perera', '1994-04-05', 'Female', 'Unmarried', '17, 7th Lane, Matara', 'Sri Lanka', 2, 1, 1, 4, 'EM-0001', 6),
   ('EM-0009', 'Nihal Ranasinghe', '1980-12-12', 'Male', 'Married', '56, 8th Lane, Kegalle', 'Sri Lanka', 1, 3, 3, 5, 'EM-0005', 7),
-  ('EM-0010', 'Priyanka Fernando', '1988-09-28', 'Female', 'Married', '12, 9th Lane, Badulla', 'Sri Lanka', 4, 2, 2, 4, 'EM-0006', 8);
+  ('EM-0010', 'Priyanka Fernando', '1988-09-28', 'Female', 'Married', '12, 9th Lane, Badulla', 'Sri Lanka', 4, 2, 2, 4, 'EM-0006', 8),
+  -- new sample data  --
+  ('EM-0011', 'Kasun Bandara', '1992-07-10', 'Male', 'Married', '5, 1st Lane, Homagama', 'Sri Lanka', 4, 2, 1, 2, 'EM-0005', 1),
+  ('EM-0012', 'Gayan Dissanayake', '1993-04-19', 'Male', 'Unmarried', '14, 2nd Lane, Pannipitiya', 'Sri Lanka', 3, 3, 2, 5, 'EM-0001', 2),
+  ('EM-0013', 'Nuwani Perera', '1994-06-25', 'Female', 'Married', '25, 5th Lane, Maharagama', 'Sri Lanka', 3, 4, 3, 4, 'EM-0005', 3),
+  ('EM-0014', 'Saman Liyanage', '1995-08-03', 'Male', 'Unmarried', '2, 1st Lane, Maharagama', 'Sri Lanka', 2, 2, 3, 1, 'EM-0001', 4),
+  ('EM-0015', 'Tharindu Jyasinghe', '1996-01-09', 'Male', 'Married', '21, 7th Lane, Nugegoda', 'Sri Lanka', 5, 2, 3, 1, 'EM-0006', 6),
+  ('EM-0016', 'Aruni Gamage', '1993-07-07', 'Female', 'Married', '2, 7th Lane, Homagama', 'Sri Lanka', 5, 1, 2, 5, 'EM-0001', 5),
+  ('EM-0017', 'Manjula Kumari', '1993-06-18', 'Female', 'Married', '14, 3rd Lane, Pannipitiya', 'Sri Lanka', 3, 4, 3, 6, 'EM-0016', 7),
+  ('EM-0018', 'Thushara de Silva', '1996-02-24', 'Female', 'Unmarried', '20, 3rd Lane, Nugegoda', 'Sri Lanka', 5, 1, 2, 3, 'EM-0016', 9),
+  ('EM-0019', 'Harshani Peiris', '1995-10-03', 'Female', 'Unmarried', '4, 9th Lane, Homagama', 'Sri Lanka', 2, 3, 3, 5, 'EM-0018', 10),
+  ('EM-0020', 'Nethmi Fenando', '1997-11-09', 'Female', 'Unmarried', '19, 9th Lane, Nugegoda', 'Sri Lanka', 5, 3, 3, 1, 'EM-0018', 8);
 
 -- Sample data for UserAccount table (10 records)
 
@@ -428,7 +439,19 @@ VALUES
 	(7, 'saman85', 'EM-0007', 'saman85@gmail.com', 'password', 4),
 	(8, 'lakshika94', 'EM-0008', 'lakshika94@gmail.com', 'password', 2),
 	(9, 'nihal80', 'EM-0009', 'nihal80@gmail.com', 'password', 3),
-	(10, 'priyanka88', 'EM-0010', 'priyanka88@gmail.com', 'password', 4);
+	(10, 'priyanka88', 'EM-0010', 'priyanka88@gmail.com', 'password', 4),
+    -- new entries
+    (11, 'kasun92', 'EM-0011', 'kasun92@gmail.com', 'password', 3),
+	(12, 'gayan93', 'EM-0012', 'gayan93@gmail.com', 'password', 4),
+	(13, 'nuwani94', 'EM-0013', 'nuwani94@gmail.com', 'password', 2),
+	(14, 'saman95', 'EM-0014', 'saman95@gmail.com', 'password', 4),
+	(15, 'tharindu96', 'EM-0015', 'tharindu96@gmail.com', 'password', 3),
+	(16, 'aruni93', 'EM-0016', 'aruni93@gmail.com', 'password', 2),
+	(17, 'manjula93', 'EM-0017', 'manjula93@gmail.com', 'password', 4),
+	(18, 'thushara96', 'EM-0018', 'thushara96@gmail.com', 'password', 2),
+	(19, 'harshani95', 'EM-0019', 'harshani95@gmail.com', 'password', 3),
+	(20, 'nethmi97', 'EM-0020', 'nethmi97@gmail.com', 'password', 4);
+
     
 -- Sample data for leave table
 INSERT INTO `leave`(LeaveLogDateTime,EmployeeID,Approved,Reason,LeaveType,FirstAbsentDate,LastAbsentDate,LeaveDayCount,ApprovedDateTime,ApprovedByID)
@@ -482,5 +505,26 @@ VALUES
 	('2024-01-12 09:30:15', 'EM-0009', 0, 'Personal leave', 'Casual', '2024-01-13', '2024-01-13', 1, NULL, NULL),
 	('2024-01-13 16:20:20', 'EM-0010', 1, 'Medical leave', 'No-Pay', '2024-01-14', '2024-01-15', 2, '2024-01-13 18:45:35', 'EM-0009'),
 	('2024-01-14 09:30:15', 'EM-0001', 1, 'Vacation', 'Annual', '2024-01-15', '2024-01-18', 4, '2024-01-14 11:45:30', 'EM-0010'),
-	('2024-01-15 16:20:20', 'EM-0002', 0, 'Personal reasons', 'Casual', '2024-01-16', '2024-01-16', 1, NULL, NULL);
+	('2024-01-15 16:20:20', 'EM-0002', 0, 'Personal reasons', 'Casual', '2024-01-16', '2024-01-16', 1, NULL, NULL),
+    -- new entries 
+    ('2023-10-04 15:09:18', 'EM-0011', 1, 'Personal leave', 'No-Pay', '2023-10-05', '2023-10-08', 3, '2023-10-05 04:00:31', 'EM-0005'),
+    ('2024-02-17 05:29:16', 'EM-0011', 1, 'Medical leave', 'Casual', '2024-02-17', '2024-02-18', 2, '2024-02-17 08:01:30', 'EM-0005'),
+	('2023-11-08 18:02:45', 'EM-0012', 1, 'Personal leave', 'Annual', '2023-11-09', '2023-11-09', 1, '2023-11-08 19:00:31', 'EM-0001'),
+	('2024-02-13 10:48:53', 'EM-0012', 1, 'Medical leave', 'Annual', '2024-02-14', '2024-02-15', 2, '2024-02-13 11:30:21', 'EM-0001'),
+	('2023-10-22 13:49:27', 'EM-0013', 1, 'Sick leave', 'Casual', '2023-10-22', '2023-10-22', 1, '2023-10-22 03:15:11', 'EM-0005'),
+	('2024-01-17 12:27:59', 'EM-0013', 0, 'Sick leave', 'No-Pay', '2024-01-17', '2024-01-19', 3, NULL, NULL),
+	('2023-11-22 05:29:16', 'EM-0014', 1, 'Medical leave', 'Annual', '2023-11-23', '2023-11-23', 1, '2023-11-22 12:48:53', 'EM-0001'),
+	('2024-01-27 23:10:20', 'EM-0014', 0, 'Personal reason', 'Casual', '2024-01-28', '2024-01-29', 2, NULL, NULL),
+	('2023-10-26 03:15:11', 'EM-0015', 0, 'Personal reason', 'No-Pay', '2023-10-26', '2023-10-26', 1, NULL, NULL),
+	('2024-03-05 05:40:43', 'EM-0015', 1, 'Medical leave', 'Casual', '2024-03-05', '2024-03-05', 1, '2024-03-05 10:48:53', 'EM-0006'),
+	('2023-10-01 06:36:08', 'EM-0016', 0, 'Personal leave', 'Annual', '2023-10-02', '2023-10-04', 3, NULL, NULL),
+	('2024-03-02 08:57:50', 'EM-0016', 1, 'Sick leave', 'No-Pay', '2024-03-03', '2024-03-03', 1, '2024-03-03 04:00:31', 'EM-0001'),
+	('2023-11-24 10:30:04', 'EM-0017', 1, 'Medical leave', 'No-Pay', '2023-11-25', '2023-11-26', 2, '2023-11-25 19:05:06', 'EM-0016'),
+	('2024-01-16 12:48:53', 'EM-0017', 0, 'Personal reason', 'Casual', '2024-01-16', '2024-01-16', 1, NULL, NULL),
+	('2023-12-19 05:37:27', 'EM-0018', 1, 'Medical leave', 'No-Pay', '2023-12-20', '2023-12-20', 1, '2023-12-20 06:36:08', 'EM-0016'),
+	('2024-03-19 08:29:41', 'EM-0018', 1, 'Medical leave', 'No-Pay', '2024-03-20', '2024-03-20', 1, '2024-03-20 04:00:31', 'EM-0016'),
+	('2023-11-20 19:05:06', 'EM-0019', 0, 'Sick leave', 'Annual', '2023-11-21', '2023-11-21', 1, NULL, NULL),
+	('2024-01-05 12:23:09', 'EM-0019', 1, 'Medical leave', 'Annual', '2024-01-06', '2024-01-07', 2, '2024-01-06 05:29:16', 'EM-0018'),
+	('2023-12-07 11:11:08', 'EM-0020', 1, 'Personal reason', 'Casual', '2023-12-08', '2023-12-09', 2, '2023-12-08 05:29:16', 'EM-0018'),
+	('2024-03-26 21:53:54', 'EM-0020', 1, 'Sick leave', 'Casual', '2024-03-28', '2024-03-28', 1, '2024-03-27 19:05:06', 'EM-0018');
 -- DELETE FROM Employee WHERE EmployeeID = 'EM-0001';leave

@@ -8,17 +8,36 @@ import TabPanel from '@mui/lab/TabPanel';
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { DataGrid } from "@mui/x-data-grid";
+
+
+const columns = [
+    { field: 'EmployeeID', headerName: 'ID', width: 100 },
+    { field: 'EmployeeName', headerName: 'Name', width: 210 },
+    { field: 'Gender', headerName: 'Gender', width: 100 },
+    { field: 'JobTitleName', headerName: 'Job Title', width: 190 },
+    { field: 'DepartmentName', headerName: 'Department', width: 180 },
+    { field: 'PayGradeName', headerName: 'Pay Grade', width: 120 },
+    { field: 'SupervisorName', headerName: 'Supervisor', width: 200 }
+  ];
 
 
 const Reports = () => {
 
     const [report1Data, setReport1Data] = useState([]);
+    
     const [report2Data, setReport2Data] = useState([]);
+
     const [fromDateForR2, setFromDateForR2] = useState(dayjs('2022-10-29'));
     const [toDateForR2, setToDateForR2] = useState(dayjs('2023-11-30'));
     const [btnAvailableForR2, setBtnAvailableForR2] = useState(true);
-    const [report3Data, setReport3Data] = useState([]);
+    
+    const [report3Data, setReport3Data] = useState(null);
+    
     const [report4Data, setReport4Data] = useState([]);
+
+    const [report5Data, setReport5Data] = useState([]);
+    
     const [isLoading, setIsLoading] = useState(true);
     const [value, setValue] = useState('1');
 
@@ -93,28 +112,65 @@ const Reports = () => {
         // })
     };
 
+    const handleReport5 = () => {
+        console.log('Report 5');
+        axios.post('http://localhost:3000/api/users/reports',{
+            "reportNO":5
+        })
+        .then(res => {
+            console.log(res.data.data);
+            
+            let data = [];
+            for (let i = 0; i < res.data.data.length; i++) {
+                data.push({
+                id: i+1,
+                EmployeeID: res.data.data[i].EmployeeID,
+                EmployeeName: res.data.data[i].EmployeeName,
+                Gender: res.data.data[i].Gender,
+                JobTitleName: res.data.data[i].JobTitleName,
+                DepartmentName: res.data.data[i].DepartmentName,
+                PayGradeName: res.data.data[i].PayGradeName,
+                SupervisorName: res.data.data[i].SupervisorName
+                });
+            }
+            // console.log(data);
+            setReport5Data(data);
+            console.log(report5Data);
+
+        })
+        .catch(err => {
+        console.log(err);
+        })
+        .finally(() => {
+        setIsLoading(false);
+        });
+    }
+
     useEffect(() => {
         handleReport1();
-        // handleReport2();
+        handleReport2();
+        handleReport3();
+        handleReport5();
     }, []);
 
     return ( 
         <Container>
 
-            <ButtonGroup variant="text">
+            {/* <ButtonGroup variant="text">
                 <Button onClick={handleReport1}>Report 1</Button>
                 <Button onClick={handleReport2}>Report 2</Button>
                 <Button onClick={handleReport3}>Report 3</Button>
-                <Button onClick={handleReport4}>Report 4</Button>
-            </ButtonGroup>
+                <Button onClick={handleReport5}>Report 4</Button>
+            </ButtonGroup> */}
 
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <TabList onChange={handleChange} aria-label="lab API tabs example">
                     <Tab label="Number of Employees by department" value="1" />
                     <Tab label="Total leaves in the given period" value="2" />
-                    <Tab label="Report 3" value="3" />
+                    <Tab label="Summary" value="3" />
                     <Tab label="Report 4" value="4" />
+                    <Tab label="All Employees" value="5" />
                 </TabList>
                 </Box>
                 <TabPanel value="1">
@@ -128,6 +184,7 @@ const Reports = () => {
                                 series={[{ type: 'bar', data: report1Data.map((item)=>{return item.EmployeeCount}) }]}
                                 width={960}
                                 height={500}
+                                colors={['#82b1ff']}
                             />
                         </>
                     )}
@@ -165,6 +222,7 @@ const Reports = () => {
                                 series={[{ type: 'bar', data: report2Data.map((item)=>{return item.LeaveCount}) }]}
                                 width={960}
                                 height={480}
+                                colors={['#82b1ff']}
                             />
                         </>
                     ):(
@@ -175,30 +233,83 @@ const Reports = () => {
                 </TabPanel>
                 {/* ################################################################################################### */}
                 <TabPanel value="3">
-                    <>
-                        <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
-                        <br />
-                        <Grid container spacing={2}>
+                    {(report3Data != null && report3Data.data1.length > 0) ? (
+                        <Grid container textAlign={'center'}>
+                            {/* <Grid item xs={6}>
+                                <Typography variant="h6" marginY={2}>
+                                    Number of Employees by department
+                                </Typography>
+                                <BarChart
+                                    xAxis={[{ scaleType: 'band', data: report3Data.data1.map((item)=>{return item.DepartmentName}) }]}
+                                    series={[{ type: 'bar', data: report3Data.data1.map((item)=>{return item.EmployeeCount}) }]}
+                                    width={500}
+                                    height={300}
+                                    colors={['#82b1ff']}
+                                />
+                            </Grid> */}
+                            
+                            {/* <Grid item xs={12}>
+                                <Typography variant="h6" marginTop={2}>
+                                    Number of Employees by Job Title
+                                </Typography>
+                            </Grid> */}
                             <Grid item xs={6}>
-                                <Skeleton variant="circular" width={250} height={250} sx={{m:'auto'}}/>
+                                <Typography variant="h6" marginTop={2}>
+                                    Number of Employees by Job Title
+                                </Typography>
+                                <BarChart
+                                    xAxis={[{ scaleType: 'band', data: report3Data.data2.map((item)=>{return item.JobTitleName}) }]}
+                                    series={[{ type: 'bar', data: report3Data.data2.map((item)=>{return item.EmployeeCount}) }]}
+                                    width={500}
+                                    height={300}
+                                    colors={['#82b1ff']}
+                                />
                             </Grid>
+                            
+                            {/* <Grid item xs={12}>
+                                <Typography variant="h6" marginTop={2}>
+                                    Number of Employees by Pay Grade
+                                </Typography>
+                            </Grid> */}
                             <Grid item xs={6}>
-                                <Skeleton variant="rectangular" width={'100%'} height={250} />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Skeleton variant="rectangular" width={'100%'} height={160} />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Skeleton variant="rectangular" width={'100%'} height={160} />
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Skeleton variant="rectangular" width={'100%'} height={160} />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Skeleton variant="rectangular" width={'100%'} height={160} />
+                                <Typography variant="h6" marginTop={2}>
+                                    Number of Employees by Pay Grade
+                                </Typography>
+                                <BarChart
+                                    xAxis={[{ scaleType: 'band', data: report3Data.data3.map((item)=>{return item.PayGradeName}) }]}
+                                    series={[{ type: 'bar', data: report3Data.data3.map((item)=>{return item.EmployeeCount}) }]}
+                                    width={500}
+                                    height={300}
+                                    colors={['#82b1ff']}
+                                />
                             </Grid>
                         </Grid>
-                    </>
+                    ):(
+                        <>
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <br />
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <Skeleton variant="circular" width={250} height={250} sx={{m:'auto'}}/>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Skeleton variant="rectangular" width={'100%'} height={250} />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Skeleton variant="rectangular" width={'100%'} height={160} />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Skeleton variant="rectangular" width={'100%'} height={160} />
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Skeleton variant="rectangular" width={'100%'} height={160} />
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Skeleton variant="rectangular" width={'100%'} height={160} />
+                                </Grid>
+                            </Grid>
+                        </>
+                    )}
                 </TabPanel>
                 {/* ################################################################################################### */}
                 <TabPanel value="4">
@@ -227,8 +338,19 @@ const Reports = () => {
                         </Grid>
                     </>
                 </TabPanel>
+                <TabPanel value="5">
+                    <DataGrid
+                        rows={report5Data}
+                        columns={columns}
+                        initialState={{
+                        pagination: {
+                            paginationModel: { page: 0, pageSize: 10 },
+                        },
+                        }}
+                        pageSizeOptions={[10, 15]}
+                    />
+                </TabPanel>
             </TabContext>
-
 
 
             {isLoading && (

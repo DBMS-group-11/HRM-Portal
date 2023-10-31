@@ -50,7 +50,10 @@ const Supervisees = () => {
           name: res.data.supervisees[i].EmployeeName,
           gender: res.data.supervisees[i].Gender,
           'job-title': res.data.supervisees[i].JobTitleName,
-          department: res.data.supervisees[i].DepartmentName
+          department: res.data.supervisees[i].DepartmentName,
+          UserAccountLevelID: res.data.supervisees[i].UserAccountLevelID,
+          UserAccountLevelName: res.data.supervisees[i].UserAccountLevelName,
+          UserID: res.data.supervisees[i].UserID
         });
       }
       // console.log(data);
@@ -70,7 +73,7 @@ const Supervisees = () => {
 
   const handleRowClick = (row) => {
     // sending id as state to the next page
-    navigate('/dashboard/supervisees/edit-employee', {state: {EmployeeID: row.row.emp_id}});
+    navigate('/dashboard/supervisees/edit-employee', {state: {EmployeeID: row.row.emp_id, UserID: row.row.UserID}});
   }
 
   return ( 

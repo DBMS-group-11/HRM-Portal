@@ -70,7 +70,7 @@ const MyAccount = () => {
     
         axios.post('http://localhost:3000/api/users/myAccount', data)
             .then(res => {
-                console.log(res);
+                console.log(res.data);
                 if (res.status === 200 && res.data.success) {
                     setData({
                         "personalInfo": {

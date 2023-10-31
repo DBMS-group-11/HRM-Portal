@@ -17,7 +17,8 @@ const EditEmployee = () => {
     const [isReadOnly, setIsReadOnly] = useState(true);
     const [myData, setMyData] = useState({});
     const location = useLocation();
-    const [customAttributes, setCustomAttributes] = useState([]);
+    const [oldCustomAttributes, setOldCustomAttributes] = useState([]);
+    const [newCustomAttributes, setNewCustomAttributes] = useState([]);
 
     const [cookies] = useCookies(['x-ual', 'x-uData']);
 
@@ -25,6 +26,7 @@ const EditEmployee = () => {
 
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
+        myData.personalInfo = { ...e, employeeID: location.state.EmployeeID, UserID: location.state.UserID };
     };
 
     const getDepartmentInfo = (e) => {
@@ -38,35 +40,40 @@ const EditEmployee = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsReadOnly(true);
-        console.log('====submit====');
+        // console.log('====submit====');
 
-        myData.CustomAttributesInfo = customAttributes;
         setData(myData)
-        console.log(myData);
+        oldCustomAttributes != null ? myData.CustomAttributesInfo = oldCustomAttributes : myData.CustomAttributesInfo = [];
+        myData.newlyAddedCustomAttributesInfo = newCustomAttributes;
+        
+        // console.log(myData);
 
         axios.put("http://localhost:3000/api/users/editSupervisees",myData)
         .then(res=>{
-            console.log(res.data.success);
+            // console.log(res.data.success);
             if(res.data.success===1){
                 console.log("updated");
             }
         }).catch(err => {
             console.log("Axios post error");
+            alert("Error Occured, Please try again!");
         }).finally(() => {
-            console.log("final");
+            // console.log("final");
+            alert("Updated Successfully");
+            navigate('/dashboard/supervisees');
         });
     };
 
     useEffect(() => {
         document.title = "Edit Employee | HRM-Portal";
         
-        const data = { EmployeeID: location.state.EmployeeID }; 
+        const data = { EmployeeID: location.state.EmployeeID, UserID: location.state.UserID }; 
     
         axios.post('http://localhost:3000/api/users/myAccount', data)
         .then(res => {
-            console.log(res);
+            // console.log(res);
             if (res.status === 200 && res.data.success) {
-                console.log(res.data);
+                // console.log(res.data);
                 setData({
                         "personalInfo": {
                             "name": res.data.PersonalInfo?.personalInfo?.EmployeeName || "N/A",
@@ -97,14 +104,12 @@ const EditEmployee = () => {
                             "emergencyAddress": res.data.EmergencyInfo?.[0]?.Address || "N/A"
                         }
                     });
-                setCustomAttributes(res.data.CustomAttributesInfo);
+                    setOldCustomAttributes(res.data.CustomAttributesInfo);
             }
         })
         .catch(err => {
             console.log(err);
         });
-        
-        console.log(data);
 
     }, []);
     return ( 
@@ -129,26 +134,36 @@ const EditEmployee = () => {
                 <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo}/>
 
                 {/* custom attributes */}
-                {customAttributes != null && customAttributes.map((customAttribute, index) => (
+                {oldCustomAttributes != null && oldCustomAttributes.map((customAttribute, index) => (
+                    <CustomAttribute
+                        key={index}
+                        isReadOnly={isReadOnly}
+                        getData={(e) => {
+                            // myData[`customAttribute${index}`] = e;
+                            // myData.noOfCustomAttributes = index+1;
+                            oldCustomAttributes[index] = e;
+                        }}
+                        data={customAttribute}
+                    />
+                ))}
+                {/* custom attributes */}
+                {newCustomAttributes.map((customAttribute, index) => (
                     <CustomAttribute key={index} getData={(e) => {
                         // myData[`customAttribute${index}`] = e;
                         // myData.noOfCustomAttributes = index+1;
-                        customAttributes[index] = e;
+                        newCustomAttributes[index] = e;
                     }}/>
                 ))}
                 <Button
                     variant="outlined"
                     color="primary"
                     sx={{width:'100%'}}
+                    disabled={isReadOnly}
                     onClick={() => {
-                        if(customAttributes == null){
-                            setCustomAttributes([{}]);
-                        }else{
-                            setCustomAttributes([...customAttributes, {}]);
-                        }
+                        setNewCustomAttributes([...newCustomAttributes, {}]);
                     }}
                 >
-                    Add Custom Attribute
+                    Add New Custom Attribute
                 </Button>
             </Box>
      );

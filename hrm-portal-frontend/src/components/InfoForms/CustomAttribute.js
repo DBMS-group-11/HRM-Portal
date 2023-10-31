@@ -9,8 +9,8 @@ const CustomAttribute = ({data, isReadOnly, getData}) => {
 
     useEffect(() => {
         if(isReadOnly){
-            setAttributeName(data && data.attributeName || '');
-            setAttributeValue(data && data.attributeValue || '');
+            setAttributeName(data && data.AttributeName || '');
+            setAttributeValue(data && data.AttributeValue || '');
         }
         else{
             let formData = {AttributeName: attributeName, AttributeValue: attributeValue};
