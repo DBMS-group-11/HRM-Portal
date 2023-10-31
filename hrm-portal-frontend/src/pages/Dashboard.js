@@ -73,6 +73,13 @@ const drawerLinks = [
         path:'/dashboard/myAccount',
         active:false,
         visibilityLevel:4
+    },
+    {
+        label:'Edit Credentials',
+        icon:<AccountCircleIcon />,
+        path:'/dashboard/edit-credentials',
+        active:false,
+        visibilityLevel:4
     }
 ];
 

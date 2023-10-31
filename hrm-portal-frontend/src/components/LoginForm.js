@@ -27,24 +27,21 @@ const LoginForm = ({setLoggedIn, snackBarOpen}) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
+
         if(onValidUsername(email)){
 
             // hashing password
             var hash = require('hash.js')
             const passwordHash = hash.sha256().update(password).digest('hex');
-            
-            // console.log(passwordHash);
 
-            const values={ email , passwordHash };
+            const values={ email , password: passwordHash };
+            console.log(values);
 
 
             axios.post('http://localhost:3000/api/users/login',values)
             .then(res=>{
                 console.log(res.data);
                 if(res.data.success==1){
-                    navigate('/dashboard/home');
-                    setLoggedIn(true);
-
                     const userData = {
                         EmployeeID:res.data.values.EmployeeID,
                         UserID:res.data.values.UserID,
@@ -57,6 +54,9 @@ const LoginForm = ({setLoggedIn, snackBarOpen}) => {
                     setCookie('u-token', res.data.token, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
                     setCookie('x-ual', res.data.values.UserAccountLevelID, { path: '/' , expires: new Date(Date.now() + 900000)}); // ual - user acount level : cookie expires in 15 mins
                     setCookie('x-uData', jwt, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
+                    
+                    setLoggedIn(true);
+                    navigate('/dashboard/home');
                 }
                 else if(res.data.success==0){
                     setErrorCredentials(true);

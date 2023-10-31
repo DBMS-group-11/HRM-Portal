@@ -19,36 +19,42 @@ const UserCredentialsForm = () => {
             return;
         }
         // console.log(userEmail, userPassword, newPassword);
-        axios.patch('http://localhost:3000/api/users/editUserCredentials',{
-            email:userEmail,
-            oldPassword:userPassword,
-            newPassword:newPassword
-        })
-        .then( res => {
-            // console.log(res.data);
-            if(res.data.success === 1) {
-                console.log('success');
-                alert("Password changed!");
-                setChangePassword(false);
-                setUserEmail('');
-                setUserPassword('');
-                setNewPassword('');
-                setConfirmPassword('');
-            }
-            else {
-                setError(res.data.message);
-                console.log(res.data.message);
-            }
+
+        // hashing password
+        var hash = require('hash.js')
+        const oldPasswordHash = hash.sha256().update(userPassword).digest('hex');
+        const newPasswordHash = hash.sha256().update(newPassword).digest('hex');
+
+        console.log(oldPasswordHash);
+        console.log(newPasswordHash);
+        console.log(oldPasswordHash === newPasswordHash);
+
+        // axios.patch('http://localhost:3000/api/users/editUserCredentials',{
+        //     email:userEmail,
+        //     oldPassword:oldPasswordHash,
+        //     newPassword:newPasswordHash
+        // })
+        // .then( res => {
+        //     // console.log(res.data);
+        //     if(res.data.success === 1) {
+        //         console.log('success');
+        //         alert("Password changed!");
+        //         setChangePassword(false);
+        //         setUserEmail('');
+        //         setUserPassword('');
+        //         setNewPassword('');
+        //         setConfirmPassword('');
+        //     }
+        //     else {
+        //         setError(res.data.message);
+        //         console.log(res.data.message);
+        //     }
         
-        })
+        // });
     }
     
     return (
-
         <Container sx={{marginY:2}}>
-            {!changePassword && <Button variant="outlined" color="primary" onClick={() => setChangePassword(!changePassword)}>Edit Login Credentials</Button>}
-            {changePassword &&
-                <>
                 <Typography variant="h6" marginY={2}>Edit User Credentials</Typography>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
@@ -102,6 +108,7 @@ const UserCredentialsForm = () => {
                         />
                     </Grid>
                     <Grid item xs={12} display={'flex'} justifyContent={'center'}>
+                        <br />
                         <Button
                             variant="outlined"
                             color="primary"
@@ -126,8 +133,6 @@ const UserCredentialsForm = () => {
                         </Button>
                     </Grid>
                 </Grid>
-                </>
-            }
         </Container>
     );
 }

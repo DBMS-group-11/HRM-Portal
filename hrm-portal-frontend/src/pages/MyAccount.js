@@ -163,7 +163,7 @@ const MyAccount = () => {
                 Add New Custom Attribute
             </Button>
 
-            <UserCredentialsForm />
+            {/* <UserCredentialsForm /> */}
         </Box>
     );
 }

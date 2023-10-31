@@ -430,27 +430,27 @@ VALUES
 -- Sample data for userAccount table
 INSERT INTO userAccount(userID, username, EmployeeID, Email, PasswordHash, userAccountLevelID)
 VALUES
-	(1, 'admin123', 'EM-0001', 'admin@gmail.com', 'admin', 1),
-	(2, 'wjiesooriya92', 'EM-0002', 'wijesooriya92@gmail.com', 'password', 3),
-	(3, 'shantha78', 'EM-0003', 'shantha78@gmail.com', 'password', 4),
-	(4, 'nimali89', 'EM-0004', 'nimali89@gmail.com', 'password', 4),
-	(5, 'kamal82', 'EM-0005', 'kamal82@gmail.com', 'password', 2),
-	(6, 'mala90', 'EM-0006', 'mala90@gmail.com', 'password', 3),
-	(7, 'saman85', 'EM-0007', 'saman85@gmail.com', 'password', 4),
-	(8, 'lakshika94', 'EM-0008', 'lakshika94@gmail.com', 'password', 2),
-	(9, 'nihal80', 'EM-0009', 'nihal80@gmail.com', 'password', 3),
-	(10, 'priyanka88', 'EM-0010', 'priyanka88@gmail.com', 'password', 4),
+	(1, 'admin123', 'EM-0001', 'admin@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 1),
+	(2, 'wjiesooriya92', 'EM-0002', 'wijesooriya92@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 3),
+	(3, 'shantha78', 'EM-0003', 'shantha78@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 4),
+	(4, 'nimali89', 'EM-0004', 'nimali89@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 4),
+	(5, 'kamal82', 'EM-0005', 'kamal82@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 2),
+	(6, 'mala90', 'EM-0006', 'mala90@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 3),
+	(7, 'saman85', 'EM-0007', 'saman85@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 4),
+	(8, 'lakshika94', 'EM-0008', 'lakshika94@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 2),
+	(9, 'nihal80', 'EM-0009', 'nihal80@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 3),
+	(10, 'priyanka88', 'EM-0010', 'priyanka88@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 4),
     -- new entries
-    (11, 'kasun92', 'EM-0011', 'kasun92@gmail.com', 'password', 3),
-	(12, 'gayan93', 'EM-0012', 'gayan93@gmail.com', 'password', 4),
-	(13, 'nuwani94', 'EM-0013', 'nuwani94@gmail.com', 'password', 2),
-	(14, 'saman95', 'EM-0014', 'saman95@gmail.com', 'password', 4),
-	(15, 'tharindu96', 'EM-0015', 'tharindu96@gmail.com', 'password', 3),
-	(16, 'aruni93', 'EM-0016', 'aruni93@gmail.com', 'password', 2),
-	(17, 'manjula93', 'EM-0017', 'manjula93@gmail.com', 'password', 4),
-	(18, 'thushara96', 'EM-0018', 'thushara96@gmail.com', 'password', 2),
-	(19, 'harshani95', 'EM-0019', 'harshani95@gmail.com', 'password', 3),
-	(20, 'nethmi97', 'EM-0020', 'nethmi97@gmail.com', 'password', 4);
+    (11, 'kasun92', 'EM-0011', 'kasun92@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 3),
+	(12, 'gayan93', 'EM-0012', 'gayan93@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 4),
+	(13, 'nuwani94', 'EM-0013', 'nuwani94@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 2),
+	(14, 'saman95', 'EM-0014', 'saman95@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 4),
+	(15, 'tharindu96', 'EM-0015', 'tharindu96@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 3),
+	(16, 'aruni93', 'EM-0016', 'aruni93@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 2),
+	(17, 'manjula93', 'EM-0017', 'manjula93@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 4),
+	(18, 'thushara96', 'EM-0018', 'thushara96@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 2),
+	(19, 'harshani95', 'EM-0019', 'harshani95@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 3),
+	(20, 'nethmi97', 'EM-0020', 'nethmi97@gmail.com', '$2b$10$DcwLvdXofqQ1Ty/ReChBqOFWkr5TQ5TQVY3qTTdfGuZrYcEP..Sa6', 4);
 
     
 -- Sample data for leave table

@@ -156,7 +156,7 @@ const Home = () => {
                         {empDetails.employeeId}
                     </Typography>
                 </Box>
-                <Avatar alt="John Doe" src="/company.jpg" sx={{ width: 72, height: 72, ml:3 }} />
+                <Avatar alt="John Doe" src="/userIcon.jpg" sx={{ width: 72, height: 72, ml:3 }} />
 
             </Toolbar>
             <Grid container spacing={2} marginTop={2}>
