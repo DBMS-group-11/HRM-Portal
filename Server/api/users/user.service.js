@@ -902,31 +902,40 @@ module.exports = {
             throw new Error(`An error occurred in updateDependent: ${error.message}`);
         }
     },
-    addNewCustomAttributeForEmployee :async (connection, data) => {
+    addNewCustomAttributeForEmployee: async (connection, data) => {
         console.log("___addNewCustomAttributeForEmployee");
         console.log(data);
     
-        // Destructuring the data for readability.
-        const { EmployeeID, AttributeName, AttributeValue } = data;
+        const { EmployeeID, CustomAttributes } = data;
     
-        // Define the query string using placeholders for the values to prevent SQL injection.
-        const query = `
-            INSERT INTO EmployeeCustomAttributes (EmployeeID, AttributeName, AttributeValue)
-            VALUES (?, ?, ?);
-        `;
+        const results = [];
     
-        try {
-            // Execute the query with the provided data.
-            const result = await connection.query(query, [EmployeeID, AttributeName, AttributeValue]);
-            console.log("Attribute added successfully:", result);
-            return result;
-        } catch (error) {
-            // Log the error to the console for debugging.
-            console.error("Error adding new custom attribute:", error.message);
-            // Re-throw the error to be handled by the calling function.
-            throw error;
+        for (const { AttributeName, AttributeValue } of CustomAttributes) {
+            const query = `
+                INSERT INTO EmployeeCustomAttributes (EmployeeID, AttributeName, AttributeValue)
+                VALUES (?, ?, ?);
+            `;
+    
+            try {
+                const result = await connection.query(query, [EmployeeID, AttributeName, AttributeValue]);
+                console.log("Attribute added successfully:", result);
+                results.push(result);
+            } catch (error) {
+                if (error.code === 'ER_DUP_ENTRY') {
+                    console.error(`Duplicate entry for ${AttributeName} and employee ID ${EmployeeID}:`, error.message);
+                } else {
+                    console.error("Error adding new custom attribute:", error.message);
+                }
+                // Depending on the requirements, you might want to stop the loop and throw an error
+                // or you might just log the error and continue with the next attribute
+                // For now, let's log and continue
+            }
         }
+    
+        // Return all results, including any errors that were caught.
+        return results;
     }
+    
     // addNewColumnCustomAttributeInfo: async (connection, data) => {
     //     console.log("___addNewColumnCustomAttributeInfo");
     //     console.log(data);

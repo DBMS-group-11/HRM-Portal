@@ -314,7 +314,7 @@ module.exports = {
     addCustomAttribute: async (req, res) => {
         console.log("> addCustomAttribute")
         
-        if (!req.body.EmployeeID || !req.body.AttributeName || !req.body.AttributeValue) {
+        if (!req.body.EmployeeID || !req.body.CustomAttributes) {
             return res.status(400).json({ error: 'Required data NOT FOUND!.' });
         }
         let connection;
