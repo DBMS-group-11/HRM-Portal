@@ -6,7 +6,7 @@ async function findIDs(data) {
     const connection = await pool.getConnection();
     let newData = {};
     const queries = {
-        'Country': 'SELECT CountryID FROM country WHERE CountryName=?',
+        // 'Country': 'SELECT CountryID FROM country WHERE CountryName=?',
         'JobTitleID': 'SELECT JobTitleID FROM jobtitle WHERE JobTitleName = ?',
         'DepartmentID': 'SELECT DepartmentID FROM department WHERE DepartmentName = ?',
         'PayGradeID': 'SELECT PayGradeID FROM paygrade WHERE PayGradeName = ?',
@@ -72,8 +72,6 @@ module.exports = {
         try {
             const newData = await findIDs(data);
             // console.log(newData)
-
-            data['Country'] = newData['CountryID']
             data['JobTitleID'] = newData['JobTitleID']
             data['DepartmentID'] = newData['DepartmentID']
             data['PayGradeID'] = newData['PayGradeID']
@@ -817,7 +815,7 @@ module.exports = {
         try {
             const newData = await findIDs(data);
             // console.log(newData);
-            if (!newData.CountryID || !newData.DepartmentID || !newData.JobTitleID || !newData.PayGradeID || !newData.EmploymentStatusID || typeof newData.SupervisorID === 'undefined') {
+            if (!newData.DepartmentID || !newData.JobTitleID || !newData.PayGradeID || !newData.EmploymentStatusID || typeof newData.SupervisorID === 'undefined') {
                 throw new Error("Required ID(s) missing from newData");
             }
 
@@ -846,7 +844,7 @@ module.exports = {
                 data.Gender,
                 data.MaritalStatus,
                 data.Address,
-                newData.CountryID,
+                data.Country,
                 newData.DepartmentID,
                 newData.JobTitleID,
                 newData.PayGradeID,
