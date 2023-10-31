@@ -650,6 +650,26 @@ module.exports = {
             throw new Error(`An error occurred while fetching emergency info: ${error.message}`);
         }
     },
+    getCustomAttributesInfo: async(connection,data) => {
+        console.log("___getCustomAttributesInfo")
+        const sqlQuery = `
+            SELECT
+                AttributeName,AttributeValue
+            FROM 
+                employeecustomattributes
+            WHERE
+                employeecustomattributes.EmployeeID =?`
+        try{
+            const [results] = await connection.query(sqlQuery,[data.EmployeeID]);
+            if(results.length==0){
+                return null;
+            }
+            return results;
+        }catch(error){
+            console.log("Failed to fetch employeecustomattributes info:",error);
+            throw new Error(`An error occurred while fetching employeecustomattributes info: ${error.message}`);
+        }
+    },
     fetchNotApprovedLeaves: async (connection) => {
         console.log("___fetchNotApprovedLeaves")
         const sqlQuery = `

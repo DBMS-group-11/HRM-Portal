@@ -35,6 +35,7 @@ const {
     getEmployeeStatusInfo,
     getPayGradesInfo,
     getEmergencyInfo,
+    getCustomAttributesInfo,
 
     editUserCredentials,
 
@@ -354,7 +355,8 @@ module.exports = {
                 EmployeeStatusInfo,
                 PayGradesInfo,
 
-                EmergencyInfo
+                EmergencyInfo,
+                CustomAttributesInfo,
 
             ] = await Promise.all([
                 getUserAccountLevelByUserID(connection,data),
@@ -368,7 +370,8 @@ module.exports = {
                 getEmployeeStatusInfo(connection, data),
                 getPayGradesInfo(connection, data),
 
-                getEmergencyInfo(connection, data)
+                getEmergencyInfo(connection, data),
+                getCustomAttributesInfo(connection,data)
             ]);
             return res.json({
                 success: 1,
@@ -381,7 +384,8 @@ module.exports = {
                 SupervisorsInfo,
                 EmployeeStatusInfo,
                 PayGradesInfo,
-                EmergencyInfo
+                EmergencyInfo,
+                CustomAttributesInfo
 
             });
 
