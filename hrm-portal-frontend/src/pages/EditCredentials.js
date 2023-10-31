@@ -1,12 +1,12 @@
-import { Container } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import UserCredentialsForm from "../components/userCredentialsForm";
 
 const EditCredentials = () => {
     return ( 
-        <Container maxWidth={720}>
-            {/* <h1>Edit Credentials</h1> */}
+        <Box sx={{maxWidth:'840px', margin:'auto'}}>
+            <Typography variant="h5" sx={{textAlign:'center', my:2}}><b>Edit Credentials</b></Typography>
             <UserCredentialsForm />
-        </Container>
+        </Box>
      );
 }
  

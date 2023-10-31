@@ -7,23 +7,13 @@ import axios from "axios";
 import jwt from "jwt-decode";
 
 const columns = [
-    { field: 'emp_id', headerName: 'ID', width: 130 },
-    { field: 'name', headerName: 'Name', width: 230 },
-    { field: 'gender', headerName: 'Gender', width: 230 },
-    { field: 'job-title', headerName: 'Job Title', width: 230 },
-    { field: 'department', headerName: 'Department', width: 230 }
+    { field: 'emp_id', headerName: 'ID', width: 120 },
+    { field: 'name', headerName: 'Name', width: 200 },
+    { field: 'gender', headerName: 'Gender', width: 120 },
+    { field: 'Email', headerName: 'Email', width: 230 },
+    { field: 'job-title', headerName: 'Job Title', width: 200 },
+    { field: 'department', headerName: 'Department', width: 150 }
   ];
-  
-  // const rows = [
-  //   { id: 1, emp_id: 'EMP001', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-  //   { id: 2, emp_id: 'EMP002', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-  //   { id: 3, emp_id: 'EMP003', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-  //   { id: 4, emp_id: 'EMP004', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-  //   { id: 5, emp_id: 'EMP005', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-  //   { id: 6, emp_id: 'EMP006', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-  //   { id: 7, emp_id: 'EMP007', name: 'John Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 },
-  //   { id: 8, emp_id: 'EMP008', name: 'Jane Doe', 'job-title': 'Software Engineer', department: 'IT', 'no-of-days': 2 }
-  // ];
 
 
 const Supervisees = () => {
@@ -48,6 +38,7 @@ const Supervisees = () => {
           id: i+1,
           emp_id: res.data.supervisees[i].EmployeeID,
           name: res.data.supervisees[i].EmployeeName,
+          Email: res.data.supervisees[i].Email,
           gender: res.data.supervisees[i].Gender,
           'job-title': res.data.supervisees[i].JobTitleName,
           department: res.data.supervisees[i].DepartmentName,
@@ -81,27 +72,14 @@ const Supervisees = () => {
           {isLoading && (
             <>
               <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
-              <br />
-              <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                      <Skeleton variant="circular" width={250} height={250} sx={{m:'auto'}}/>
-                  </Grid>
-                  <Grid item xs={6}>
-                      <Skeleton variant="rectangular" width={'100%'} height={250} />
-                  </Grid>
-                  <Grid item xs={6}>
-                      <Skeleton variant="rectangular" width={'100%'} height={160} />
-                  </Grid>
-                  <Grid item xs={6}>
-                      <Skeleton variant="rectangular" width={'100%'} height={160} />
-                  </Grid>
-                  <Grid item xs={8}>
-                      <Skeleton variant="rectangular" width={'100%'} height={160} />
-                  </Grid>
-                  <Grid item xs={4}>
-                      <Skeleton variant="rectangular" width={'100%'} height={160} />
-                  </Grid>
-              </Grid>
+              <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+              <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+              <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+              <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+              <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+              <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+              <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+              <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
             </>
           )}
           {!isLoading && (

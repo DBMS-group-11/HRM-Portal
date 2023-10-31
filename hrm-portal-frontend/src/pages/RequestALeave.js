@@ -30,7 +30,6 @@ const RequestALeave = () => {
         if (reason === 'clickaway') {
             return;
         }
-
         setSnackBarOpen(false);
     };
 

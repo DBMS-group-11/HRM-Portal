@@ -1,6 +1,6 @@
-import { Container, Grid, Skeleton, Typography } from "@mui/material"
+import { Button, Container, Grid, Skeleton, Snackbar, Typography } from "@mui/material"
 import { DataGrid } from '@mui/x-data-grid';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -29,10 +29,24 @@ const ManageLeave = () => {
   const [rows, setRows] = useState([]);
   const [manageLeavesData, setManageLeavesData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
+
+  const handleSnackBarClose = (event, reason) => {
+      if (reason === 'clickaway') {
+          return;
+      }
+      setSnackBarOpen(false);
+  };
 
   useEffect(() => {
     document.title = 'Manage Leave | HRM-Portal';
     setIsLoading(true);
+
+    const snackMsg = location.state?.snackMsg;
+    if (snackMsg) {
+        setSnackBarOpen(true);
+    }
 
     axios.get('http://localhost:3000/api/users/getNotApprovedLeaves')
     .then(res => {
@@ -78,34 +92,20 @@ const ManageLeave = () => {
           { isLoading && (
               <>
                 <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
-                <br />
-                <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                        <Skeleton variant="circular" width={250} height={250} sx={{m:'auto'}}/>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Skeleton variant="rectangular" width={'100%'} height={250} />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Skeleton variant="rectangular" width={'100%'} height={160} />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Skeleton variant="rectangular" width={'100%'} height={160} />
-                    </Grid>
-                    <Grid item xs={8}>
-                        <Skeleton variant="rectangular" width={'100%'} height={160} />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Skeleton variant="rectangular" width={'100%'} height={160} />
-                    </Grid>
-                </Grid>
-            </>
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+              </>
           )}
           <br />
           <Typography variant="h6">
               Manage Leaves
           </Typography>
-          <br />
           <div style={{ height: '80%', width: '100%' }}>
           {rows.length > 0 ? (
             <DataGrid
@@ -125,6 +125,17 @@ const ManageLeave = () => {
             </Typography>
           )}
           </div>
+          <Snackbar
+              open={snackBarOpen}
+              autoHideDuration={6000}
+              onClose={handleSnackBarClose}
+              message={location.state?.snackMsg}
+              action={
+                  <Button color="inherit" onClick={handleSnackBarClose}>
+                      OK
+                  </Button>
+              }
+          />
       </Container>
     );
 }

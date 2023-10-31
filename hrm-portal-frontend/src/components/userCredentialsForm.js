@@ -54,85 +54,86 @@ const UserCredentialsForm = () => {
     }
     
     return (
-        <Container sx={{marginY:2}}>
-                <Typography variant="h6" marginY={2}>Edit User Credentials</Typography>
-                <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                        <TextField
-                            id="user-email"
-                            label="email"
-                            variant="standard"
-                            fullWidth
-                            value={userEmail}
-                            onChange={(e) => setUserEmail(e.target.value)}
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField 
-                            id="old-password"
-                            label="old Password"
-                            variant="standard"
-                            fullWidth
-                            type="password"
-                            value={userPassword}
-                            onChange={(e) => setUserPassword(e.target.value)}
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField 
-                            id="new-password"
-                            label="New Password"
-                            variant="standard"
-                            fullWidth
-                            type="password"
-                            value={newPassword}
-                            {...(error && {error:true, helperText:error})}
-                            onChange={(e) =>{
-                                setNewPassword(e.target.value)
-                                setError('')
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField 
-                            id="confirm-password"
-                            label="Confirm New Password"
-                            variant="standard"
-                            fullWidth
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => {
-                                setConfirmPassword(e.target.value)
-                                setError('')
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} display={'flex'} justifyContent={'center'}>
-                        <br />
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            sx={{width:'40%', m:'auto'}}
-                            onClick={()=> {
-                                setChangePassword(false);
-                                setUserEmail('');
-                                setUserPassword('');
-                                setNewPassword('');
-                                setConfirmPassword('');
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            sx={{width:'40%', m:'auto'}}
-                            onClick={handleSubmit}
-                        >
-                            Save
-                        </Button>
-                    </Grid>
+        <Container sx={{
+            marginY:2, border:1, borderColor:'grey.400', borderRadius:2, padding:4
+        }}>
+            <Grid container spacing={2} >
+                <Grid item xs={6}>
+                    <TextField
+                        id="user-email"
+                        label="email"
+                        variant="standard"
+                        fullWidth
+                        value={userEmail}
+                        onChange={(e) => setUserEmail(e.target.value)}
+                    />
                 </Grid>
+                <Grid item xs={6}>
+                    <TextField 
+                        id="old-password"
+                        label="old Password"
+                        variant="standard"
+                        fullWidth
+                        type="password"
+                        value={userPassword}
+                        onChange={(e) => setUserPassword(e.target.value)}
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField 
+                        id="new-password"
+                        label="New Password"
+                        variant="standard"
+                        fullWidth
+                        type="password"
+                        value={newPassword}
+                        {...(error && {error:true, helperText:error})}
+                        onChange={(e) =>{
+                            setNewPassword(e.target.value)
+                            setError('')
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField 
+                        id="confirm-password"
+                        label="Confirm New Password"
+                        variant="standard"
+                        fullWidth
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value)
+                            setError('')
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} display={'flex'} justifyContent={'center'}>
+                    <br />
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        sx={{width:'40%', m:'auto'}}
+                        onClick={()=> {
+                            setChangePassword(false);
+                            setUserEmail('');
+                            setUserPassword('');
+                            setNewPassword('');
+                            setConfirmPassword('');
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{width:'40%', m:'auto'}}
+                        onClick={handleSubmit}
+                    >
+                        Save
+                    </Button>
+                </Grid>
+            </Grid>
         </Container>
     );
 }
