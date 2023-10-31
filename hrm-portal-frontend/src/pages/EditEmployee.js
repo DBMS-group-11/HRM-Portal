@@ -17,7 +17,8 @@ const EditEmployee = () => {
     const [isReadOnly, setIsReadOnly] = useState(true);
     const [myData, setMyData] = useState({});
     const location = useLocation();
-    const [customAttributes, setCustomAttributes] = useState([]);
+    const [oldCustomAttributes, setOldCustomAttributes] = useState([]);
+    const [newCustomAttributes, setNewCustomAttributes] = useState([]);
 
     const [cookies] = useCookies(['x-ual', 'x-uData']);
 
@@ -40,7 +41,7 @@ const EditEmployee = () => {
         setIsReadOnly(true);
         console.log('====submit====');
 
-        myData.CustomAttributesInfo = customAttributes;
+        myData.CustomAttributesInfo = oldCustomAttributes;
         setData(myData)
         console.log(myData);
 
@@ -97,7 +98,7 @@ const EditEmployee = () => {
                             "emergencyAddress": res.data.EmergencyInfo?.[0]?.Address || "N/A"
                         }
                     });
-                setCustomAttributes(res.data.CustomAttributesInfo);
+                setOldCustomAttributes(res.data.CustomAttributesInfo);
             }
         })
         .catch(err => {
@@ -129,26 +130,36 @@ const EditEmployee = () => {
                 <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo}/>
 
                 {/* custom attributes */}
-                {customAttributes != null && customAttributes.map((customAttribute, index) => (
+                {oldCustomAttributes != null && oldCustomAttributes.map((customAttribute, index) => (
+                    <CustomAttribute
+                        key={index}
+                        isReadOnly={isReadOnly}
+                        getData={(e) => {
+                            // myData[`customAttribute${index}`] = e;
+                            // myData.noOfCustomAttributes = index+1;
+                            oldCustomAttributes[index] = e;
+                        }}
+                        data={customAttribute}
+                    />
+                ))}
+                {/* custom attributes */}
+                {newCustomAttributes.map((customAttribute, index) => (
                     <CustomAttribute key={index} getData={(e) => {
                         // myData[`customAttribute${index}`] = e;
                         // myData.noOfCustomAttributes = index+1;
-                        customAttributes[index] = e;
+                        newCustomAttributes[index] = e;
                     }}/>
                 ))}
                 <Button
                     variant="outlined"
                     color="primary"
                     sx={{width:'100%'}}
+                    disabled={isReadOnly}
                     onClick={() => {
-                        if(customAttributes == null){
-                            setCustomAttributes([{}]);
-                        }else{
-                            setCustomAttributes([...customAttributes, {}]);
-                        }
+                        setNewCustomAttributes([...newCustomAttributes, {}]);
                     }}
                 >
-                    Add Custom Attribute
+                    Add New Custom Attribute
                 </Button>
             </Box>
      );

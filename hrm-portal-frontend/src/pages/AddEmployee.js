@@ -45,8 +45,9 @@ const AddEmployee = ({children}) => {
         e.preventDefault();
         setIsLoading(true);
         console.log('submit');
+
+        myData.CustomAttributes = customAttributes;
         console.log(myData);
-        console.log(customAttributes);
 
         axios.post("http://localhost:3000/api/users/reg",myData)
         .then(res=>{
@@ -62,22 +63,6 @@ const AddEmployee = ({children}) => {
             setIsLoading(false);
         });
 
-        // custom attributes
-        // axios.post('http://localhost:3000/api/users/addCustomAttribute',{
-        //     "CustomAttributes": customAttributes
-        // })
-        // .then(res=>{
-        //     console.log(res.data.success);
-        //     if(res.data.success===1){
-        //         console.log("Custom attributes added");
-        //         // setSnackBarOpen(true);
-        //     }
-        // }).catch(err => {
-        //     console.log(err);
-        //     console.log("Axios post error");
-        // }).finally(() => {
-        //     setIsLoading(false);
-        // });
     };
     /////////////////////////////////
 
