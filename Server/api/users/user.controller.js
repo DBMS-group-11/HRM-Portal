@@ -130,7 +130,10 @@ module.exports = {
         const data = req.body;
         // console.log(data)
         try {
-            const { email, password } = req.body;
+            const { email, password1 } = req.body;
+
+            const salt = await bcrypt.genSalt(10);
+            const password = await bcrypt.hash(password1, salt); // ensure you get the password from the correct part of the body
 
             // console.log(email)
             // console.log(password)
