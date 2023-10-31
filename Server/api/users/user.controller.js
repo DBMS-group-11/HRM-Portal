@@ -14,6 +14,8 @@ const {
     getCountries,
     getEmployeeStatus,
     getPayGrades,
+    getCustomAttributes,
+    
     addDependent,
 
     addNewColumnForEmployee,
@@ -288,14 +290,16 @@ module.exports = {
                 jobTitles,
                 countries,
                 EmployeeStatuses,
-                PayGrades
+                PayGrades,
+                CustomAttributes,
             ] = await Promise.all([
                 getDepartments(),
                 getSupervisors(),
                 getJobTitles(),
                 getCountries(),
                 getEmployeeStatus(),
-                getPayGrades()
+                getPayGrades(),
+                getCustomAttributes(),
             ]);
             console.log('<')
             return res.json({
@@ -304,7 +308,8 @@ module.exports = {
                 jobTitles,
                 countries,
                 EmployeeStatuses,
-                PayGrades
+                PayGrades,
+                CustomAttributes
             });
         } catch (error) {
             console.error("Actual error:", error); // Log the actual error
@@ -831,12 +836,18 @@ module.exports = {
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
             }
+            customAttributes={
+                "EmployeeID": employeeData.EmployeeID,
+                "CustomAttributesInfo":body.CustomAttributesInfo
+            }
             
             const employeeResult = await updateEmployee(connection, employeeData);//update employee
 
             const userResult = await updateUser(connection, userData);//update user
             
             const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
+
+            const customAttributesResult=await updateMyCustomAttributes(connection,customAttributes);//update my custom attributes
 
             //Commit transaction
             await connection.commit();
@@ -848,7 +859,8 @@ module.exports = {
                     user: userResult,
                     employee: employeeResult,
                     dependentResult: dependentResult,
-                    emergencyResult: emergencyResult
+                    emergencyResult: emergencyResult,
+                    customAttributesResult: customAttributesResult
                 },
                 message: "Edit employee successful",
             })
