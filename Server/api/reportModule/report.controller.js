@@ -5,7 +5,9 @@ const {
     getEmployeeByJobtitle,
     getEmployeeByPaygrade,
     getTotalLeavesInGivenPeriodByDepartment,
-    getEmployeeDetails
+    getEmployeeDetails,
+    getReportByCustomAttributes,
+    getCustomAttributes
 }=require('./report.servise');
 
 module.exports={
@@ -36,7 +38,9 @@ module.exports={
 
                 return res.json({ success: 1, data1: result1, data2: result2, data3: result3});
             }else if (reportNO==4){
-                // const result1 = await getEmployeeByDepartment(connection);
+                const result = await getReportByCustomAttributes(connection,req.body.AttributeName);
+                
+                return res.json({ success: 1, data: result[0]});
             }else if (reportNO==5){
                 const result = await getEmployeeDetails(connection);
                 return res.json({ success: 1, data: result });
@@ -53,5 +57,19 @@ module.exports={
                 connection.release(); 
             }
         }
-    }
+    },
+    getCustomAttributes: async (req, res) => {
+        console.log("> getCustomAttributes");
+        let connection;
+        try {
+            connection = await pool.getConnection();
+            const result = await getCustomAttributes(connection);
+            connection.release(); // Always release the connection after using it
+            res.status(200).json(result[0]); // Send the result as JSON
+        } catch (error) {
+            console.error("Error fetching custom attributes:", error);
+            if (connection) connection.release(); // Release the connection in case of an error
+            res.status(500).json({ message: "Internal Server Error" }); // Send error response
+        }
+    } 
 };

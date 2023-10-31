@@ -29,7 +29,8 @@ const{
 }=require("../api/users/user.controller");
 
 const{
-    reports
+    reports,
+    getCustomAttributes
 }=require("../api/reportModule/report.controller");
 
 const router=require("express").Router();
@@ -75,5 +76,6 @@ router.post("/supervisees",supervisees); //get my supervisees
 router.put("/editSupervisees",editSupervisees); //edit my supervisees
 
 router.post("/reports",reports) //get reports
+router.get("/getCustomAttributes",getCustomAttributes);//get employees custom attributes
 
 module.exports=router;
