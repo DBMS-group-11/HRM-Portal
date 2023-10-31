@@ -2,7 +2,7 @@ const pool = require("../../db/database");
 
 async function findIDs(data) {
     console.log("___findIDs");
-    // console.log(data)
+    console.log(data)
     const connection = await pool.getConnection();
     let newData = {};
     const queries = {
@@ -67,7 +67,7 @@ module.exports = {
     },
     addEmployee: async (connection, data) => { //done
         console.log("___addEmployee")
-        // console.log(data)
+        console.log(data)
         try {
             const newData = await findIDs(data);
 
@@ -952,7 +952,7 @@ module.exports = {
     },
     updateMyCustomAttributes: async (connection, data) => {
         console.log("___updateMyCustomAttributes")
-        // console.log(data)
+        console.log(data)
         const { EmployeeID, CustomAttributesInfo } = data;
 
         const results = [];
@@ -979,20 +979,20 @@ module.exports = {
     },
     addNewCustomAttributeForEmployee: async (connection, data) => {
         console.log("___addNewCustomAttributeForEmployee");
-        console.log(data);
+        // console.log(data);
 
-        const { EmployeeID, CustomAttributes } = data;
+        const { EmployeeID, CustomAttributesInfo } = data;
 
         const results = [];
 
-        for (const { AttributeName, AttributeValue } of CustomAttributes) {
+        for (const { AttributeName, AttributeValue } of CustomAttributesInfo) {
             const query = `
             INSERT INTO EmployeeCustomAttributes (EmployeeID, AttributeName, AttributeValue)
             VALUES (?, ?, ?);
             `;
             try {
                 const result = await connection.query(query, [EmployeeID, AttributeName, AttributeValue]);
-                console.log("Attribute added successfully:", result);
+                // console.log("Attribute added successfully:", result);
                 results.push(result);
             } catch (error) {
                 if (error.code === 'ER_DUP_ENTRY') {

@@ -15,7 +15,7 @@ const {
     getEmployeeStatus,
     getPayGrades,
     getCustomAttributes,
-    
+
     addDependent,
 
     addNewColumnForEmployee,
@@ -238,6 +238,10 @@ module.exports = {
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
             }
+            customAttributes={
+                "EmployeeID": data.EmployeeID,
+                "CustomAttributesInfo":body.CustomAttributes
+            }
             // //Hash password
             // const salt = genSaltSync(10);
             // body.PasswordHash = hashSync(body.PasswordHash, salt);
@@ -249,6 +253,8 @@ module.exports = {
             //Add dependent
             const dependentResult = await addDependent(connection, dependentInfo);
 
+            const customAttributeResult= await addNewCustomAttributeForEmployee(connection,customAttributes);
+
             //Commit transaction
             await connection.commit();
 
@@ -258,7 +264,8 @@ module.exports = {
                 data: {
                     user: userResult,
                     employee: employeeResult,
-                    dependentResult: dependentResult
+                    dependentResult: dependentResult,
+                    customAttributeResult:customAttributeResult,
                 },
                 message: "Registration successful",
             })
@@ -409,7 +416,7 @@ module.exports = {
     editMyAccount: async (req, res) => {
         console.log("> editMyAccount");
         const body = req.body;
-        // console.log(body)
+        console.log(body)
         let connection;
         try {
             //Get a connection from the pool
@@ -457,6 +464,11 @@ module.exports = {
                 "EmployeeID": employeeData.EmployeeID,
                 "CustomAttributesInfo":body.CustomAttributesInfo
             }
+            newlyAddedCustomAttributesInfo={
+                "EmployeeID": employeeData.EmployeeID,
+                "CustomAttributesInfo":body.newlyAddedCustomAttributesInfo
+            }
+
             const employeeResult = await updateEmployee(connection, employeeData);//update employee
 
             const UserAccountLevelID=await getUserAccountLevelIDByUserAccountLevelName(connection,userData.UserAccountLevelName);
@@ -466,6 +478,7 @@ module.exports = {
             const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
 
             const customAttributesResult=await updateMyCustomAttributes(connection,customAttributes);//update my custom attributes
+            const newlyAddedcustomAttributesResult=await addNewCustomAttributeForEmployee(connection,newlyAddedCustomAttributesInfo);//add new custom attributes
 
             // console.log(customAttributes)
 
@@ -480,7 +493,8 @@ module.exports = {
                     employee: employeeResult,
                     dependentResult: dependentResult,
                     emergencyResult: emergencyResult,
-                    customAttributesResult: customAttributesResult
+                    customAttributesResult: customAttributesResult,
+                    newlyAddedcustomAttributesResult:newlyAddedcustomAttributesResult
                 },
                 message: "Edit employee successful",
             })
