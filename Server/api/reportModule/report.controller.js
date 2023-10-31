@@ -37,6 +37,8 @@ module.exports={
                 return res.json({ success: 1, data1: result1, data2: result2, data3: result3});
             }else if (reportNO==4){
                 // const result1 = await getEmployeeByDepartment(connection);
+            }else if (reportNO==5){
+                
             }
             else {
                 return res.json({ success: 0, message: "Invalid report number" });

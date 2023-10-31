@@ -236,6 +236,15 @@ module.exports = {
             throw new Error(`An error occurred while fetching job titles: ${error.message}`);
         }
     },
+    getCustomAttributes: async () => {
+        console.log("___getCustomAttributes")
+        try{
+            const [results] = await pool.query('SELECT AttributeName FROM employeecustomattributes');
+            return results;
+        }catch(error){
+            throw new Error(`An error occurred while fetching custom attributes: ${error.message}`);
+        }
+    },
     getTotTakenLeaveCount: async (userID) => {
         console.log("___getTotTakenLeaveCount");
         try {
@@ -732,12 +741,12 @@ module.exports = {
                 JOIN jobtitle ON jobtitle.JobTitleID = employee.JobTitleID
                 WHERE employee.SupervisorID = ?`, [EmployeeID]
             );
-    
+
             // Early exit if there are no supervisees
             if (supervisees.length === 0) {
                 return null;
             }
-    
+
             // Create an array of promises for the custom attributes queries
             const customAttributesPromises = supervisees.map(supervisee =>
                 connection.query(
@@ -749,16 +758,16 @@ module.exports = {
                     supervisee.CustomAttributes = customAttributes;
                 })
             );
-    
+
             // Wait for all the custom attributes promises to resolve
             await Promise.all(customAttributesPromises);
-    
+
             return supervisees;
         } catch (error) {
             console.error("Error getting supervisees:", error.message);
             throw new Error(`An error occurred while getting supervisees: ${error.message}`);
         }
-    },    
+    },
     editUserCredentials: async (connection, data) => { //done
         console.log("___editUserCredentials");
         // console.log(data)
@@ -945,7 +954,7 @@ module.exports = {
         console.log("___updateMyCustomAttributes")
         // console.log(data)
         const { EmployeeID, CustomAttributesInfo } = data;
-    
+
         const results = [];
         for (const { AttributeName, AttributeValue } of CustomAttributesInfo) {
             // The query should be an UPDATE statement, not an INSERT statement.
@@ -967,7 +976,7 @@ module.exports = {
             }
         }
         return results;
-    },    
+    },
     addNewCustomAttributeForEmployee: async (connection, data) => {
         console.log("___addNewCustomAttributeForEmployee");
         console.log(data);

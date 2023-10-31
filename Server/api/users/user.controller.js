@@ -14,6 +14,8 @@ const {
     getCountries,
     getEmployeeStatus,
     getPayGrades,
+    getCustomAttributes,
+    
     addDependent,
 
     addNewColumnForEmployee,
@@ -288,14 +290,16 @@ module.exports = {
                 jobTitles,
                 countries,
                 EmployeeStatuses,
-                PayGrades
+                PayGrades,
+                CustomAttributes,
             ] = await Promise.all([
                 getDepartments(),
                 getSupervisors(),
                 getJobTitles(),
                 getCountries(),
                 getEmployeeStatus(),
-                getPayGrades()
+                getPayGrades(),
+                getCustomAttributes(),
             ]);
             console.log('<')
             return res.json({
@@ -304,7 +308,8 @@ module.exports = {
                 jobTitles,
                 countries,
                 EmployeeStatuses,
-                PayGrades
+                PayGrades,
+                CustomAttributes
             });
         } catch (error) {
             console.error("Actual error:", error); // Log the actual error
