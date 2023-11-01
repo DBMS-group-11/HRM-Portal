@@ -35,6 +35,8 @@ const Reports = () => {
     const [report3Data, setReport3Data] = useState(null);
     
     const [report4Data, setReport4Data] = useState([]);
+    const [attributeList, setAttributeList] = useState([]);
+    const [selectedAttribute, setSelectedAttribute] = useState('');
 
     const [report5Data, setReport5Data] = useState([]);
     
@@ -100,16 +102,16 @@ const Reports = () => {
         })
     };
 
-    const handleReport4 = () => {
+    const handleReport4 = (attribute) => {
         console.log('Report 4');
-        // axios.post('http://localhost:3000/api/users/reports',{
-        //     "reportNO":4
-        // })
-        // .then((response) => {
-        //     console.log(response.data.data1);
-        //     setReport4Data(response.data);
-        //     console.log(report4Data);
-        // })
+        axios.post('http://localhost:3000/api/users/reports',{
+            "reportNO":4,
+            "AttributeName": attribute
+        })
+        .then((response) => {
+            console.log(response.data.data);
+            setReport4Data(response.data.data);
+        });
     };
 
     const handleReport5 = () => {
@@ -118,7 +120,7 @@ const Reports = () => {
             "reportNO":5
         })
         .then(res => {
-            console.log(res.data.data);
+            console.log(res.data);
             
             let data = [];
             for (let i = 0; i < res.data.data.length; i++) {
@@ -133,7 +135,7 @@ const Reports = () => {
                 SupervisorName: res.data.data[i].SupervisorName
                 });
             }
-            // console.log(data);
+            console.log(data);
             setReport5Data(data);
             console.log(report5Data);
 
@@ -151,6 +153,18 @@ const Reports = () => {
         handleReport2();
         handleReport3();
         handleReport5();
+
+        axios.get('http://localhost:3000/api/users/getCustomAttributes')
+        .then((response) => {
+            console.log(response.data);
+            const data = [];
+            for (let i = 0; i < response.data.length; i++) {
+                data.push(response.data[i].AttributeName);
+            }
+            setAttributeList(data);
+            setSelectedAttribute(data[0]);
+            handleReport4(data[0]);
+        })
     }, []);
 
     return ( 
@@ -160,7 +174,7 @@ const Reports = () => {
                 <Button onClick={handleReport1}>Report 1</Button>
                 <Button onClick={handleReport2}>Report 2</Button>
                 <Button onClick={handleReport3}>Report 3</Button>
-                <Button onClick={handleReport5}>Report 4</Button>
+                <Button onClick={()=>{console.log(attributeList)}}>Report 4</Button>
             </ButtonGroup> */}
 
             <TabContext value={value}>
@@ -169,7 +183,7 @@ const Reports = () => {
                     <Tab label="Number of Employees by department" value="1" />
                     <Tab label="Total leaves in the given period" value="2" />
                     <Tab label="Summary" value="3" />
-                    <Tab label="Report 4" value="4" />
+                    <Tab label="Custom Attribute Reports" value="4" />
                     <Tab label="All Employees" value="5" />
                 </TabList>
                 </Box>
@@ -287,56 +301,67 @@ const Reports = () => {
                     ):(
                         <>
                             <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
-                            <br />
-                            <Grid container spacing={2}>
-                                <Grid item xs={6}>
-                                    <Skeleton variant="circular" width={250} height={250} sx={{m:'auto'}}/>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Skeleton variant="rectangular" width={'100%'} height={250} />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Skeleton variant="rectangular" width={'100%'} height={160} />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Skeleton variant="rectangular" width={'100%'} height={160} />
-                                </Grid>
-                                <Grid item xs={8}>
-                                    <Skeleton variant="rectangular" width={'100%'} height={160} />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <Skeleton variant="rectangular" width={'100%'} height={160} />
-                                </Grid>
-                            </Grid>
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
                         </>
                     )}
                 </TabPanel>
                 {/* ################################################################################################### */}
                 <TabPanel value="4">
-                    <>
-                        <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
-                        <br />
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <Skeleton variant="circular" width={250} height={250} sx={{m:'auto'}}/>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Skeleton variant="rectangular" width={'100%'} height={250} />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Skeleton variant="rectangular" width={'100%'} height={160} />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Skeleton variant="rectangular" width={'100%'} height={160} />
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Skeleton variant="rectangular" width={'100%'} height={160} />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Skeleton variant="rectangular" width={'100%'} height={160} />
-                            </Grid>
-                        </Grid>
-                    </>
+                    <Box sx={{paddingX:6, display:'flex'}}>
+                        <Typography variant="h6">
+                            Select a custom attribute
+                        </Typography>
+                        <TextField 
+                            select
+                            label="Custom Attribute"
+                            variant="outlined"
+                            SelectProps={
+                                {native:true}
+                            }
+                            sx={{flexGrow:1, marginLeft:2}}
+                            onChange={(event)=>{
+                                setSelectedAttribute(event.target.value);
+                                handleReport4(event.target.value);
+                            }}
+                            value={selectedAttribute}
+                            >
+                            {attributeList.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </TextField>
+                    </Box>
+                    <br />
+                    {(report4Data != null && report4Data.length > 0) ? (
+                        <BarChart
+                        xAxis={[{ scaleType: 'band', data: report4Data.map((item)=>{return item.AttributeValue}) }]}
+                        series={[{ type: 'bar', data: report4Data.map((item)=>{return item.EmployeeCount}) }]}
+                        width={500}
+                        height={300}
+                        colors={['#82b1ff']}
+                    />
+                    ):(
+                        <>
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                            <Skeleton variant="text" sx={{ fontSize: '3rem' }} />
+                        </>
+                    )}
+                    
                 </TabPanel>
                 <TabPanel value="5">
                     <DataGrid

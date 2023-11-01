@@ -1,4 +1,4 @@
-import { Box, Button, IconButton } from "@mui/material";
+import { Box, Button, IconButton, Snackbar } from "@mui/material";
 import PersonalInfo from "../components/InfoForms/PersonalInfo";
 import DepartmentInfo from "../components/InfoForms/DepartmentInfo";
 import EmergencyInfo from "../components/InfoForms/EmergencyInfo";
@@ -18,6 +18,15 @@ const MyAccount = () => {
     const [myData, setMyData] = useState({});
     const [oldCustomAttributes, setOldCustomAttributes] = useState([]);
     const [newCustomAttributes, setNewCustomAttributes] = useState([]);
+    const [snackBarOpen, setSnackBarOpen] = useState(false);
+
+
+    const handleSnackBarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnackBarOpen(false);
+    };
 
     const [cookies] = useCookies(['x-ual', 'x-uData']);
 
@@ -52,6 +61,7 @@ const MyAccount = () => {
             console.log(res.data.success);
             if(res.data.success===1){
                 console.log("updated");
+                setSnackBarOpen(true);
             }
         }).catch(err => {
             console.log("Axios post error");
@@ -163,7 +173,17 @@ const MyAccount = () => {
                 Add New Custom Attribute
             </Button>
 
-            {/* <UserCredentialsForm /> */}
+            <Snackbar
+                open={snackBarOpen}
+                autoHideDuration={6000}
+                onClose={handleSnackBarClose}
+                message="Successfully Updated!"
+                action={
+                    <Button color="inherit" onClick={handleSnackBarClose}>
+                        OK
+                    </Button>
+                }
+            />
         </Box>
     );
 }
