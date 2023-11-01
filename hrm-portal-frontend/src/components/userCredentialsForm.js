@@ -25,32 +25,29 @@ const UserCredentialsForm = () => {
         const oldPasswordHash = hash.sha256().update(userPassword).digest('hex');
         const newPasswordHash = hash.sha256().update(newPassword).digest('hex');
 
-        console.log(oldPasswordHash);
-        console.log(newPasswordHash);
-        console.log(oldPasswordHash === newPasswordHash);
 
-        // axios.patch('http://localhost:3000/api/users/editUserCredentials',{
-        //     email:userEmail,
-        //     oldPassword:oldPasswordHash,
-        //     newPassword:newPasswordHash
-        // })
-        // .then( res => {
-        //     // console.log(res.data);
-        //     if(res.data.success === 1) {
-        //         console.log('success');
-        //         alert("Password changed!");
-        //         setChangePassword(false);
-        //         setUserEmail('');
-        //         setUserPassword('');
-        //         setNewPassword('');
-        //         setConfirmPassword('');
-        //     }
-        //     else {
-        //         setError(res.data.message);
-        //         console.log(res.data.message);
-        //     }
+        axios.patch('http://localhost:3000/api/users/editUserCredentials',{
+            email:userEmail,
+            oldPassword:oldPasswordHash,
+            newPassword:newPasswordHash
+        })
+        .then( res => {
+            // console.log(res.data);
+            if(res.data.success === 1) {
+                console.log('success');
+                alert("Password changed!");
+                setChangePassword(false);
+                setUserEmail('');
+                setUserPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+            }
+            else {
+                setError(res.data.message);
+                console.log(res.data.message);
+            }
         
-        // });
+        });
     }
     
     return (
