@@ -50,10 +50,10 @@ const LoginForm = ({setLoggedIn, snackBarOpen}) => {
 
                     const jwt = sign(userData, secret);
 
-                    setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
-                    setCookie('u-token', res.data.token, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
-                    setCookie('x-ual', res.data.values.UserAccountLevelID, { path: '/' , expires: new Date(Date.now() + 900000)}); // ual - user acount level : cookie expires in 15 mins
-                    setCookie('x-uData', jwt, { path: '/' , expires: new Date(Date.now() + 900000)}); // cookie expires in 15 mins
+                    setCookie('userLoggedIn', true, { path: '/' , expires: new Date(Date.now() + 3600000)}); // cookie expires in 1 h
+                    setCookie('u-token', res.data.token, { path: '/' , expires: new Date(Date.now() + 3600000)}); // cookie expires in 1 h
+                    setCookie('x-ual', res.data.values.UserAccountLevelID, { path: '/' , expires: new Date(Date.now() + 3600000)}); // ual - user acount level : cookie expires in 1 h
+                    setCookie('x-uData', jwt, { path: '/' , expires: new Date(Date.now() + 3600000)}); // cookie expires in 1 h
                     
                     setLoggedIn(true);
                     navigate('/dashboard/home');
