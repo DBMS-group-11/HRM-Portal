@@ -257,6 +257,7 @@ module.exports = {
             // console.log(passwordHash)
             // data.PasswordHash = passwordHash;
 
+            // const
             //Add employee
             const employeeResult = await addEmployee(connection, data);
             //Add user
@@ -435,12 +436,13 @@ module.exports = {
 
             //Start transaction
             await connection.beginTransaction();
-            const employeeDetails = await getEmployeeDetails(connection, body.personalInfo.employeeID);
+            // const employeeDetails = await getEmployeeDetails(connection, body.personalInfo.employeeID);
 
             //update the emegency information
-            body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
-            const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
+            // body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
+            // const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
 
+            const UserIDAndUserAccountLvID = await getUserIDAndUserAccountLvIDByEmployeeID(connection, body.personalInfo.employeeID);
             // Prepare data for update employee information
             employeeData = {
                 "EmployeeID": body.personalInfo.employeeID,
@@ -464,7 +466,8 @@ module.exports = {
                 "Email": body.personalInfo.email,
                 // "PasswordHash": "0000", //default password
                 "UserAccountLevelName": body.personalInfo.userAccountType,
-
+                "UserAccountLevelID":UserIDAndUserAccountLvID[0].UserAccountLevelID
+                
             }
             dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
@@ -479,14 +482,16 @@ module.exports = {
                 "EmployeeID": employeeData.EmployeeID,
                 "CustomAttributesInfo": body.newlyAddedCustomAttributesInfo
             }
+            // const UserAccountLevelID = await getUserAccountLevelIDByUserAccountLevelName(connection, userData.UserAccountLevelName);
+            
+            const emergencyInfo = body.emergencyInfo;
 
-            const employeeResult = await updateEmployee(connection, employeeData);//update employee
+            // const employeeResult = await updateEmployee(connection, employeeData);//update employee --old one
+            // userData.UserAccountLevelID = UserAccountLevelID;
+            const employeeResult = await updateEmployee(connection, {employeeData, userData, dependentInfo, emergencyInfo});//update employee
+            // const userResult = await updateUser(connection, userData);//update user
 
-            const UserAccountLevelID = await getUserAccountLevelIDByUserAccountLevelName(connection, userData.UserAccountLevelName);
-            userData.UserAccountLevelID = UserAccountLevelID;
-            const userResult = await updateUser(connection, userData);//update user
-
-            const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
+            // const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
 
             const customAttributesResult = await updateMyCustomAttributes(connection, customAttributes);//update my custom attributes
             const newlyAddedcustomAttributesResult = await addNewCustomAttributeForEmployee(connection, newlyAddedCustomAttributesInfo);//add new custom attributes
@@ -500,10 +505,10 @@ module.exports = {
             return res.json({
                 success: 1,
                 data: {
-                    user: userResult,
+                    // user: userResult,
                     employee: employeeResult,
-                    dependentResult: dependentResult,
-                    emergencyResult: emergencyResult,
+                    // dependentResult: dependentResult,
+                    // emergencyResult: emergencyResult,
                     customAttributesResult: customAttributesResult,
                     newlyAddedcustomAttributesResult: newlyAddedcustomAttributesResult
                 },
