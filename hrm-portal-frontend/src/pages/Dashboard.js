@@ -94,7 +94,7 @@ function Dashboard(props) {
 
     const navigate = useNavigate();
 
-    const [cookies, setCookie, removeCookie] = useCookies(['userLoggedIn', 'x-ual']);
+    const [cookies, setCookie, removeCookie] = useCookies(['userLoggedIn', 'x-ual', 'x-uData', 'u-token']);
 
 
     const handleDrawerToggle = () => {

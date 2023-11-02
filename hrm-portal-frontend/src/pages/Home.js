@@ -98,7 +98,7 @@ const Home = () => {
             let uData = jwt(cookies['x-uData']);
             uData = {...uData, TotalLeavesTaken: res.data.TotApprovedLeaveCount[0].totApprovedLeaveCount};
             let jwtData = sign(uData, secret);
-            updateCookies('x-uData', jwtData, { path: '/' , expires: new Date(Date.now() + 900000)});
+            updateCookies('x-uData', jwtData, { path: '/' , expires: new Date(Date.now() + 3600000)});
         })
         .catch(err => {
             console.log(err);
