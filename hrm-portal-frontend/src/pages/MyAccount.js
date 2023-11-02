@@ -20,6 +20,9 @@ const MyAccount = () => {
     const [newCustomAttributes, setNewCustomAttributes] = useState([]);
     const [snackBarOpen, setSnackBarOpen] = useState(false);
 
+    const [errorPersonalForm, setErrorPersonalForm] = useState(false);
+    const [errorEmergencyForm, setErrorEmergencyForm] = useState(false);
+
 
     const handleSnackBarClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -32,8 +35,12 @@ const MyAccount = () => {
 
     const [uData, setUData] = useState(jwt(cookies['x-uData']));
 
+
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
+        if(!e){
+            return;
+        }
         myData.personalInfo = { ...e, employeeID: uData.EmployeeID ,UserID:uData.UserID};
     };
 
@@ -51,13 +58,23 @@ const MyAccount = () => {
 
         setData(myData)
 
-        // if(myData.personalInfo?.)
-
-        setIsReadOnly(true);
         oldCustomAttributes != null ? myData.CustomAttributesInfo = oldCustomAttributes : myData.CustomAttributesInfo = [];
         myData.newlyAddedCustomAttributesInfo = newCustomAttributes;
 
         console.log(myData);
+
+        if(!myData.personalInfo || !myData.departmentInfo || !myData.emergencyInfo){
+            if(!myData.personalInfo){
+                setErrorPersonalForm(true);
+                myData.personalInfo = { ...e, employeeID: uData.EmployeeID ,UserID:uData.UserID};
+            }
+            if(!myData.emergencyInfo){
+                setErrorEmergencyForm(true);
+            }
+            console.log(" field error");
+            return;
+        }
+        setIsReadOnly(true);
 
         axios.put("http://localhost:3000/api/users/editMyAccount",myData)
         .then(res=>{
@@ -70,6 +87,8 @@ const MyAccount = () => {
             console.log("Axios post error");
         }).finally(() => {
             console.log("final");
+            setErrorPersonalForm(false);
+            setErrorEmergencyForm(false);
         });
     };
     /////////////////////////////////
@@ -139,9 +158,9 @@ const MyAccount = () => {
                     </IconButton>
                 </Box>
             )}
-            <PersonalInfo data={data} isReadOnly={isReadOnly} getData={getPersonalInfo} />
+            <PersonalInfo data={data} isReadOnly={isReadOnly} getData={getPersonalInfo} errorInForm={errorPersonalForm}/>
             <DepartmentInfo data={data} isReadOnly={isReadOnly} getData={getDepartmentInfo} />
-            <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo} />
+            <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo} errorInForm={errorEmergencyForm}/>
             
             {/* custom attributes */}
             {oldCustomAttributes != null && oldCustomAttributes.map((customAttribute, index) => (

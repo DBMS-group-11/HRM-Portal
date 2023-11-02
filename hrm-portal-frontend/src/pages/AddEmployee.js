@@ -19,6 +19,8 @@ const AddEmployee = ({children}) => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate=useNavigate();
     const [snackBarOpen, setSnackBarOpen] = useState(false);
+    const [errorPersonalForm, setErrorPersonalForm] = useState(false);
+    const [errorEmergencyForm, setErrorEmergencyForm] = useState(false);
 
     const handleSnackBarClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -29,8 +31,11 @@ const AddEmployee = ({children}) => {
     };
 
 
-    const getPersonalInfo = (e) => {
+    const getPersonalInfo = (e, validity) => {
         myData.personalInfo = e;
+        if(!e){
+            return;
+        }
     };
 
     const getDepartmentInfo = (e) => {
@@ -47,9 +52,18 @@ const AddEmployee = ({children}) => {
         console.log('submit');
 
         myData.CustomAttributes = customAttributes;
-        // console.log(myData.personalInfo.);
 
-        // if(myData.)
+        if(!myData.personalInfo || !myData.departmentInfo || !myData.emergencyInfo){
+            if(!myData.personalInfo){
+                setErrorPersonalForm(true);
+            }
+            if(!myData.emergencyInfo){
+                setErrorEmergencyForm(true);
+            }
+            setIsLoading(false);
+            console.log(" field error");
+            return;
+        }
 
         axios.post("http://localhost:3000/api/users/reg",myData)
         .then(res=>{
@@ -69,6 +83,8 @@ const AddEmployee = ({children}) => {
 
         }).finally(() => {
             setIsLoading(false);
+            setErrorPersonalForm(false);
+            setErrorEmergencyForm(false);
         });
 
     };
@@ -81,9 +97,9 @@ const AddEmployee = ({children}) => {
 
     return ( 
             <Box maxWidth={"840px"} margin={'auto'}>
-                <PersonalInfo getData={getPersonalInfo}/>
+                <PersonalInfo getData={getPersonalInfo} errorInForm={errorPersonalForm}/>
                 <DepartmentInfo getData={getDepartmentInfo}/>
-                <EmergencyInfo getData={getEmergencyInfo}/>
+                <EmergencyInfo getData={getEmergencyInfo} errorInForm={errorEmergencyForm}/>
                 
                 {/* custom attributes */}
                 {customAttributes.map((customAttribute, index) => (

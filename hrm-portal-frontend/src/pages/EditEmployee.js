@@ -19,10 +19,16 @@ const EditEmployee = () => {
     const [oldCustomAttributes, setOldCustomAttributes] = useState([]);
     const [newCustomAttributes, setNewCustomAttributes] = useState([]);
 
+    const [errorPersonalForm, setErrorPersonalForm] = useState(false);
+    const [errorEmergencyForm, setErrorEmergencyForm] = useState(false);
+
     const navigate = useNavigate();
 
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
+        if(!e){
+            return;
+        }
         myData.personalInfo = { ...e, employeeID: location.state.EmployeeID, UserID: location.state.UserID };
     };
 
@@ -36,7 +42,6 @@ const EditEmployee = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setIsReadOnly(true);
         // console.log('====submit====');
 
         setData(myData)
@@ -44,6 +49,19 @@ const EditEmployee = () => {
         myData.newlyAddedCustomAttributesInfo = newCustomAttributes;
         
         console.log(myData);
+
+        if(!myData.personalInfo || !myData.departmentInfo || !myData.emergencyInfo){
+            if(!myData.personalInfo){
+                setErrorPersonalForm(true);
+                myData.personalInfo = { ...e, employeeID: location.state.EmployeeID, UserID: location.state.UserID };
+            }
+            if(!myData.emergencyInfo){
+                setErrorEmergencyForm(true);
+            }
+            console.log(" field error");
+            return;
+        }
+        setIsReadOnly(true);
 
         axios.put("http://localhost:3000/api/users/editSupervisees",myData)
         .then(res=>{
@@ -58,6 +76,8 @@ const EditEmployee = () => {
             // console.log("final");
             alert("Updated Successfully");
             navigate('/dashboard/supervisees');
+            setErrorPersonalForm(false);
+            setErrorEmergencyForm(false);
         });
     };
 
@@ -126,9 +146,9 @@ const EditEmployee = () => {
                         {isReadOnly ? <EditOutlined /> : <CloseOutlined />}
                     </IconButton>
                 </Box>
-                <PersonalInfo data={data} isReadOnly={isReadOnly} getData={getPersonalInfo}/>
+                <PersonalInfo data={data} isReadOnly={isReadOnly} getData={getPersonalInfo} errorInForm={errorPersonalForm}/>
                 <DepartmentInfo data={data} isReadOnly={isReadOnly} getData={getDepartmentInfo}/>
-                <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo}/>
+                <EmergencyInfo data={data} isReadOnly={isReadOnly} getData={getEmergencyInfo} errorInForm={errorEmergencyForm}/>
 
                 {/* custom attributes */}
                 {oldCustomAttributes != null && oldCustomAttributes.map((customAttribute, index) => (
