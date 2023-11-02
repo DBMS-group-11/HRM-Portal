@@ -191,8 +191,8 @@ module.exports = {
             await connection.beginTransaction();
 
             // Add emergency contact
-            const emergencyResult = await addEmergencyContact(connection, body.emergencyInfo);
-            const EmergencyContactID = emergencyResult.EmergencyContactID;
+            // const emergencyResult = await addEmergencyContact(connection, body.emergencyInfo);
+            // const EmergencyContactID = emergencyResult.EmergencyContactID;
 
             const lastUserIDResult = await getLastUserID(connection); //get UserID of last Added user
             // console.log(lastUserIDResult)
@@ -213,7 +213,7 @@ module.exports = {
             const PasswordHash = await bcrypt.hash("9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0", salt);
 
             // Prepare data for registration
-            data = {
+            let employeeData = {
                 "UserID": UserID,
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
@@ -234,17 +234,15 @@ module.exports = {
                 "JobTitleID": body.departmentInfo.jobTitle,
                 "PayGradeID": body.departmentInfo.payGrade,
                 "EmploymentStatusID": body.departmentInfo.status,
-                "SupervisorID": body.departmentInfo.supervisor,
-
-                "EmergencyContactID": EmergencyContactID
+                "SupervisorID": body.departmentInfo.supervisor
             }
-            dependentInfo = {
-                "EmployeeID": data.EmployeeID,
+            let dependentInfo = {
+                "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
             }
-            customAttributes = {
-                "EmployeeID": data.EmployeeID,
+            let customAttributes = {
+                "EmployeeID": employeeData.EmployeeID,
                 "CustomAttributesInfo": body.CustomAttributes
             }
             //Hash password
@@ -258,11 +256,13 @@ module.exports = {
             // data.PasswordHash = passwordHash;
 
             //Add employee
-            const employeeResult = await addEmployee(connection, data);
+            const emergencyInfo = body.emergencyInfo;
+
+            const employeeResult = await addEmployee(connection, {employeeData, dependentInfo, emergencyInfo});
             //Add user
-            const userResult = await addUser(connection, data);
+            // const userResult = await addUser(connection, data);
             //Add dependent
-            const dependentResult = await addDependent(connection, dependentInfo);
+            // const dependentResult = await addDependent(connection, dependentInfo);
 
             const customAttributeResult = await addNewCustomAttributeForEmployee(connection, customAttributes);
 
@@ -273,9 +273,9 @@ module.exports = {
             return res.json({
                 success: 1,
                 data: {
-                    user: userResult,
+                    // user: userResult,
                     employee: employeeResult,
-                    dependentResult: dependentResult,
+                    // dependentResult: dependentResult,
                     customAttributeResult: customAttributeResult,
                 },
                 message: "Registration successful",
@@ -287,6 +287,13 @@ module.exports = {
                 await connection.rollback();
             }
             console.log(error)
+            if(error == "Error: Duplicate email detected!"){
+                return res.status(500).json({
+                    success: -1,
+                    message: "Duplicate email detected!",
+                });
+            }
+
             console.log("<")
             return res.status(500).json({
                 success: 0,
@@ -826,14 +833,14 @@ module.exports = {
             await connection.beginTransaction();
             const UserIDAndUserAccountLvID = await getUserIDAndUserAccountLvIDByEmployeeID(connection, body.personalInfo.employeeID);
 
-            const employeeDetails = await getEmployeeDetails(connection, body.personalInfo.employeeID);
+            // const employeeDetails = await getEmployeeDetails(connection, body.personalInfo.employeeID);
 
             //update the emegency information
-            body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
-            const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
+            // body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
+            // const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
 
             // Prepare data for update employee information
-            employeeData = {
+            let employeeData = {
                 "EmployeeID": body.personalInfo.employeeID,
                 "EmployeeName": body.personalInfo.name,
                 "DateOfBirth": body.personalInfo.dob,
@@ -848,7 +855,7 @@ module.exports = {
                 "EmploymentStatusID": body.departmentInfo.status,
                 "SupervisorID": body.departmentInfo.supervisor,
             }
-            userData = {
+            let userData = {
                 "UserID": UserIDAndUserAccountLvID[0].UserID,//body.personalInfo.UserID,
                 "EmployeeID": body.personalInfo.employeeID,
                 "Username": body.personalInfo.username,
@@ -857,26 +864,28 @@ module.exports = {
                 "UserAccountLevelID":UserIDAndUserAccountLvID[0].UserAccountLevelID
                 // "UserAccountLevelID": body.personalInfo.UserAccountLevelID
             }
-            dependentInfo = {
+            let dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
             }
-            customAttributes = {
+            let customAttributes = {
                 "EmployeeID": employeeData.EmployeeID,
                 "CustomAttributesInfo": body.CustomAttributesInfo
             }
-            newlyAddedCustomAttributesInfo = {
+            let newlyAddedCustomAttributesInfo = {
                 "EmployeeID": employeeData.EmployeeID,
                 "CustomAttributesInfo": body.newlyAddedCustomAttributesInfo
 
             }
 
-            const employeeResult = await updateEmployee(connection, employeeData);//update employee
+            const emergencyInfo = body.emergencyInfo;
 
-            const userResult = await updateUser(connection, userData);//update user
+            const employeeResult = await updateEmployee(connection, {employeeData, userData, dependentInfo, emergencyInfo});//update employee
 
-            const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
+            // const userResult = await updateUser(connection, userData);//update user
+
+            // const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
 
             const customAttributesResult = await updateMyCustomAttributes(connection, customAttributes);//update my custom attributes
 
@@ -889,10 +898,10 @@ module.exports = {
             return res.json({
                 success: 1,
                 data: {
-                    user: userResult,
+                    // user: userResult,
                     employee: employeeResult,
-                    dependentResult: dependentResult,
-                    emergencyResult: emergencyResult,
+                    // dependentResult: dependentResult,
+                    // emergencyResult: emergencyResult,
                     customAttributesResult: customAttributesResult,
                     newlyAddedcustomAttributesResult: newlyAddedcustomAttributesResult
                 },

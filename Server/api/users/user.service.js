@@ -71,32 +71,38 @@ module.exports = {
         console.log("___addEmployee")
         // console.log(data)
         try {
-            const newData = await findIDs(data);
+            const {employeeData, dependentInfo, emergencyInfo} = data;
+
+            const newData = await findIDs(employeeData);
             // console.log(newData)
-            data['JobTitleID'] = newData['JobTitleID']
-            data['DepartmentID'] = newData['DepartmentID']
-            data['PayGradeID'] = newData['PayGradeID']
-            data['EmploymentStatusID'] = newData['EmploymentStatusID']
-            data['SupervisorID'] = newData['SupervisorID']
-            // console.log(data)
 
             const [results] = await connection.query(
-                `INSERT INTO employee(EmployeeID, EmployeeName, DateOfBirth, Gender, MaritalStatus, Address, Country, DepartmentID, JobTitleID, PayGradeID, EmploymentStatusID, SupervisorID, EmergencyContactID)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `CALL RegisterEmployeeAndRelatedData(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
-                    data.EmployeeID,
-                    data.EmployeeName,
-                    data.DateOfBirth,
-                    data.Gender,
-                    data.MaritalStatus,
-                    data.Address,
-                    data.Country,
-                    data.DepartmentID,
-                    data.JobTitleID,
-                    data.PayGradeID,
-                    data.EmploymentStatusID,
-                    data.SupervisorID,
-                    data.EmergencyContactID
+                    employeeData.EmployeeID,
+                    employeeData.EmployeeName,
+                    employeeData.DateOfBirth,
+                    employeeData.Gender,
+                    employeeData.MaritalStatus,
+                    employeeData.Address,
+                    employeeData.Country,
+                    newData.DepartmentID,
+                    newData.JobTitleID,
+                    newData.PayGradeID,
+                    newData.EmploymentStatusID,
+                    newData.SupervisorID,
+                    employeeData.UserAccountLevelID,
+                    employeeData.UserID,
+                    employeeData.Username,
+                    employeeData.Email,
+                    employeeData.PasswordHash,
+                    dependentInfo.DependentName,
+                    dependentInfo.DependentAge,
+                    emergencyInfo.name1,
+                    emergencyInfo.telNo1,
+                    emergencyInfo.name2,
+                    emergencyInfo.telNo2,
+                    emergencyInfo.emergencyAddress
                 ]
             );
             console.log("Employee added successfully")
@@ -837,46 +843,43 @@ module.exports = {
     },
     updateEmployee: async (connection, data) => { //done
         console.log("___updateEmployee");
+        const {employeeData, userData, dependentInfo, emergencyInfo} = data
         try {
-            const newData = await findIDs(data);
+            const newData = await findIDs(employeeData);
             // console.log(newData);
             if (!newData.DepartmentID || !newData.JobTitleID || !newData.PayGradeID || !newData.EmploymentStatusID || typeof newData.SupervisorID === 'undefined') {
                 throw new Error("Required ID(s) missing from newData");
             }
 
             // console.log(data);
-            const query = `
-                UPDATE employee
-                SET 
-                    EmployeeName=?, 
-                    DateOfBirth=?, 
-                    Gender=?,
-                    MaritalStatus=?,
-                    Address=?,
-                    Country=?,
-                    DepartmentID=?,
-                    JobTitleID=?,
-                    PayGradeID=?,
-                    EmploymentStatusID=?,
-                    SupervisorID=?
-                WHERE
-                    EmployeeID=?
-            `;
+            const [result] = await connection.execute('CALL UpdateEmployeeAndRelatedData( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                    employeeData.EmployeeID,
+                    employeeData.EmployeeName,
+                    employeeData.DateOfBirth,
+                    employeeData.Gender,
+                    employeeData.MaritalStatus,
+                    employeeData.Address,
+                    employeeData.Country,
+                    newData.DepartmentID,
+                    newData.JobTitleID,
+                    newData.PayGradeID,
+                    newData.EmploymentStatusID,
+                    newData.SupervisorID,
+                    userData.UserID,
+                    userData.Username,
+                    userData.Email,
+                    userData.UserAccountLevelID,
+                    dependentInfo.DependentName,
+                    dependentInfo.DependentAge,
+                    emergencyInfo.name1,
+                    emergencyInfo.telNo1,
+                    emergencyInfo.name2,
+                    emergencyInfo.telNo2,
+                    emergencyInfo.emergencyAddress
+                ]
+            );
 
-            const result = await connection.query(query, [
-                data.EmployeeName,
-                data.DateOfBirth,
-                data.Gender,
-                data.MaritalStatus,
-                data.Address,
-                data.Country,
-                newData.DepartmentID,
-                newData.JobTitleID,
-                newData.PayGradeID,
-                newData.EmploymentStatusID,
-                newData.SupervisorID,
-                data.EmployeeID
-            ]);
 
             return result;
 

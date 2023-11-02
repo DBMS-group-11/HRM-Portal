@@ -82,10 +82,10 @@ const LoginForm = ({setLoggedIn, snackBarOpen}) => {
             <Typography variant="body2">Welcome Back</Typography>
             <form>
                 <TextField
-                    label="username"
+                    label="email"
                     variant="outlined"
                     fullWidth
-                    {...(errUserName && {error:true, helperText:"Invalid username"})}
+                    {...(errUserName && {error:true, helperText:"Invalid email"})}
                     {...(errorCredentials && {error:true})}
                     sx={{my:1}}
                     onChange={(e)=>{
