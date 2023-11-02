@@ -3,14 +3,33 @@ import Grid from '@mui/material/Grid';
 import { useEffect, useState } from "react";
 
 
-const EmergencyInfo = ({data, isReadOnly, getData}) => {
+const EmergencyInfo = ({data, isReadOnly, getData, errorInForm}) => {
     const [name1, setName1] = useState('');
     const [telNo1, setTelNo1] = useState('');
     const [name2, setName2] = useState('');
     const [telNo2, setTelNo2] = useState('');
     const [emergencyAddress, setEmergencyAddress] = useState('');
 
+    const [name1Error, setName1Error] = useState(false);
+    const [telNo1Error, setTelNo1Error] = useState(false);
+    const [name2Error, setName2Error] = useState(false);
+    const [telNo2Error, setTelNo2Error] = useState(false);
+    const [emergencyAddressError, setEmergencyAddressError] = useState(false);
+
+    const setErrorState = (value, setErrorFunction) => {
+        setErrorFunction(value === '' || value === null || value === undefined);
+    };
+
     useEffect(() => {
+
+        if (errorInForm) {
+            setErrorState(name1, setName1Error);
+            setErrorState(telNo1, setTelNo1Error);
+            setErrorState(name2, setName2Error);
+            setErrorState(telNo2, setTelNo2Error);
+            setErrorState(emergencyAddress, setEmergencyAddressError);
+          }
+
         if(isReadOnly){
             setName1(data && data.emergencyInfo.name1 || '');
             setTelNo1(data && data.emergencyInfo.telNo1 || '');
@@ -25,7 +44,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                 getData(null);
             }
         }
-    } , [isReadOnly, data, name1, telNo1, name2, telNo2, emergencyAddress]);
+    } , [isReadOnly, data, name1, telNo1, name2, telNo2, emergencyAddress, errorInForm]);
 
     const isFormDataValid = () => {
         return (
@@ -48,6 +67,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(name1Error && {error:true, helperText:"Please fill in this field"})}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -62,6 +82,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(name1Error && {error:true, helperText:"Please fill in this field"})}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -76,6 +97,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(name1Error && {error:true, helperText:"Please fill in this field"})}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -90,6 +112,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(name1Error && {error:true, helperText:"Please fill in this field"})}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -104,6 +127,7 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(name1Error && {error:true, helperText:"Please fill in this field"})}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}

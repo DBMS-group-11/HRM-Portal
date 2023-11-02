@@ -37,13 +37,36 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
     const [dependentName, setDependentName] = useState('');
     const [dependentAge, setDependentAge] = useState('');
 
+    const [errorInThisForm, setErrorInThisForm] = useState(false);
+
     const [nameError, setNameError] = useState(false);
     const [addressError, setAddressError] = useState(false);
     const [countryError, setCountryError] = useState(false);
     const [usernameError, setUsernameError] = useState(false);
+    const [emailError, setEmailError] = useState(false);
+    const [userAccountTypeError, setUserAccountTypeError] = useState(false);
+    const [dobError, setDobError] = useState(false);
+    const [maritalStatusError, setMaritalStatusError] = useState(false);
+    const [genderError, setGenderError] = useState(false);
 
+
+    const setErrorState = (value, setErrorFunction) => {
+        setErrorFunction(value === null || value === '' || value === undefined);
+    };
 
     useEffect(() => {
+        
+        if (errorInForm) {
+            setErrorState(name, setNameError);
+            setErrorState(address, setAddressError);
+            setErrorState(country, setCountryError);
+            setErrorState(username, setUsernameError);
+            setErrorState(email, setEmailError);
+            setErrorState(userAccountType, setUserAccountTypeError);
+            setErrorState(dob, setDobError);
+            setErrorState(maritalStatus, setMaritalStatusError);
+            setErrorState(gender, setGenderError);
+          }
 
         if(isReadOnly){
             setName(data && data.personalInfo.name || '');
@@ -67,12 +90,12 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                 getData(null);
             }
         }
-    } , [isReadOnly, data, name, address, country, username, email, userAccountType, dob, maritalStatus, gender, dependentName, dependentAge]);
+    } , [isReadOnly, data, name, address, country, username, email, userAccountType, dob, maritalStatus, gender, dependentName, dependentAge, errorInForm]);
     
     
     const isFormDataValid = () => {
         return (
-            name !== '' &&
+            (name !== '' )&&
             address !== '' &&
             country !== '' &&
             username !== '' &&
@@ -132,6 +155,7 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                         variant="standard"
                         fullWidth
                         required
+                        {...(nameError && {error:true, helperText:"Please fill in name"})}
                         InputProps={{
                             readOnly: isReadOnly,
                         }}
@@ -149,6 +173,7 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(addressError && {error:true, helperText:"Please fill in this field"})}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -163,6 +188,7 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(countryError && {error:true, helperText:"Please fill in this field"})}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -177,6 +203,7 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(usernameError && {error:true, helperText:"Please fill in this field"})}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -191,6 +218,7 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(emailError && {error:true, helperText:"Please use a valid Email"})}
                     InputProps={{
                         readOnly: isReadOnly,
                     }}
@@ -205,6 +233,7 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(userAccountTypeError && {error:true, helperText:"Please fill in this field"})}
                     select
                     value={userAccountType}
                     SelectProps={{
@@ -226,6 +255,7 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                         label="Date of Birth"
+                        // {...(dobError && {error:true, helperText:"Please fill in this field"})}
                         value={ dob != '' ? dayjs(dob) : dayjs()}
                         {...(isReadOnly ? {} : {onChange: (newValue) => setDob(dayjs(newValue).format("YYYY/MM/DD"))})}
                     />
@@ -238,6 +268,7 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(maritalStatusError && {error:true, helperText:"Please fill in this field"})}
                     select
                     SelectProps={{
                         native: true,
@@ -259,6 +290,7 @@ const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
                     variant="standard"
                     fullWidth
                     required
+                    {...(genderError && {error:true, helperText:"Please fill in this field"})}
                     select
                     SelectProps={{
                         native: true,
