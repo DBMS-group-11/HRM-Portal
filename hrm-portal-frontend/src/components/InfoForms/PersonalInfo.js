@@ -31,7 +31,11 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [userAccountType, setUserAccountType] = useState('Level1');
+<<<<<<< HEAD
+    const [dob, setDob] = useState('2023/11/03');
+=======
     const [dob, setDob] = useState('11/03/2023');
+>>>>>>> f815775584c9f4576155087c8f0f71b70ed42928
     const [maritalStatus, setMaritalStatus] = useState('Married');
     const [gender, setGender] = useState('Male');
     const [dependentName, setDependentName] = useState('');
