@@ -41,6 +41,8 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
     const [dependentName, setDependentName] = useState('');
     const [dependentAge, setDependentAge] = useState('');
 
+    const [nameError, setNameError] = useState(false);
+
 
     useEffect(() => {
 
@@ -80,6 +82,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                             variant="standard"
                             fullWidth
                             required
+                            error={nameError}
                             InputProps={{
                                 readOnly: isReadOnly,
                             }}

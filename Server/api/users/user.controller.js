@@ -239,7 +239,7 @@ module.exports = {
             let dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
-                "DependentAge": body.personalInfo.dependentAge
+                "DependentAge": body.personalInfo.dependentAge == '' ? 0 : body.personalInfo.dependentAge
             }
             let customAttributes = {
                 "EmployeeID": employeeData.EmployeeID,
@@ -867,7 +867,7 @@ module.exports = {
             let dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
-                "DependentAge": body.personalInfo.dependentAge
+                "DependentAge": body.personalInfo.dependentAge = '' ? 0 : body.personalInfo.dependentAge
             }
             let customAttributes = {
                 "EmployeeID": employeeData.EmployeeID,

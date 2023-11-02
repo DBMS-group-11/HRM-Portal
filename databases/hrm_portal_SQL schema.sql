@@ -618,7 +618,7 @@ BEGIN
         UserID = p_UserID AND EmployeeID = p_EmployeeID;
 
     -- Update or insert dependent information
-    IF NOT p_DependentName = '' THEN
+    IF NOT (p_DependentName = '') THEN
 		UPDATE dependentInfo
 		SET
 			DependentName = p_DependentName,
@@ -688,7 +688,7 @@ BEGIN
     VALUES (p_UserID, p_Username, p_Email, p_EmployeeID, p_PasswordHash, v_userAccountLevelID);
 
     -- Update or insert dependent information
-    IF not p_DependentName = '' THEN
+    IF not (p_DependentName = '') THEN
 		INSERT INTO dependentinfo(EmployeeID,DependentName,DependentAge)
 		VALUES(p_EmployeeID, p_DependentName, p_DependentAge);
 	END IF;
