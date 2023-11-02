@@ -826,14 +826,14 @@ module.exports = {
             await connection.beginTransaction();
             const UserIDAndUserAccountLvID = await getUserIDAndUserAccountLvIDByEmployeeID(connection, body.personalInfo.employeeID);
 
-            const employeeDetails = await getEmployeeDetails(connection, body.personalInfo.employeeID);
+            // const employeeDetails = await getEmployeeDetails(connection, body.personalInfo.employeeID);
 
             //update the emegency information
-            body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
-            const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
+            // body.emergencyInfo.EmergencyContactID = employeeDetails[0].EmergencyContactID;
+            // const emergencyResult = await updateEmergencyContact(connection, body.emergencyInfo);
 
             // Prepare data for update employee information
-            employeeData = {
+            let employeeData = {
                 "EmployeeID": body.personalInfo.employeeID,
                 "EmployeeName": body.personalInfo.name,
                 "DateOfBirth": body.personalInfo.dob,
@@ -848,7 +848,7 @@ module.exports = {
                 "EmploymentStatusID": body.departmentInfo.status,
                 "SupervisorID": body.departmentInfo.supervisor,
             }
-            userData = {
+            let userData = {
                 "UserID": UserIDAndUserAccountLvID[0].UserID,//body.personalInfo.UserID,
                 "EmployeeID": body.personalInfo.employeeID,
                 "Username": body.personalInfo.username,
@@ -857,26 +857,28 @@ module.exports = {
                 "UserAccountLevelID":UserIDAndUserAccountLvID[0].UserAccountLevelID
                 // "UserAccountLevelID": body.personalInfo.UserAccountLevelID
             }
-            dependentInfo = {
+            let dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
                 "DependentAge": body.personalInfo.dependentAge
             }
-            customAttributes = {
+            let customAttributes = {
                 "EmployeeID": employeeData.EmployeeID,
                 "CustomAttributesInfo": body.CustomAttributesInfo
             }
-            newlyAddedCustomAttributesInfo = {
+            let newlyAddedCustomAttributesInfo = {
                 "EmployeeID": employeeData.EmployeeID,
                 "CustomAttributesInfo": body.newlyAddedCustomAttributesInfo
 
             }
 
-            const employeeResult = await updateEmployee(connection, employeeData);//update employee
+            const emergencyInfo = body.emergencyInfo;
 
-            const userResult = await updateUser(connection, userData);//update user
+            const employeeResult = await updateEmployee(connection, {employeeData, userData, dependentInfo, emergencyInfo});//update employee
 
-            const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
+            // const userResult = await updateUser(connection, userData);//update user
+
+            // const dependentResult = await updateDependent(connection, dependentInfo);//update dependent
 
             const customAttributesResult = await updateMyCustomAttributes(connection, customAttributes);//update my custom attributes
 
@@ -889,10 +891,10 @@ module.exports = {
             return res.json({
                 success: 1,
                 data: {
-                    user: userResult,
+                    // user: userResult,
                     employee: employeeResult,
-                    dependentResult: dependentResult,
-                    emergencyResult: emergencyResult,
+                    // dependentResult: dependentResult,
+                    // emergencyResult: emergencyResult,
                     customAttributesResult: customAttributesResult,
                     newlyAddedcustomAttributesResult: newlyAddedcustomAttributesResult
                 },

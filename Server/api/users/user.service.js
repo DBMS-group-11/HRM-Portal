@@ -837,46 +837,43 @@ module.exports = {
     },
     updateEmployee: async (connection, data) => { //done
         console.log("___updateEmployee");
+        const {employeeData, userData, dependentInfo, emergencyInfo} = data
         try {
-            const newData = await findIDs(data);
+            const newData = await findIDs(employeeData);
             // console.log(newData);
             if (!newData.DepartmentID || !newData.JobTitleID || !newData.PayGradeID || !newData.EmploymentStatusID || typeof newData.SupervisorID === 'undefined') {
                 throw new Error("Required ID(s) missing from newData");
             }
 
             // console.log(data);
-            const query = `
-                UPDATE employee
-                SET 
-                    EmployeeName=?, 
-                    DateOfBirth=?, 
-                    Gender=?,
-                    MaritalStatus=?,
-                    Address=?,
-                    Country=?,
-                    DepartmentID=?,
-                    JobTitleID=?,
-                    PayGradeID=?,
-                    EmploymentStatusID=?,
-                    SupervisorID=?
-                WHERE
-                    EmployeeID=?
-            `;
+            const [result] = await connection.execute('CALL UpdateEmployeeAndRelatedData( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                    employeeData.EmployeeID,
+                    employeeData.EmployeeName,
+                    employeeData.DateOfBirth,
+                    employeeData.Gender,
+                    employeeData.MaritalStatus,
+                    employeeData.Address,
+                    employeeData.Country,
+                    newData.DepartmentID,
+                    newData.JobTitleID,
+                    newData.PayGradeID,
+                    newData.EmploymentStatusID,
+                    newData.SupervisorID,
+                    userData.UserID,
+                    userData.Username,
+                    userData.Email,
+                    userData.UserAccountLevelID,
+                    dependentInfo.DependentName,
+                    dependentInfo.DependentAge,
+                    emergencyInfo.name1,
+                    emergencyInfo.telNo1,
+                    emergencyInfo.name2,
+                    emergencyInfo.telNo2,
+                    emergencyInfo.emergencyAddress
+                ]
+            );
 
-            const result = await connection.query(query, [
-                data.EmployeeName,
-                data.DateOfBirth,
-                data.Gender,
-                data.MaritalStatus,
-                data.Address,
-                data.Country,
-                newData.DepartmentID,
-                newData.JobTitleID,
-                newData.PayGradeID,
-                newData.EmploymentStatusID,
-                newData.SupervisorID,
-                data.EmployeeID
-            ]);
 
             return result;
 
