@@ -5,7 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
-import axios from "axios";
+
 
 const PersonalInfo = ({data, isReadOnly, getData}) => {
     
@@ -21,10 +21,6 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
         {
             value: 'Level3',
             label: 'HR-Manager'
-        },
-        {
-            value: 'Level4',
-            label: 'Admin'
         }
     ];
 

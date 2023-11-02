@@ -47,7 +47,9 @@ const AddEmployee = ({children}) => {
         console.log('submit');
 
         myData.CustomAttributes = customAttributes;
-        console.log(myData);
+        // console.log(myData.personalInfo.);
+
+        // if(myData.)
 
         axios.post("http://localhost:3000/api/users/reg",myData)
         .then(res=>{

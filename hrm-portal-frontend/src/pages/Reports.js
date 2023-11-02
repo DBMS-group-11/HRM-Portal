@@ -149,22 +149,27 @@ const Reports = () => {
     }
 
     useEffect(() => {
-        handleReport1();
-        handleReport2();
-        handleReport3();
-        handleReport5();
+        try{
+            handleReport1();
+            handleReport2();
+            handleReport3();
+            handleReport5();
 
-        axios.get('http://localhost:3000/api/users/getCustomAttributes')
-        .then((response) => {
-            console.log(response.data);
-            const data = [];
-            for (let i = 0; i < response.data.length; i++) {
-                data.push(response.data[i].AttributeName);
-            }
-            setAttributeList(data);
-            setSelectedAttribute(data[0]);
-            handleReport4(data[0]);
-        })
+            axios.get('http://localhost:3000/api/users/getCustomAttributes')
+            .then((response) => {
+                console.log(response.data);
+                const data = [];
+                for (let i = 0; i < response.data.length; i++) {
+                    data.push(response.data[i].AttributeName);
+                }
+                setAttributeList(data);
+                setSelectedAttribute(data[0]);
+                handleReport4(data[0]);
+            })
+        }
+        catch(err){
+            console.log(err);
+        }
     }, []);
 
     return ( 
@@ -315,31 +320,41 @@ const Reports = () => {
                 </TabPanel>
                 {/* ################################################################################################### */}
                 <TabPanel value="4">
-                    <Box sx={{paddingX:6, display:'flex'}}>
-                        <Typography variant="h6">
-                            Select a custom attribute
-                        </Typography>
-                        <TextField 
-                            select
-                            label="Custom Attribute"
-                            variant="outlined"
-                            SelectProps={
-                                {native:true}
-                            }
-                            sx={{flexGrow:1, marginLeft:2}}
-                            onChange={(event)=>{
-                                setSelectedAttribute(event.target.value);
-                                handleReport4(event.target.value);
-                            }}
-                            value={selectedAttribute}
-                            >
-                            {attributeList.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </TextField>
-                    </Box>
+                    { (attributeList.length != 0) ?
+                        (
+                            <Box sx={{paddingX:6, display:'flex'}}>
+                                <Typography variant="h6">
+                                    Select a custom attribute
+                                </Typography>
+                                <TextField 
+                                    select
+                                    label="Custom Attribute"
+                                    variant="outlined"
+                                    SelectProps={
+                                        {native:true}
+                                    }
+                                    sx={{flexGrow:1, marginLeft:2}}
+                                    onChange={(event)=>{
+                                        setSelectedAttribute(event.target.value);
+                                        handleReport4(event.target.value);
+                                    }}
+                                    value={selectedAttribute}
+                                    >
+                                    {attributeList.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </TextField>
+                            </Box>
+                        ):(
+                            <Box sx={{paddingX:6, display:'flex'}}>
+                                <Typography variant="h6">
+                                    No Attributes to Show!
+                                </Typography>
+                            </Box>
+                        )
+                    }
                     <br />
                     {(report4Data != null && report4Data.length > 0) ? (
                         <BarChart

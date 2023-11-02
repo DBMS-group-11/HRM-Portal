@@ -48,8 +48,11 @@ const MyAccount = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('====submit====');
-        
+
         setData(myData)
+
+        // if(myData.personalInfo?.)
+
         setIsReadOnly(true);
         oldCustomAttributes != null ? myData.CustomAttributesInfo = oldCustomAttributes : myData.CustomAttributesInfo = [];
         myData.newlyAddedCustomAttributesInfo = newCustomAttributes;
