@@ -8,7 +8,6 @@ import { CloseOutlined, EditOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useCookies } from "react-cookie";
 import CustomAttribute from "../components/InfoForms/CustomAttribute";
 
 const EditEmployee = () => {
@@ -19,8 +18,6 @@ const EditEmployee = () => {
     const location = useLocation();
     const [oldCustomAttributes, setOldCustomAttributes] = useState([]);
     const [newCustomAttributes, setNewCustomAttributes] = useState([]);
-
-    const [cookies] = useCookies(['x-ual', 'x-uData']);
 
     const navigate = useNavigate();
 
@@ -46,7 +43,7 @@ const EditEmployee = () => {
         oldCustomAttributes != null ? myData.CustomAttributesInfo = oldCustomAttributes : myData.CustomAttributesInfo = [];
         myData.newlyAddedCustomAttributesInfo = newCustomAttributes;
         
-        // console.log(myData);
+        console.log(myData);
 
         axios.put("http://localhost:3000/api/users/editSupervisees",myData)
         .then(res=>{

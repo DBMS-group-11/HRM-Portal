@@ -7,7 +7,7 @@ use hrm_portal;
 -- -------------------------------------------------------------------------------
 CREATE TABLE if not exists `Organization`(
   `OrganizationID` NUMERIC(10,0),
-  `Name` VARCHAR(20),
+  `Name` VARCHAR(30),
   `Address` VARCHAR(50),
   `RegistrationNumber` VARCHAR(10),
   PRIMARY KEY (`OrganizationID`)
@@ -39,10 +39,10 @@ CREATE TABLE if not exists `PayGrade` (
 -- -------------------------------------------------------------------------------
 CREATE TABLE if not exists `EmergencyContact` (
   `EmergencyContactID` INT AUTO_INCREMENT,
-  `PrimaryName` VARCHAR(20),
-  `PrimaryPhoneNumber` NUMERIC(20,0),
-  `SecondaryName` VARCHAR(50),
-  `SecondaryPhoneNumber` NUMERIC(20,0),
+  `PrimaryName` VARCHAR(30),
+  `PrimaryPhoneNumber` VARCHAR(20),
+  `SecondaryName` VARCHAR(30),
+  `SecondaryPhoneNumber` VARCHAR(20),
   `Address` VARCHAR(100),
   PRIMARY KEY (`EmergencyContactID`)
 );
@@ -63,7 +63,7 @@ CREATE TABLE if not exists `EmploymentStatus` (
 );
 CREATE TABLE if not exists `Employee` (
   `EmployeeID` VARCHAR(10),  
-  `EmployeeName` VARCHAR(20),
+  `EmployeeName` VARCHAR(40),
   `DateOfBirth` DATE,
   `Gender` ENUM('Male','Female'),
   `MaritalStatus` ENUM('Married','Unmarried'),
@@ -153,6 +153,8 @@ CREATE TABLE if not exists `Salary` (
   FOREIGN KEY (`PayGradeID`) REFERENCES `PayGrade`(`PayGradeID`),
   FOREIGN KEY (`EmploymentStatusID`) REFERENCES `EmploymentStatus`(`EmploymentStatusID`)
 );
+
+
 -- --------Triggers------------------------------------------------------------------------------
 
 DELIMITER //
