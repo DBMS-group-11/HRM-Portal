@@ -7,7 +7,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
 
-const PersonalInfo = ({data, isReadOnly, getData}) => {
+const PersonalInfo = ({data, isReadOnly, getData, errorInForm}) => {
     
     const userAccountTypes = [
         {
@@ -38,6 +38,9 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
     const [dependentAge, setDependentAge] = useState('');
 
     const [nameError, setNameError] = useState(false);
+    const [addressError, setAddressError] = useState(false);
+    const [countryError, setCountryError] = useState(false);
+    const [usernameError, setUsernameError] = useState(false);
 
 
     useEffect(() => {
@@ -58,9 +61,30 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
         }
         else{
             let formData = {name, address, country, username, email, userAccountType, dob, maritalStatus, gender, dependentName, dependentAge};
-            getData(formData);
+            if(isFormDataValid()){
+                getData(formData);
+            }else{
+                getData(null);
+            }
         }
     } , [isReadOnly, data, name, address, country, username, email, userAccountType, dob, maritalStatus, gender, dependentName, dependentAge]);
+    
+    
+    const isFormDataValid = () => {
+        return (
+            name !== '' &&
+            address !== '' &&
+            country !== '' &&
+            username !== '' &&
+            email !== '' &&
+            userAccountType !== '' &&
+            dob !== '' &&
+            maritalStatus !== '' &&
+            gender !== '' &&
+            dependentName !== '' &&
+            dependentAge !== ''
+        );
+    };
     
     return (
 
@@ -78,7 +102,7 @@ const PersonalInfo = ({data, isReadOnly, getData}) => {
                             variant="standard"
                             fullWidth
                             required
-                            error={nameError}
+                            {...(nameError && {error:true, helperText:"Please fill in name"})}
                             InputProps={{
                                 readOnly: isReadOnly,
                             }}

@@ -19,6 +19,7 @@ const AddEmployee = ({children}) => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate=useNavigate();
     const [snackBarOpen, setSnackBarOpen] = useState(false);
+    const [errorPersonalForm, setErrorPersonalForm] = useState(false);
 
     const handleSnackBarClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -47,9 +48,13 @@ const AddEmployee = ({children}) => {
         console.log('submit');
 
         myData.CustomAttributes = customAttributes;
-        // console.log(myData.personalInfo.);
 
-        // if(myData.)
+        if(!myData.personalInfo || !myData.departmentInfo || !myData.emergencyInfo){
+            setErrorPersonalForm(true);
+            alert("Please fill all the fields!");
+            setIsLoading(false);
+            return;
+        }
 
         axios.post("http://localhost:3000/api/users/reg",myData)
         .then(res=>{
@@ -69,6 +74,7 @@ const AddEmployee = ({children}) => {
 
         }).finally(() => {
             setIsLoading(false);
+            setErrorPersonalForm(false);
         });
 
     };
@@ -81,7 +87,7 @@ const AddEmployee = ({children}) => {
 
     return ( 
             <Box maxWidth={"840px"} margin={'auto'}>
-                <PersonalInfo getData={getPersonalInfo}/>
+                <PersonalInfo getData={getPersonalInfo} errorInForm={errorPersonalForm}/>
                 <DepartmentInfo getData={getDepartmentInfo}/>
                 <EmergencyInfo getData={getEmergencyInfo}/>
                 

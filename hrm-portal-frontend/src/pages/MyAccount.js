@@ -34,6 +34,9 @@ const MyAccount = () => {
 
     const getPersonalInfo = (e) => {
         myData.personalInfo = e;
+        if(!e){
+            return;
+        }
         myData.personalInfo = { ...e, employeeID: uData.EmployeeID ,UserID:uData.UserID};
     };
 
@@ -51,13 +54,17 @@ const MyAccount = () => {
 
         setData(myData)
 
-        // if(myData.personalInfo?.)
-
         setIsReadOnly(true);
         oldCustomAttributes != null ? myData.CustomAttributesInfo = oldCustomAttributes : myData.CustomAttributesInfo = [];
         myData.newlyAddedCustomAttributesInfo = newCustomAttributes;
 
         console.log(myData);
+
+        if(!myData.personalInfo || !myData.departmentInfo || !myData.emergencyInfo){
+            alert("Please fill all the fields!");
+            myData.personalInfo = { ...e, employeeID: uData.EmployeeID ,UserID:uData.UserID};
+            return;
+        }
 
         axios.put("http://localhost:3000/api/users/editMyAccount",myData)
         .then(res=>{

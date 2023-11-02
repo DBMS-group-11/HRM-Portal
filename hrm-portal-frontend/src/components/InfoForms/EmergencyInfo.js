@@ -19,9 +19,23 @@ const EmergencyInfo = ({data, isReadOnly, getData}) => {
             setEmergencyAddress(data && data.emergencyInfo.emergencyAddress || '');
         }else{
             let formData = {name1, telNo1, name2, telNo2, emergencyAddress};
-            getData(formData);
+            if(isFormDataValid()){
+                getData(formData);
+            }else{
+                getData(null);
+            }
         }
     } , [isReadOnly, data, name1, telNo1, name2, telNo2, emergencyAddress]);
+
+    const isFormDataValid = () => {
+        return (
+            name1 !== '' &&
+            telNo1 !== '' &&
+            name2 !== '' &&
+            telNo2 !== '' &&
+            emergencyAddress !== ''
+        );
+    };    
 
     return (
         <Container sx={{marginY:2, border:1, borderColor:'grey.400', borderRadius:2, padding:4}}>

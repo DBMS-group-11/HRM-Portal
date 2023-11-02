@@ -45,6 +45,11 @@ const EditEmployee = () => {
         
         console.log(myData);
 
+        if(!myData.personalInfo || !myData.departmentInfo || !myData.emergencyInfo){
+            alert("Please fill all the fields!");
+            return;
+        }
+
         axios.put("http://localhost:3000/api/users/editSupervisees",myData)
         .then(res=>{
             // console.log(res.data.success);

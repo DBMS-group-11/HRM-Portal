@@ -70,9 +70,24 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
             setSupervisor(data && data.departmentInfo.supervisor || '');
         }else{
             let formData = {jobTitle, department, status, payGrade, supervisor};
-            getData(formData);
+            if(isFormDataValid()){
+                getData(formData);
+            }else{
+                getData(null);
+            }
         }
     } , [isReadOnly, data, jobTitle, department, status, payGrade, supervisor]);
+
+    const isFormDataValid = () => {
+        
+        return (
+            jobTitle !== '' &&
+            department !== '' &&
+            status !== '' &&
+            payGrade !== '' &&
+            supervisor !== ''
+        );
+    };
 
     return (
         <Container sx={{marginY:2, border:1, borderColor:'grey.400', borderRadius:2, padding:4}}>
