@@ -528,3 +528,103 @@ VALUES
 	('2023-12-07 11:11:08', 'EM-0020', 1, 'Personal reason', 'Casual', '2023-12-08', '2023-12-09', 2, '2023-12-08 05:29:16', 'EM-0018'),
 	('2024-03-26 21:53:54', 'EM-0020', 1, 'Sick leave', 'Casual', '2024-03-28', '2024-03-28', 1, '2024-03-27 19:05:06', 'EM-0018');
 -- DELETE FROM Employee WHERE EmployeeID = 'EM-0001';leave
+
+-- INDEXES to improve performence
+
+-- Index on leave.Approved
+CREATE INDEX idx_leave_Approved ON `leave` (Approved);
+
+-- Index on employeecustomattributes.AttributeName
+CREATE INDEX idx_employeecustomattributes_AttributeName ON `employeecustomattributes` (AttributeName);
+
+-- Index on useraccountlevel.UserAccountLevelName
+CREATE INDEX idx_useraccountlevel_AttributeName ON `useraccountlevel` (UserAccountLevelName);
+
+
+-- ------------------------------------------------------------------------------------------------
+-- PROCEDURES
+-- ------------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+CREATE PROCEDURE UpdateEmployeeAndRelatedData(
+    IN p_EmployeeID VARCHAR(10),
+    IN p_EmployeeName VARCHAR(40),
+    IN p_DateOfBirth DATE,
+    IN p_Gender enum('Male','Female'),
+    IN p_MaritalStatus enum('Married','Unmarried'),
+    IN p_Address varchar(2000),
+    IN p_Country VARCHAR(20),
+    IN p_DepartmentID varchar(10),
+    IN p_JobTitleID decimal(10,0),
+    IN p_PayGradeID decimal(10,0),
+    IN p_EmploymentStatusID decimal(10,0),
+    IN p_SupervisorID VARCHAR(10),
+    IN p_UserID decimal(10,0),
+    IN p_Username varchar(32),
+    IN p_Email varchar(64),
+    IN p_UserAccountLevelID decimal(10,0),
+    IN p_DependentName VARCHAR(20),
+    IN p_DependentAge decimal(10,0),
+    IN p_PrimaryName VARCHAR(30),
+    IN p_PrimaryPhoneNumber VARCHAR(20),
+    IN p_SecondaryName VARCHAR(30),
+    IN p_SecondaryPhoneNumber VARCHAR(20),
+    IN p_emergencyAddress VARCHAR(100)
+)
+BEGIN
+    DECLARE v_EmergencyContactID INT;
+
+    -- Get the EmergencyContactID from the employee's data
+    SELECT EmergencyContactID INTO v_EmergencyContactID
+    FROM employee
+    WHERE EmployeeID = p_EmployeeID;
+
+    -- Update the emergency contact information
+    UPDATE emergencyContact
+	SET
+		PrimaryName = p_PrimaryName,
+		PrimaryPhoneNumber = p_PrimaryPhoneNumber,
+		SecondaryName = p_SecondaryName,
+		SecondaryPhoneNumber = p_SecondaryPhoneNumber,
+        Address = p_emergencyAddress
+	WHERE
+		EmergencyContactID = v_EmergencyContactID;
+
+    -- Update the employee table
+    UPDATE employee
+    SET
+        EmployeeName = p_EmployeeName,
+        DateOfBirth = p_DateOfBirth,
+        Gender = p_Gender,
+        MaritalStatus = p_MaritalStatus,
+        Address = p_Address,
+        Country = p_Country,
+        DepartmentID = p_DepartmentID,
+        JobTitleID = p_JobTitleID,
+        PayGradeID = p_PayGradeID,
+        EmploymentStatusID = p_EmploymentStatusID,
+        SupervisorID = p_SupervisorID
+    WHERE
+        EmployeeID = p_EmployeeID;
+
+    -- Update the user account information
+    UPDATE useraccount
+    SET
+        Username = p_Username,
+        Email = p_Email,
+        UserAccountLevelID = p_UserAccountLevelID
+    WHERE
+        UserID = p_UserID AND EmployeeID = p_EmployeeID;
+
+    -- Update or insert dependent information
+    UPDATE dependentInfo
+    SET
+        DependentName = p_DependentName,
+        DependentAge = p_DependentAge
+    WHERE
+        EmployeeID = p_EmployeeID;
+
+END //
+
+DELIMITER ;

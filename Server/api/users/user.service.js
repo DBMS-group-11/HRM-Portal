@@ -829,7 +829,7 @@ module.exports = {
             const query = `UPDATE emergencycontact 
                             SET PrimaryName=?, PrimaryPhoneNumber=?, SecondaryName=?, SecondaryPhoneNumber=? 
                             WHERE EmergencyContactID=?`;
-            const result = await connection.query(query, [data.name1, data.telNo1, data.name2, data.telNo2, data.EmergencyContactID]);
+            const result = await connection.query(query, [data.name1, data.telNo1, data.name2, data.telNo2, data.EmergencyContactIDz]);
             return result;
         } catch (error) {
             throw new Error(`An error occurred while updating emergency contact: ${error.message}`);
@@ -837,46 +837,43 @@ module.exports = {
     },
     updateEmployee: async (connection, data) => { //done
         console.log("___updateEmployee");
+        const {employeeData, userData, dependentInfo, emergencyInfo} = data
         try {
-            const newData = await findIDs(data);
+            const newData = await findIDs(employeeData);
             // console.log(newData);
             if (!newData.DepartmentID || !newData.JobTitleID || !newData.PayGradeID || !newData.EmploymentStatusID || typeof newData.SupervisorID === 'undefined') {
                 throw new Error("Required ID(s) missing from newData");
             }
 
             // console.log(data);
-            const query = `
-                UPDATE employee
-                SET 
-                    EmployeeName=?, 
-                    DateOfBirth=?, 
-                    Gender=?,
-                    MaritalStatus=?,
-                    Address=?,
-                    Country=?,
-                    DepartmentID=?,
-                    JobTitleID=?,
-                    PayGradeID=?,
-                    EmploymentStatusID=?,
-                    SupervisorID=?
-                WHERE
-                    EmployeeID=?
-            `;
+            const [result] = await connection.execute('CALL UpdateEmployeeAndRelatedData( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                    employeeData.EmployeeID,
+                    employeeData.EmployeeName,
+                    employeeData.DateOfBirth,
+                    employeeData.Gender,
+                    employeeData.MaritalStatus,
+                    employeeData.Address,
+                    employeeData.Country,
+                    newData.DepartmentID,
+                    newData.JobTitleID,
+                    newData.PayGradeID,
+                    newData.EmploymentStatusID,
+                    newData.SupervisorID,
+                    userData.UserID,
+                    userData.Username,
+                    userData.Email,
+                    userData.UserAccountLevelID,
+                    dependentInfo.DependentName,
+                    dependentInfo.DependentAge,
+                    emergencyInfo.name1,
+                    emergencyInfo.telNo1,
+                    emergencyInfo.name2,
+                    emergencyInfo.telNo2,
+                    emergencyInfo.emergencyAddress
+                ]
+            );
 
-            const result = await connection.query(query, [
-                data.EmployeeName,
-                data.DateOfBirth,
-                data.Gender,
-                data.MaritalStatus,
-                data.Address,
-                data.Country,
-                newData.DepartmentID,
-                newData.JobTitleID,
-                newData.PayGradeID,
-                newData.EmploymentStatusID,
-                newData.SupervisorID,
-                data.EmployeeID
-            ]);
 
             return result;
 
