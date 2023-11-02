@@ -883,8 +883,6 @@ module.exports = {
                     emergencyInfo.emergencyAddress
                 ]
             );
-
-
             return result;
 
         } catch (error) {
