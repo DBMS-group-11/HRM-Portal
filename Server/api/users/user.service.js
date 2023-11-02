@@ -76,6 +76,10 @@ module.exports = {
             const newData = await findIDs(employeeData);
             // console.log(newData)
 
+            if (newData.SupervisorID == null){
+                newData.SupervisorID = 'EM-0001';
+            }
+
             const [results] = await connection.query(
                 `CALL RegisterEmployeeAndRelatedData(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
