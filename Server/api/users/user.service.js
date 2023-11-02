@@ -827,9 +827,9 @@ module.exports = {
         // console.log(data);
         try {
             const query = `UPDATE emergencycontact 
-                            SET PrimaryName=?, PrimaryPhoneNumber=?, SecondaryName=?, SecondaryPhoneNumber=? 
+                            SET PrimaryName=?, PrimaryPhoneNumber=?, SecondaryName=?, SecondaryPhoneNumber=?, Address=? 
                             WHERE EmergencyContactID=?`;
-            const result = await connection.query(query, [data.name1, data.telNo1, data.name2, data.telNo2, data.EmergencyContactID]);
+            const result = await connection.query(query, [data.name1, data.telNo1, data.name2, data.telNo2, data.emergencyAddress, data.EmergencyContactID]);
             return result;
         } catch (error) {
             throw new Error(`An error occurred while updating emergency contact: ${error.message}`);
