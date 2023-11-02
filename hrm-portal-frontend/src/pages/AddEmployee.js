@@ -57,8 +57,14 @@ const AddEmployee = ({children}) => {
                 setSnackBarOpen(true);
             }
         }).catch(err => {
-            console.log(err);
+            console.log(err.response);
             console.log("Axios post error");
+            // duplicate email
+            if(err.response && err.response.data.success == -1){
+                console.log("Duplicate Email");
+                alert("Duplicate Email Detected!");
+            }
+
         }).finally(() => {
             setIsLoading(false);
         });

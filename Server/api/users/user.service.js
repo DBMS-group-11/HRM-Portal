@@ -71,32 +71,42 @@ module.exports = {
         console.log("___addEmployee")
         // console.log(data)
         try {
-            const newData = await findIDs(data);
+            const {employeeData, dependentInfo, emergencyInfo} = data;
+
+            const newData = await findIDs(employeeData);
             // console.log(newData)
-            data['JobTitleID'] = newData['JobTitleID']
-            data['DepartmentID'] = newData['DepartmentID']
-            data['PayGradeID'] = newData['PayGradeID']
-            data['EmploymentStatusID'] = newData['EmploymentStatusID']
-            data['SupervisorID'] = newData['SupervisorID']
-            // console.log(data)
+
+            if (newData.SupervisorID == null){
+                newData.SupervisorID = 'EM-0001';
+            }
 
             const [results] = await connection.query(
-                `INSERT INTO employee(EmployeeID, EmployeeName, DateOfBirth, Gender, MaritalStatus, Address, Country, DepartmentID, JobTitleID, PayGradeID, EmploymentStatusID, SupervisorID, EmergencyContactID)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `CALL RegisterEmployeeAndRelatedData(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
-                    data.EmployeeID,
-                    data.EmployeeName,
-                    data.DateOfBirth,
-                    data.Gender,
-                    data.MaritalStatus,
-                    data.Address,
-                    data.Country,
-                    data.DepartmentID,
-                    data.JobTitleID,
-                    data.PayGradeID,
-                    data.EmploymentStatusID,
-                    data.SupervisorID,
-                    data.EmergencyContactID
+                    employeeData.EmployeeID,
+                    employeeData.EmployeeName,
+                    employeeData.DateOfBirth,
+                    employeeData.Gender,
+                    employeeData.MaritalStatus,
+                    employeeData.Address,
+                    employeeData.Country,
+                    newData.DepartmentID,
+                    newData.JobTitleID,
+                    newData.PayGradeID,
+                    newData.EmploymentStatusID,
+                    newData.SupervisorID,
+                    employeeData.UserAccountLevelID,
+                    employeeData.UserID,
+                    employeeData.Username,
+                    employeeData.Email,
+                    employeeData.PasswordHash,
+                    dependentInfo.DependentName,
+                    dependentInfo.DependentAge,
+                    emergencyInfo.name1,
+                    emergencyInfo.telNo1,
+                    emergencyInfo.name2,
+                    emergencyInfo.telNo2,
+                    emergencyInfo.emergencyAddress
                 ]
             );
             console.log("Employee added successfully")

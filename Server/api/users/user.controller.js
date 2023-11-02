@@ -191,8 +191,8 @@ module.exports = {
             await connection.beginTransaction();
 
             // Add emergency contact
-            const emergencyResult = await addEmergencyContact(connection, body.emergencyInfo);
-            const EmergencyContactID = emergencyResult.EmergencyContactID;
+            // const emergencyResult = await addEmergencyContact(connection, body.emergencyInfo);
+            // const EmergencyContactID = emergencyResult.EmergencyContactID;
 
             const lastUserIDResult = await getLastUserID(connection); //get UserID of last Added user
             // console.log(lastUserIDResult)
@@ -213,7 +213,7 @@ module.exports = {
             const PasswordHash = await bcrypt.hash("9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0", salt);
 
             // Prepare data for registration
-            data = {
+            let employeeData = {
                 "UserID": UserID,
                 "Username": body.personalInfo.username,
                 "Email": body.personalInfo.email,
@@ -234,17 +234,15 @@ module.exports = {
                 "JobTitleID": body.departmentInfo.jobTitle,
                 "PayGradeID": body.departmentInfo.payGrade,
                 "EmploymentStatusID": body.departmentInfo.status,
-                "SupervisorID": body.departmentInfo.supervisor,
-
-                "EmergencyContactID": EmergencyContactID
+                "SupervisorID": body.departmentInfo.supervisor
             }
-            dependentInfo = {
-                "EmployeeID": data.EmployeeID,
+            let dependentInfo = {
+                "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
-                "DependentAge": body.personalInfo.dependentAge
+                "DependentAge": body.personalInfo.dependentAge == '' ? 0 : body.personalInfo.dependentAge
             }
-            customAttributes = {
-                "EmployeeID": data.EmployeeID,
+            let customAttributes = {
+                "EmployeeID": employeeData.EmployeeID,
                 "CustomAttributesInfo": body.CustomAttributes
             }
             //Hash password
@@ -259,11 +257,13 @@ module.exports = {
 
             // const
             //Add employee
-            const employeeResult = await addEmployee(connection, data);
+            const emergencyInfo = body.emergencyInfo;
+
+            const employeeResult = await addEmployee(connection, {employeeData, dependentInfo, emergencyInfo});
             //Add user
-            const userResult = await addUser(connection, data);
+            // const userResult = await addUser(connection, data);
             //Add dependent
-            const dependentResult = await addDependent(connection, dependentInfo);
+            // const dependentResult = await addDependent(connection, dependentInfo);
 
             const customAttributeResult = await addNewCustomAttributeForEmployee(connection, customAttributes);
 
@@ -274,9 +274,9 @@ module.exports = {
             return res.json({
                 success: 1,
                 data: {
-                    user: userResult,
+                    // user: userResult,
                     employee: employeeResult,
-                    dependentResult: dependentResult,
+                    // dependentResult: dependentResult,
                     customAttributeResult: customAttributeResult,
                 },
                 message: "Registration successful",
@@ -288,6 +288,13 @@ module.exports = {
                 await connection.rollback();
             }
             console.log(error)
+            if(error == "Error: Duplicate email detected!"){
+                return res.status(500).json({
+                    success: -1,
+                    message: "Duplicate email detected!",
+                });
+            }
+
             console.log("<")
             return res.status(500).json({
                 success: 0,
@@ -865,7 +872,7 @@ module.exports = {
             let dependentInfo = {
                 "EmployeeID": employeeData.EmployeeID,
                 "DependentName": body.personalInfo.dependentName,
-                "DependentAge": body.personalInfo.dependentAge
+                "DependentAge": body.personalInfo.dependentAge = '' ? 0 : body.personalInfo.dependentAge
             }
             let customAttributes = {
                 "EmployeeID": employeeData.EmployeeID,

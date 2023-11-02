@@ -618,12 +618,80 @@ BEGIN
         UserID = p_UserID AND EmployeeID = p_EmployeeID;
 
     -- Update or insert dependent information
-    UPDATE dependentInfo
-    SET
-        DependentName = p_DependentName,
-        DependentAge = p_DependentAge
-    WHERE
-        EmployeeID = p_EmployeeID;
+    IF NOT (p_DependentName = '') THEN
+		UPDATE dependentInfo
+		SET
+			DependentName = p_DependentName,
+			DependentAge = p_DependentAge
+		WHERE
+			EmployeeID = p_EmployeeID;
+	END IF;
+
+END //
+
+DELIMITER ;
+
+-- Add new employees
+
+DELIMITER //
+
+CREATE PROCEDURE RegisterEmployeeAndRelatedData(
+    IN p_EmployeeID VARCHAR(10),
+    IN p_EmployeeName VARCHAR(40),
+    IN p_DateOfBirth DATE,
+    IN p_Gender enum('Male','Female'),
+    IN p_MaritalStatus enum('Married','Unmarried'),
+    IN p_Address varchar(2000),
+    IN p_Country VARCHAR(20),
+    IN p_DepartmentID varchar(10),
+    IN p_JobTitleID decimal(10,0),
+    IN p_PayGradeID decimal(10,0),
+    IN p_EmploymentStatusID decimal(10,0),
+    IN p_SupervisorID VARCHAR(10),
+    IN p_UserAccountLevelName varchar(32),
+    IN p_UserID decimal(10,0),
+    IN p_Username varchar(32),
+    IN p_Email varchar(64),
+    IN p_PasswordHash varchar(100),
+    IN p_DependentName VARCHAR(20),
+    IN p_DependentAge decimal(10,0),
+    IN p_PrimaryName VARCHAR(30),
+    IN p_PrimaryPhoneNumber VARCHAR(20),
+    IN p_SecondaryName VARCHAR(30),
+    IN p_SecondaryPhoneNumber VARCHAR(20),
+    IN p_emergencyAddress VARCHAR(100)
+)
+BEGIN
+
+	DECLARE v_emergencyID INT;
+    DECLARE v_userAccountLevelID varchar(32);
+    
+    -- Add emergency contact information
+    INSERT INTO emergencyContact(PrimaryName, PrimaryPhoneNumber, SecondaryName, SecondaryPhoneNumber, Address)
+	VALUES (p_PrimaryName, p_PrimaryPhoneNumber, p_SecondaryName, p_SecondaryPhoneNumber, p_emergencyAddress);
+    
+    SELECT EmergencyContactID INTO v_emergencyID
+    FROM EmergencyContact
+    ORDER BY EmergencyContactID DESC
+    LIMIT 1;
+    
+    -- add employee data
+    INSERT INTO employee(EmployeeID, EmployeeName, DateOfBirth, Gender, MaritalStatus, Address, Country, DepartmentID, JobTitleID, PayGradeID, EmploymentStatusID, SupervisorID, EmergencyContactID)
+	VALUES (p_EmployeeID, p_EmployeeName, p_DateOfBirth, p_Gender, p_MaritalStatus, p_Address, p_Country, p_DepartmentID, p_JobTitleID, p_PayGradeID, p_EmploymentStatusID, p_SupervisorID, v_emergencyID);
+
+    -- Update the user account information
+    SELECT UserAccountLevelID INTO v_userAccountLevelID
+    FROM useraccountlevel
+    WHERE UserAccountLevelName=p_UserAccountLevelName;
+    
+    INSERT INTO useraccount(UserID, Username, Email, EmployeeID, PasswordHash, UserAccountLevelID)
+    VALUES (p_UserID, p_Username, p_Email, p_EmployeeID, p_PasswordHash, v_userAccountLevelID);
+
+    -- Update or insert dependent information
+    IF not (p_DependentName = '') THEN
+		INSERT INTO dependentinfo(EmployeeID,DependentName,DependentAge)
+		VALUES(p_EmployeeID, p_DependentName, p_DependentAge);
+	END IF;
 
 END //
 
