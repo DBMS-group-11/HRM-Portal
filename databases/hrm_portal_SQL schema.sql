@@ -528,3 +528,12 @@ VALUES
 	('2023-12-07 11:11:08', 'EM-0020', 1, 'Personal reason', 'Casual', '2023-12-08', '2023-12-09', 2, '2023-12-08 05:29:16', 'EM-0018'),
 	('2024-03-26 21:53:54', 'EM-0020', 1, 'Sick leave', 'Casual', '2024-03-28', '2024-03-28', 1, '2024-03-27 19:05:06', 'EM-0018');
 -- DELETE FROM Employee WHERE EmployeeID = 'EM-0001';leave
+
+
+-- INDEXES to improve performence
+
+-- Index on leave.Approved
+CREATE INDEX idx_leave_Approved ON `leave` (Approved);
+
+-- Index on employeecustomattributes.AttributeName
+CREATE INDEX idx_employeecustomattributes_AttributeName ON `employeecustomattributes` (AttributeName);
