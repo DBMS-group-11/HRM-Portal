@@ -59,7 +59,7 @@ function App() {
               <Route path='/dashboard/request-a-leave' element={<RequestALeave/>}/>
               <Route path='/dashboard/add-employee' element={<AddEmployee/>}/>
               <Route path='/dashboard/edit-credentials' element={<EditCredentials/>}/>
-              <Route path='/dashboard/reports' element={<Reports/>}/>
+              <Route path='/dashboard/reports' element={cookies['x-ual'] <= 2 ? <Reports/> : <Navigate to="/404" />}/>
           </Route>
           )}
           <Route path='/*' element={<Page404 />}/>

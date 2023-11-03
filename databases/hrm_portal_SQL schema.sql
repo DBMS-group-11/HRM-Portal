@@ -573,7 +573,7 @@ VALUES
     ('EM-0006','Weight',55),
     ('EM-0005','Weight',55),
     ('EM-0010','Weight',58),
-    ('EM-0006','Weight',80),
+    ('EM-0007','Weight',80),
     ('EM-0001','Religon','Buddist'),
     ('EM-0002','Religon','Hindu'),
     ('EM-0003','Religon','Buddist'),

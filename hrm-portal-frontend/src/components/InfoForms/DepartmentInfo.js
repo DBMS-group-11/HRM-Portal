@@ -43,7 +43,7 @@ const DepartmentInfo = ({data, isReadOnly, getData}) => {
             for(let i=0; i<res.data.supervisors.length; i++){
                 // loading supervisor list to the select box
                 setSupervisorList(supervisorList => [...supervisorList, {value: res.data.supervisors[i].EmployeeName, label: res.data.supervisors[i].EmployeeName}]);
-                setSupervisor(res.data.supervisors[0].EmployeeName);
+                // setSupervisor(res.data.supervisors[0].EmployeeName);
             }
 
             for(let i=0; i<res.data.PayGrades.length; i++){

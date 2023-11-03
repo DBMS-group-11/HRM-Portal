@@ -52,7 +52,7 @@ const drawerLinks = [
         icon: <Groups2Icon />,
         path: '/dashboard/supervisees',
         active: false,
-        visibilityLevel: 2
+        visibilityLevel: 3
     },
     {
         label:'Add Employee',
@@ -66,7 +66,7 @@ const drawerLinks = [
         icon:<SummarizeOutlinedIcon />,
         path:'/dashboard/reports',
         active:false,
-        visibilityLevel:4
+        visibilityLevel:2
     },
     {
         label:'My Account',
